@@ -1,11 +1,11 @@
 import React from 'react';
-import {Alert, StyleSheet, View} from 'react-native';
+import {Alert, StyleSheet, View, Text} from 'react-native';
 import {useForm, Controller} from 'react-hook-form';
 import {useAuthentication} from '../hooks/ApiHooks';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useContext} from 'react';
 import {MainContext} from '../contexts/MainContext';
-import {Card, Input, Button} from '@rneui/themed';
+import {Input, Button} from '@rneui/themed';
 
 // LoginForm Component for User Authentication
 const LoginForm = () => {
@@ -22,7 +22,7 @@ const LoginForm = () => {
     formState: {errors},
   } = useForm({
     defaultValues: {
-      username: '',
+      email: '',
       password: '',
     },
   });
@@ -44,6 +44,14 @@ const LoginForm = () => {
     }
   };
 
+  const onForgotPasswordPress = () => {
+    // Placeholder for now, you can replace this with navigation or other logic
+    Alert.alert(
+      'Reset Password',
+      'Password reset functionality not implemented yet.',
+    );
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.inputContainer}>
@@ -54,7 +62,7 @@ const LoginForm = () => {
           }}
           render={({field: {onChange, onBlur, value}}) => (
             <Input
-              placeholder="Username"
+              placeholder="Email"
               onBlur={onBlur}
               onChangeText={onChange}
               value={value}
@@ -85,12 +93,15 @@ const LoginForm = () => {
               inputStyle={styles.input}
             />
           )}
-          name="password"
+          name="Password"
         />
+        <Text style={styles.forgotPasswordText} onPress={onForgotPasswordPress}>
+          Forgot your password?
+        </Text>
       </View>
 
       <Button
-        title="Submit"
+        title="Log In"
         onPress={handleSubmit(logIn)}
         buttonStyle={styles.button}
         titleStyle={styles.buttonText}
@@ -109,7 +120,7 @@ const styles = StyleSheet.create({
   },
   inputContainer: {
     width: '100%',
-    marginBottom: 20,
+    marginBottom: 5,
   },
   input: {
     backgroundColor: 'white', // or any light shade
@@ -119,6 +130,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#DDDDDD', // light gray border for the inputs
     fontSize: 16,
+    height: 50,
   },
   button: {
     height: 50,
@@ -127,10 +139,20 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginTop: 20,
+    width: '100%',
   },
   buttonText: {
     fontSize: 18,
     color: 'white',
+  },
+  forgotPasswordText: {
+    alignSelf: 'flex-end', // Align text to the right
+    color: 'blue', // Make text color blue to indicate it's clickable
+    fontWeight: 'bold', // Bold font weight
+    // Add a little space above the text
+    fontSize: 13, // Optional: adjust font size as needed
+    marginRight: 5, // Optional: space text from right edge of button
+    marginBottom: 5, // Optional: space text from bottom of button
   },
 });
 

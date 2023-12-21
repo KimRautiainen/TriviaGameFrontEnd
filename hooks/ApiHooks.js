@@ -1,11 +1,11 @@
 import {useContext, useEffect, useState} from 'react';
-import {triviaUrl, apiUrl} from '../utils/app-config';
+import {triviaUrl, apiUrl, authUrl} from '../utils/app-config';
 import {doFetch} from '../utils/functions';
 import {MainContext} from '../contexts/MainContext';
 
 const useAuthentication = () => {
   const postLogin = async (user) => {
-    return await doFetch(apiUrl + 'login', {
+    return await doFetch(authUrl + 'login', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
