@@ -18,6 +18,7 @@ const DrawerNavigator = () => {
       drawerContent={(props) => <CustomDrawerContent {...props} />}
     >
       <Drawer.Screen name="Home" component={HomePage} />
+      <Drawer.Screen name="Login" component={Login} />
       {/* Add other screens for the drawer here */}
     </Drawer.Navigator>
   );

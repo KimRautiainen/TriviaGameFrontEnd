@@ -5,10 +5,13 @@ import {
   DrawerItemList,
 } from '@react-navigation/drawer';
 import {MainContext} from '../contexts/MainContext'; // adjust this import based on your context location
+import {apiUrl} from '../utils/app-config';
 
 const CustomDrawerContent = (props) => {
   const {user} = useContext(MainContext);
   console.log('user', user);
+  const imageUrl = apiUrl + 'uploads/' + user.userAvatar;
+  console.log('Image URL:', imageUrl);
 
   return (
     <DrawerContentScrollView {...props}>
@@ -17,12 +20,14 @@ const CustomDrawerContent = (props) => {
       >
         {/* Display user info here */}
         <Image
-          source={{uri: user.userAvatar}}
+          source={{uri: imageUrl}}
           style={{width: 80, height: 80, borderRadius: 40}}
         />
-        <Text style={{fontSize: 18, marginTop: 5}}>Username</Text>
-        <Text style={{fontSize: 16, color: 'grey'}}>Level: 1</Text>
-        <Text style={{fontSize: 16, color: 'grey'}}>Xp: 0</Text>
+        <Text style={{fontSize: 18, marginTop: 5}}>{user.username}</Text>
+        <Text style={{fontSize: 16, color: 'grey'}}>Level: {user.level}</Text>
+        <Text style={{fontSize: 16, color: 'grey'}}>
+          Xp: {user.experiencePoints} / {user.maxXp}
+        </Text>
       </View>
       <DrawerItemList {...props} />
     </DrawerContentScrollView>
