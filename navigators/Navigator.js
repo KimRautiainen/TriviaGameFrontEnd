@@ -1,21 +1,38 @@
+import * as React from 'react';
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import {createDrawerNavigator} from '@react-navigation/drawer';
 import Login from '../views/Login';
+import HomePage from '../views/Home';
+import {CustomDrawerContent} from '../components/DrawerContent'; // import your custom drawer content
 import {useContext} from 'react';
 import {MainContext} from '../contexts/MainContext';
-import HomePage from '../views/Home';
 
 const Stack = createNativeStackNavigator();
+const Drawer = createDrawerNavigator();
 
-const Stackscreen = () => {
+// Drawer Navigator
+const DrawerNavigator = () => {
+  return (
+    <Drawer.Navigator
+      drawerContent={(props) => <CustomDrawerContent {...props} />}
+    >
+      <Drawer.Screen name="Home" component={HomePage} />
+      {/* Add other screens for the drawer here */}
+    </Drawer.Navigator>
+  );
+};
+
+// Stack Navigator
+const StackNavigator = () => {
   const {isLoggedIn} = useContext(MainContext);
-  // const isLoggedIn = true;
+
   return (
     <Stack.Navigator>
       {isLoggedIn ? (
         <Stack.Screen
-          name="Home"
-          component={HomePage}
+          name="Drawer"
+          component={DrawerNavigator}
           options={{headerShown: false}}
         />
       ) : (
@@ -29,11 +46,11 @@ const Stackscreen = () => {
   );
 };
 
+// Root Navigator
 const Navigator = () => {
-  // setHeight tänne
   return (
     <NavigationContainer>
-      <Stackscreen />
+      <StackNavigator />
     </NavigationContainer>
   );
 };
