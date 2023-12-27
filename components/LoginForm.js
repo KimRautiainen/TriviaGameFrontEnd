@@ -1,11 +1,11 @@
-import React from 'react';
-import {Alert, StyleSheet, View, Text} from 'react-native';
+import React, {useState} from 'react';
+import {Alert, StyleSheet, View, Text, TouchableOpacity} from 'react-native';
 import {useForm, Controller} from 'react-hook-form';
 import {useAuthentication} from '../hooks/ApiHooks';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useContext} from 'react';
 import {MainContext} from '../contexts/MainContext';
-import {Input, Button} from '@rneui/themed';
+import {Input, Button, Icon} from '@rneui/themed';
 
 // LoginForm Component for User Authentication
 const LoginForm = () => {
@@ -14,7 +14,11 @@ const LoginForm = () => {
 
   // Accessing the application's global state through MainContext
   const {setIsLoggedIn, setUser} = useContext(MainContext);
+  const [passwordVisible, setPasswordVisible] = useState(false);
 
+  const togglePasswordVisibility = () => {
+    setPasswordVisible(!passwordVisible);
+  };
   // Setting up form controls and validation using react-hook-form
   const {
     control,
@@ -58,7 +62,7 @@ const LoginForm = () => {
         <Controller
           control={control}
           rules={{
-            required: {value: true, message: 'Username is required'},
+            required: {value: true, message: 'Email is required'},
           }}
           render={({field: {onChange, onBlur, value}}) => (
             <Input
@@ -71,7 +75,7 @@ const LoginForm = () => {
               inputStyle={styles.input}
             />
           )}
-          name="username"
+          name="email"
         />
       </View>
 
@@ -85,15 +89,23 @@ const LoginForm = () => {
           render={({field: {onChange, onBlur, value}}) => (
             <Input
               placeholder="password"
-              secureTextEntry
+              secureTextEntry={!passwordVisible}
               onBlur={onBlur}
               onChangeText={onChange}
               value={value}
               errorMessage={errors.password?.message}
               inputStyle={styles.input}
+              rightIcon={
+                <TouchableOpacity onPress={togglePasswordVisibility}>
+                  <Icon
+                    name={passwordVisible ? 'eye' : 'eye-slash'}
+                    type="font-awesome" // Or any other icon type you're using
+                  />
+                </TouchableOpacity>
+              }
             />
           )}
-          name="Password"
+          name="password"
         />
         <Text style={styles.forgotPasswordText} onPress={onForgotPasswordPress}>
           Forgot your password?

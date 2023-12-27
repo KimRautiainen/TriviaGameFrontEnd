@@ -55,7 +55,7 @@ const Login = ({navigation}) => {
           source={require('../assets/logos/quiz-logo.png')}
           style={{
             width: deviceWidth,
-            height: deviceHeight * 0.3, // Adjust as needed
+            height: deviceHeight * 0.3,
             resizeMode: 'contain',
           }}
         />

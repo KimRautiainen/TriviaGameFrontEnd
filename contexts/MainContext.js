@@ -24,8 +24,6 @@ const MainProvider = (props) => {
         setUpdate,
         height,
         setHeight,
-        // currentVideo,
-        // setCurrentVideo,
       }}
     >
       {props.children}
