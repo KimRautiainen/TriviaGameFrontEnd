@@ -21,9 +21,11 @@ const useUser = () => {
   const getUserByToken = async (token) => {
     const options = {
       method: 'GET',
-      headers: {'x-access-token': token},
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
     };
-    return await doFetch(apiUrl + 'users/user', options);
+    return await doFetch(apiUrl + 'user/token', options);
   };
 
   const postUser = async (userData) => {

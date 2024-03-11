@@ -1,41 +1,49 @@
-import * as React from 'react';
+import React, {useContext} from 'react';
+import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import {createDrawerNavigator} from '@react-navigation/drawer';
 import Login from '../views/Login';
-import HomePage from '../views/Home';
-import {CustomDrawerContent} from '../components/DrawerContent'; // import your custom drawer content
-import {useContext} from 'react';
 import {MainContext} from '../contexts/MainContext';
+import {Icon} from '@rneui/themed';
+import HomePage from '../views/Home';
 
+const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
-const Drawer = createDrawerNavigator();
 
-// Drawer Navigator
-const DrawerNavigator = () => {
+const Tabscreen = () => {
   return (
-    <Drawer.Navigator
-      drawerContent={(props) => <CustomDrawerContent {...props} />}
+    <Tab.Navigator
+      screenOptions={{
+        activeTintColor: '#FFFFFF',
+        headerShown: false,
+        tabBarStyle: {backgroundColor: '#000000'},
+      }}
     >
-      <Drawer.Screen name="Home" component={HomePage} />
-      <Drawer.Screen name="Login" component={Login} />
-      {/* Add other screens for the drawer here */}
-    </Drawer.Navigator>
+      <Tab.Screen
+        name="Home"
+        component={HomePage}
+        options={{
+          tabBarIcon: ({color}) => <Icon name="home" color={color} />,
+          tabBarVisible: false, // this hides the tab bar only for this screen
+        }}
+      />
+    </Tab.Navigator>
   );
 };
 
-// Stack Navigator
-const StackNavigator = () => {
+const Stackscreen = () => {
   const {isLoggedIn} = useContext(MainContext);
-
+  // const isLoggedIn = true;
   return (
     <Stack.Navigator>
       {isLoggedIn ? (
-        <Stack.Screen
-          name="Drawer"
-          component={DrawerNavigator}
-          options={{headerShown: false}}
-        />
+        <>
+          <Stack.Screen
+            name="Tabs"
+            component={Tabscreen}
+            options={{headerShown: false}}
+          />
+        </>
       ) : (
         <Stack.Screen
           name="Login"
@@ -47,11 +55,11 @@ const StackNavigator = () => {
   );
 };
 
-// Root Navigator
 const Navigator = () => {
+  // setHeight tänne
   return (
     <NavigationContainer>
-      <StackNavigator />
+      <Stackscreen />
     </NavigationContainer>
   );
 };
