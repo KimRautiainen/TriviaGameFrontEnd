@@ -1,5 +1,5 @@
 import {useContext, useEffect, useState} from 'react';
-import {triviaUrl, apiUrl, authUrl} from '../utils/app-config';
+import {triviaUrl, apiUrl, authUrl, mediaUrl} from '../utils/app-config';
 import {doFetch} from '../utils/functions';
 import {MainContext} from '../contexts/MainContext';
 
@@ -64,12 +64,18 @@ const useUser = () => {
     const options = {
       method: 'GET',
       headers: {
-        'x-access-token': token,
+        Authorization: `Bearer ${token}`,
       },
     };
     return await doFetch(apiUrl + 'users/' + id, options);
   };
 
-  return {getUserByToken, postUser, checkUsername, putUser, getUserById};
+  return {
+    getUserByToken,
+    postUser,
+    checkUsername,
+    putUser,
+    getUserById,
+  };
 };
 export {useAuthentication, useUser};

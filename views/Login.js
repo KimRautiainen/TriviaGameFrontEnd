@@ -19,7 +19,7 @@ import LoginForm from '../components/LoginForm';
 import RegisterForm from '../components/RegisterForm';
 
 const Login = ({navigation}) => {
-  const {setIsLoggedIn, setUser} = useContext(MainContext);
+  const {setIsLoggedIn, setUser, setLoading} = useContext(MainContext);
   const {getUserByToken} = useUser();
   const [toggleRegister, setToggleRegister] = useState(false);
 
@@ -28,15 +28,18 @@ const Login = ({navigation}) => {
 
   const checkToken = async () => {
     try {
+      setLoading(true); // Start loading
       const token = await AsyncStorage.getItem('userToken');
       const userData = await getUserByToken(token);
       console.log('userdata', userData);
       if (userData) {
         setIsLoggedIn(true);
-        setUser(userData);
+        setUser(userData.user[0]); // Assuming you want the first user
       }
     } catch (error) {
       console.log('checkToken', error);
+    } finally {
+      setLoading(false); // Data is fetched, loading is done
     }
   };
 

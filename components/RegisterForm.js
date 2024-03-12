@@ -47,6 +47,7 @@ const RegisterForm = ({setToggleRegister}) => {
       Alert.alert('Success', registerResponse.message);
       // Switching back to login form after successful registration
       setToggleRegister(false);
+      setIsLoggedIn(true);
     } catch (error) {
       Alert.alert('Error', error.message);
     }
