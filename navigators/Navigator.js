@@ -56,7 +56,6 @@ const Stackscreen = () => {
 };
 
 const Navigator = () => {
-  // setHeight tänne
   return (
     <NavigationContainer>
       <Stackscreen />
