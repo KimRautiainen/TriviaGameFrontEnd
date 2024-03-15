@@ -1,10 +1,10 @@
 import React, {useState} from 'react';
 import {Alert, StyleSheet, View, Text, TouchableOpacity} from 'react-native';
 import {useForm, Controller} from 'react-hook-form';
-import {useAuthentication} from '../hooks/ApiHooks';
+import {useAuthentication} from '../../hooks/ApiHooks';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useContext} from 'react';
-import {MainContext} from '../contexts/MainContext';
+import {MainContext} from '../../contexts/MainContext';
 import {Input, Button, Icon} from '@rneui/themed';
 
 // LoginForm Component for User Authentication

@@ -1,7 +1,7 @@
 import {useForm, Controller} from 'react-hook-form';
-import {useUser} from '../hooks/ApiHooks';
+import {useUser} from '../../hooks/ApiHooks';
 import {useContext} from 'react';
-import {MainContext} from '../contexts/MainContext';
+import {MainContext} from '../../contexts/MainContext';
 import {Card, Input, Button} from '@rneui/themed';
 import {
   Alert,

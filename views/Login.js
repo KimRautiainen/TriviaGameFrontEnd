@@ -15,8 +15,8 @@ import PropTypes from 'prop-types';
 import {MainContext} from '../contexts/MainContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useUser} from '../hooks/ApiHooks';
-import LoginForm from '../components/LoginForm';
-import RegisterForm from '../components/RegisterForm';
+import LoginForm from '../components/loginAndRegisterationComponents/LoginForm';
+import RegisterForm from '../components/loginAndRegisterationComponents/RegisterForm';
 
 const Login = ({navigation}) => {
   const {setIsLoggedIn, setUser, setLoading} = useContext(MainContext);

@@ -1,10 +1,16 @@
 import React, {useContext} from 'react';
-import {View, Text, StyleSheet, ActivityIndicator} from 'react-native';
-import {Avatar} from 'react-native-elements';
+import {
+  View,
+  Text,
+  StyleSheet,
+  ActivityIndicator,
+  TouchableOpacity,
+} from 'react-native';
+import {Avatar, Icon} from 'react-native-elements';
 import {Bar} from 'react-native-progress';
 import PropTypes from 'prop-types';
-import {MainContext} from '../contexts/MainContext';
-import {mediaUrl} from '../utils/app-config';
+import {MainContext} from '../../contexts/MainContext';
+import {mediaUrl} from '../../utils/app-config';
 
 const UserProfile = () => {
   const {user, loading} = useContext(MainContext);
@@ -13,6 +19,8 @@ const UserProfile = () => {
     return <ActivityIndicator size="large" color="#0000ff" />;
   }
   const userAvatarUri = `${mediaUrl}${user.userAvatar}`;
+
+
 
   return (
     <View style={styles.container}>
@@ -71,6 +79,9 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: 'black',
     justifyContent: 'center',
+  },
+  achievementsIcon: {
+    position: 'absolute',
   },
   xpBarContainer: {
     position: 'relative',

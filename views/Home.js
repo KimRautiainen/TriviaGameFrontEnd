@@ -2,8 +2,9 @@
 import React, {useContext, useEffect} from 'react';
 import {ScrollView, StyleSheet} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
-import UserProfile from '../components/UserProfile';
-import GameModeCard from '../components/GameModeCard';
+import UserProfile from '../components/homeScreenComponents/UserProfile';
+import GameModeCard from '../components/homeScreenComponents/GameModeCard';
+import Inventory from '../components/homeScreenComponents/inventory';
 
 const HomePage = () => {
   const gameModes = [
@@ -14,6 +15,7 @@ const HomePage = () => {
   return (
     <SafeAreaView style={styles.container}>
       <UserProfile />
+      <Inventory />
       <ScrollView
         horizontal
         showsHorizontalScrollIndicator={false}
