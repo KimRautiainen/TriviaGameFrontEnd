@@ -6,6 +6,7 @@ import Login from '../views/Login';
 import {MainContext} from '../contexts/MainContext';
 import {Icon} from '@rneui/themed';
 import HomePage from '../views/Home';
+import GameModeScreen from '../views/GameModeScreen';
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -43,6 +44,7 @@ const Stackscreen = () => {
             component={Tabscreen}
             options={{headerShown: false}}
           />
+          <Stack.Screen name="GameModeScreen" component={GameModeScreen} />
         </>
       ) : (
         <Stack.Screen

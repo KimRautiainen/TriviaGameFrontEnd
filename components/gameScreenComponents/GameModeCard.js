@@ -2,25 +2,29 @@ import React from 'react';
 import {View, Text, StyleSheet} from 'react-native';
 import {Card} from 'react-native-elements';
 
-const GameModeCard = ({title, description}) => (
-  <View style={styles.gameModeContainer}>
-    <Card containerStyle={styles.cardContainer}>
-      <Card.Title style={styles.cardTitle}>{title}</Card.Title>
-      <Text style={styles.cardDescription}>{description}</Text>
-    </Card>
-  </View>
-);
+const GameModeCard = ({title, description}) => {
+  return (
+    <View style={styles.gameModeContainer}>
+      <Card containerStyle={styles.cardContainer}>
+        <Card.Title style={styles.cardTitle}>{title}</Card.Title>
+        <Text style={styles.cardDescription}>{description}</Text>
+      </Card>
+    </View>
+  );
+};
 
 const styles = StyleSheet.create({
   gameModeContainer: {
-    margin: 15,
+    //margin: 15,
     alignContent: 'center',
   },
   cardContainer: {
-    width: 300, // Adjust width as needed
-    height: 300, // Adjust height as needed
+    width: 320,
+    height: 100,
     alignItems: 'center', // Center content horizontally
     justifyContent: 'center', // Center content vertically
+    borderWidth: 2,
+    borderRadius: 10,
   },
   cardTitle: {
     textAlign: 'center',
