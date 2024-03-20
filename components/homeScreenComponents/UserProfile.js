@@ -20,8 +20,6 @@ const UserProfile = () => {
   }
   const userAvatarUri = `${mediaUrl}${user.userAvatar}`;
 
-
-
   return (
     <View style={styles.container}>
       <Avatar
@@ -62,6 +60,7 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
     alignItems: 'center',
+    marginBottom: 0,
     //margin: 10,
   },
   avatar: {

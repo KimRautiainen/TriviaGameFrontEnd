@@ -1,6 +1,6 @@
 // views/HomePage.js
 import React, {useContext, useEffect} from 'react';
-import {ScrollView, StyleSheet} from 'react-native';
+import {ScrollView, StyleSheet, View} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import UserProfile from '../components/homeScreenComponents/UserProfile';
 import GameModeCard from '../components/gameScreenComponents/GameModeCard';
@@ -16,16 +16,18 @@ const HomePage = ({navigation, route}) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <UserProfile />
-      <Inventory />
-      <Button
-        onPress={() => navigation.navigate('GameModeScreen')}
-        large
-        color={'green'}
-        style={styles.playButton}
-      >
-        Play
-      </Button>
+      <View style={styles.contentContainer}>
+        <UserProfile />
+        <Inventory />
+        <Button
+          onPress={() => navigation.navigate('GameModeScreen')}
+          large
+          color={'green'}
+          style={styles.playButton}
+        >
+          Play
+        </Button>
+      </View>
     </SafeAreaView>
   );
 };
@@ -33,11 +35,11 @@ const HomePage = ({navigation, route}) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  contentContainer: {
+    flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-  },
-  gameModesScrollView: {
-    flexDirection: 'row',
   },
   playButton: {
     height: 70,
@@ -47,6 +49,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     borderWidth: 1,
     backgroundColor: 'green',
+    marginBottom: 50,
   },
 });
 HomePage.propTypes = {
