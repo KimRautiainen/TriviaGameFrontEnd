@@ -1,6 +1,10 @@
-const triviaUrl = 'https://opentdb.com/api.php?'; // Open trivia database API URL
-const apiUrl = 'http://192.168.101.100:3000/'; // API URL
+// Custom Backend API URLs
+const apiUrl = 'http://192.168.101.100:3000/'; // Base api url
 const authUrl = apiUrl + 'auth/';
 const mediaUrl = apiUrl + 'uploads/';
 
-export {triviaUrl, apiUrl, authUrl, mediaUrl};
+// URLs for the Open Trivia Database API
+const categoryUrl = 'https://opentdb.com/api_category.php'; // Open trivia database category URL
+const triviaUrl = 'https://opentdb.com/api.php?'; // Open trivia database API URL
+
+export {triviaUrl, apiUrl, authUrl, mediaUrl, categoryUrl};

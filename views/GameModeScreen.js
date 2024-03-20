@@ -10,8 +10,9 @@ import {
 } from 'react-native';
 import GameModeCard from '../components/gameScreenComponents/GameModeCard';
 import gameModes from '../data/gameModes';
+import PropTypes from 'prop-types';
 
-const GameModeScreen = () => {
+const GameModeScreen = ({navigation, route}) => {
   const [isModalVisible, setModalVisible] = useState(false);
   const [selectedGameMode, setSelectedGameMode] = useState(null);
 
@@ -50,6 +51,9 @@ const GameModeScreen = () => {
               title="Play"
               onPress={() => {
                 setModalVisible(!isModalVisible);
+                navigation.navigate('GameScreen', {
+                  gameMode: selectedGameMode.title,
+                });
                 // Navigate to the game screen with selectedGameMode.title
               }}
             />
@@ -101,4 +105,7 @@ const styles = StyleSheet.create({
     color: '#666', // Slightly lighter text color for descriptions
   },
 });
+GameModeScreen.propTypes = {
+  navigation: PropTypes.object,
+};
 export default GameModeScreen;
