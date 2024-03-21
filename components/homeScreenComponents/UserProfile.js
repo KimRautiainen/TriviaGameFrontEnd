@@ -1,11 +1,5 @@
 import React, {useContext} from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  ActivityIndicator,
-  TouchableOpacity,
-} from 'react-native';
+import {View, Text, StyleSheet, ActivityIndicator} from 'react-native';
 import {Avatar, Icon} from 'react-native-elements';
 import {Bar} from 'react-native-progress';
 import PropTypes from 'prop-types';

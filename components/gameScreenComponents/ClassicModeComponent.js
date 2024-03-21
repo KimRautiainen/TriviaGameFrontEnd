@@ -14,13 +14,16 @@ const ClassicModeComponent = () => {
   const [questions, setQuestions] = useState([]);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const {getRandomQuestions} = useTrivia();
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [selectedAnswer, setSelectedAnswer] = useState(null);
   const [showAnswer, setShowAnswer] = useState(false);
+
+  console.log('rendering ClassicModeComponent');
 
   useEffect(() => {
     const fetchQuestions = async () => {
       setLoading(true);
+      await new Promise((resolve) => setTimeout(resolve, 5000)); // 3 seconds delay
       const response = await getRandomQuestions(10);
       setLoading(false);
       if (response.results) {
