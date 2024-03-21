@@ -1,5 +1,5 @@
 import {doFetch} from '../utils/functions';
-import {triviaUrl, apiUrl, authUrl, mediaUrl, categoryUrl} from '../utils/app-config';
+import {triviaUrl, categoryUrl} from '../utils/app-config';
 
 const useTrivia = () => {
   const getQuestionsWithParams = async (amount, category, difficulty, type) => {

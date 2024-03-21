@@ -1,55 +1,82 @@
 import React, {useEffect, useState} from 'react';
-import {View, Text, StyleSheet, ScrollView, Button} from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  TouchableOpacity,
+} from 'react-native';
 import {useTrivia} from '../../hooks/TriviaHooks';
+import {decodeQuestionsArray} from '../../utils/decodeQuestions';
+import LoadingIndicator from '../sharedComponents/LoadingIndicator';
 
 const ClassicModeComponent = () => {
   const [questions, setQuestions] = useState([]);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const {getRandomQuestions} = useTrivia();
+  const [loading, setLoading] = useState(false);
+  const [selectedAnswer, setSelectedAnswer] = useState(null);
+  const [showAnswer, setShowAnswer] = useState(false);
 
   useEffect(() => {
     const fetchQuestions = async () => {
+      setLoading(true);
       const response = await getRandomQuestions(10);
+      setLoading(false);
       if (response.results) {
-        const decodedQuestions = response.results.map((q) => ({
-          ...q,
-          question: decodeURIComponent(q.question),
-          correct_answer: decodeURIComponent(q.correct_answer),
-          incorrect_answers: q.incorrect_answers.map((answer) =>
-            decodeURIComponent(answer),
-          ),
-          answers: [q.correct_answer, ...q.incorrect_answers].sort(
-            () => Math.random() - 0.5,
-          ), // Shuffle answers
-        }));
-        setQuestions(decodedQuestions);
+        setQuestions(decodeQuestionsArray(response.results));
       }
     };
     fetchQuestions();
   }, []);
 
-  const handleNextQuestion = () => {
-    setCurrentQuestionIndex(
-      (prevIndex) => (prevIndex + 1 < questions.length ? prevIndex + 1 : 0), // Loop back to the first question
-    );
+  const handleAnswerSelection = (answer) => {
+    setSelectedAnswer(answer);
+    setShowAnswer(true);
+    setTimeout(() => {
+      setShowAnswer(false);
+      setSelectedAnswer(null);
+      setCurrentQuestionIndex(
+        (prevIndex) => (prevIndex + 1) % questions.length,
+      );
+    }, 2000);
   };
+
+  // Show loading screen if loading is true
+  if (loading) {
+    return <LoadingIndicator />;
+  }
 
   return (
     <ScrollView style={styles.container}>
       <Text style={styles.title}>Classic Mode</Text>
       {questions.length > 0 && (
-        <View style={styles.questionContainer}>
+        <View style={styles.card}>
           <Text style={styles.questionText}>
             {questions[currentQuestionIndex].question}
           </Text>
-          {questions[currentQuestionIndex].answers.map((answer, idx) => (
-            <Button key={idx} title={answer} onPress={() => {}} /> // Here you can add functionality to handle answer selection
-          ))}
-          <View style={styles.nextButton}>
-            <Button title="Next Question" onPress={handleNextQuestion} />
-          </View>
         </View>
       )}
+      {questions.length > 0 &&
+        questions[currentQuestionIndex].answers.map((answer, idx) => (
+          <TouchableOpacity
+            key={idx}
+            style={[
+              styles.answerCard,
+              showAnswer
+                ? answer === questions[currentQuestionIndex].correct_answer
+                  ? styles.correctAnswer
+                  : selectedAnswer === answer
+                    ? styles.wrongAnswer
+                    : {}
+                : {},
+            ]}
+            onPress={() => handleAnswerSelection(answer)}
+            disabled={showAnswer}
+          >
+            <Text style={styles.answerText}>{answer}</Text>
+          </TouchableOpacity>
+        ))}
     </ScrollView>
   );
 };
@@ -59,31 +86,45 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 10,
   },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  loadingText: {
+    marginTop: 10,
+    fontSize: 16,
+  },
   title: {
     fontSize: 24,
     fontWeight: 'bold',
     marginBottom: 20,
   },
-  questionContainer: {
-    marginBottom: 20,
+  card: {
+    marginBottom: 10,
     padding: 20,
     borderRadius: 8,
     backgroundColor: 'white',
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
     elevation: 5,
   },
   questionText: {
     fontSize: 18,
-    marginBottom: 20,
   },
-  nextButton: {
-    marginTop: 20,
+  answerCard: {
+    marginBottom: 10,
+    padding: 20,
+    borderRadius: 8,
+    backgroundColor: 'white',
+    elevation: 5,
+  },
+  correctAnswer: {
+    backgroundColor: 'lightgreen',
+  },
+  wrongAnswer: {
+    backgroundColor: 'tomato',
+  },
+  answerText: {
+    fontSize: 16,
   },
 });
 
