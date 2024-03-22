@@ -5,10 +5,15 @@ import {
   StyleSheet,
   ScrollView,
   TouchableOpacity,
+  Dimensions,
 } from 'react-native';
 import {useTrivia} from '../../hooks/TriviaHooks';
 import {decodeQuestionsArray} from '../../utils/decodeQuestions';
 import LoadingIndicator from '../sharedComponents/LoadingIndicator';
+import CorrectAnswer from '../sharedComponents/CorrectAnswer';
+import InCorrectAnswer from '../sharedComponents/IncorrectAnswer';
+import GameCompletedComponent from '../sharedComponents/GameCompletedComponent';
+import {useNavigation} from '@react-navigation/native';
 
 const ClassicModeComponent = () => {
   const [questions, setQuestions] = useState([]);
@@ -17,31 +22,71 @@ const ClassicModeComponent = () => {
   const [loading, setLoading] = useState(true);
   const [selectedAnswer, setSelectedAnswer] = useState(null);
   const [showAnswer, setShowAnswer] = useState(false);
+  const [isCorrectAnswer, setIsCorrectAnswer] = useState(false);
+  const {width, height} = Dimensions.get('window');
+  const [correctAnswersCount, setCorrectAnswersCount] = useState(0);
+  const [incorrectAnswersCount, setIncorrectAnswersCount] = useState(0);
+  const [gameCompleted, setGameCompleted] = useState(false);
+  const navigation = useNavigation();
 
-  console.log('rendering ClassicModeComponent');
+  const hadlePlayAgain = async () => {
+    setQuestions([]);
+    setCurrentQuestionIndex(0);
+    setLoading(true);
+    setSelectedAnswer(null);
+    setShowAnswer(false);
+    setIsCorrectAnswer(false);
+    setCorrectAnswersCount(0);
+    setIncorrectAnswersCount(0);
+    setGameCompleted(false);
+    await fetchQuestions();
+  };
 
-  useEffect(() => {
-    const fetchQuestions = async () => {
-      setLoading(true);
-      await new Promise((resolve) => setTimeout(resolve, 5000)); // 3 seconds delay
-      const response = await getRandomQuestions(10);
+  const handleReturnHome = () => {
+    // Navigate to home screen
+    navigation.navigate('Home');
+  };
+
+  // Fetch questions from the API
+  const fetchQuestions = async () => {
+    setLoading(true);
+    await new Promise((resolve) => setTimeout(resolve, 2000)); // Simulate delay
+    const response = await getRandomQuestions(10);
+    if (response.results) {
+      setQuestions(decodeQuestionsArray(response.results));
       setLoading(false);
-      if (response.results) {
-        setQuestions(decodeQuestionsArray(response.results));
-      }
-    };
-    fetchQuestions();
-  }, []);
+    }
+  };
 
+  // Fetch questions when the component mounts
+  useEffect(() => {
+    fetchQuestions();
+  }, []); // Dependencies remain empty for initial load
+
+  // Handle answer selection
   const handleAnswerSelection = (answer) => {
+    const isCorrect = answer === questions[currentQuestionIndex].correct_answer;
     setSelectedAnswer(answer);
     setShowAnswer(true);
+    setIsCorrectAnswer(isCorrect); // Set correct answer state
+
+    // Update correct/incorrect counts
+    if (isCorrect) {
+      setCorrectAnswersCount((prevCount) => prevCount + 1);
+    } else {
+      setIncorrectAnswersCount((prevCount) => prevCount + 1);
+    }
+
+    // Move to the next question after 2 seconds
     setTimeout(() => {
       setShowAnswer(false);
       setSelectedAnswer(null);
-      setCurrentQuestionIndex(
-        (prevIndex) => (prevIndex + 1) % questions.length,
-      );
+      setIsCorrectAnswer(false);
+      if (currentQuestionIndex < questions.length - 1) {
+        setCurrentQuestionIndex((prevIndex) => prevIndex + 1);
+      } else {
+        setGameCompleted(true);
+      }
     }, 2000);
   };
 
@@ -49,38 +94,58 @@ const ClassicModeComponent = () => {
   if (loading) {
     return <LoadingIndicator />;
   }
+  // Show game completed screen if game is completed
+  if (gameCompleted) {
+    return (
+      <GameCompletedComponent
+        correctAnswers={correctAnswersCount}
+        incorrectAnswers={incorrectAnswersCount}
+        onPlayAgain={hadlePlayAgain}
+        onReturnHome={handleReturnHome}
+      />
+    );
+  }
 
+  // Show the game screen
   return (
-    <ScrollView style={styles.container}>
-      <Text style={styles.title}>Classic Mode</Text>
-      {questions.length > 0 && (
-        <View style={styles.card}>
-          <Text style={styles.questionText}>
-            {questions[currentQuestionIndex].question}
-          </Text>
-        </View>
-      )}
-      {questions.length > 0 &&
-        questions[currentQuestionIndex].answers.map((answer, idx) => (
-          <TouchableOpacity
-            key={idx}
-            style={[
-              styles.answerCard,
-              showAnswer
-                ? answer === questions[currentQuestionIndex].correct_answer
-                  ? styles.correctAnswer
-                  : selectedAnswer === answer
-                    ? styles.wrongAnswer
-                    : {}
-                : {},
-            ]}
-            onPress={() => handleAnswerSelection(answer)}
-            disabled={showAnswer}
-          >
-            <Text style={styles.answerText}>{answer}</Text>
-          </TouchableOpacity>
-        ))}
-    </ScrollView>
+    <View style={{flex: 1}}>
+      {showAnswer &&
+        (isCorrectAnswer ? <CorrectAnswer /> : <InCorrectAnswer />)}
+      <ScrollView style={styles.container}>
+        <Text style={styles.title}>Classic Mode</Text>
+        {questions.length > 0 && (
+          <View style={styles.card}>
+            {/* Display the question count here */}
+            <Text style={styles.questionCount}>
+              Question {currentQuestionIndex + 1} of {questions.length}
+            </Text>
+            <Text style={styles.questionText}>
+              {questions[currentQuestionIndex].question}
+            </Text>
+          </View>
+        )}
+        {questions.length > 0 &&
+          questions[currentQuestionIndex].answers.map((answer, idx) => (
+            <TouchableOpacity
+              key={idx}
+              style={[
+                styles.answerCard,
+                showAnswer
+                  ? answer === questions[currentQuestionIndex].correct_answer
+                    ? styles.correctAnswer
+                    : selectedAnswer === answer
+                      ? styles.wrongAnswer
+                      : {}
+                  : {},
+              ]}
+              onPress={() => handleAnswerSelection(answer)}
+              disabled={showAnswer}
+            >
+              <Text style={styles.answerText}>{answer}</Text>
+            </TouchableOpacity>
+          ))}
+      </ScrollView>
+    </View>
   );
 };
 
@@ -103,22 +168,42 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginBottom: 20,
   },
+  questionCount: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    position: 'absolute', // Position it absolutely within the card
+    top: 10, // Adjust as needed to position correctly within the card
+    alignSelf: 'center', // Center it horizontally
+    color: '#3b5998', // Example color, adjust as needed
+  },
   card: {
-    marginBottom: 10,
+    // Increase the size of the question card
+    width: '100%', // Adjust based on your needs
+    minWidth: '100%', // Added minWidth to prevent 'width' from being '0
+    minHeight: 180,
     padding: 20,
+    marginBottom: 20, // Added more margin-bottom for separation
     borderRadius: 8,
     backgroundColor: 'white',
     elevation: 5,
+    justifyContent: 'center', // Ensure the content is centered
+    alignItems: 'center', // Center content horizontally
+    paddingTop: 40, // Added paddingTop to ensure space for the question count
   },
   questionText: {
     fontSize: 18,
+    textAlign: 'center', // Center text for better readability
   },
   answerCard: {
-    marginBottom: 10,
+    // Fixed size for answer cards to prevent flickering
+    minHeight: 60, // Adjust based on your needs
     padding: 20,
+    marginBottom: 10,
     borderRadius: 8,
     backgroundColor: 'white',
     elevation: 5,
+    justifyContent: 'center', // Center the text vertically
+    alignItems: 'center', // Center the text horizontally
   },
   correctAnswer: {
     backgroundColor: 'lightgreen',
@@ -128,6 +213,17 @@ const styles = StyleSheet.create({
   },
   answerText: {
     fontSize: 16,
+    textAlign: 'center', // Center text for better readability
+  },
+  statsContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
+  },
+  statsText: {
+    fontSize: 20,
+    margin: 10,
   },
 });
 
