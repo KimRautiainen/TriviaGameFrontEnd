@@ -45,7 +45,11 @@ const Stackscreen = () => {
             component={Tabscreen}
             options={{headerShown: false}}
           />
-          <Stack.Screen name="GameModeScreen" component={GameModeScreen} />
+          <Stack.Screen
+            name="GameModeScreen"
+            component={GameModeScreen}
+            options={{headerShown: false}}
+          />
           <Stack.Screen
             name="GameScreen"
             component={GameScreen}
