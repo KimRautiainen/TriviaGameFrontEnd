@@ -1,11 +1,5 @@
 import React, {useContext} from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  ActivityIndicator,
-  TouchableOpacity,
-} from 'react-native';
+import {View, Text, StyleSheet, ActivityIndicator} from 'react-native';
 import {Avatar, Icon} from 'react-native-elements';
 import {Bar} from 'react-native-progress';
 import PropTypes from 'prop-types';
@@ -19,8 +13,6 @@ const UserProfile = () => {
     return <ActivityIndicator size="large" color="#0000ff" />;
   }
   const userAvatarUri = `${mediaUrl}${user.userAvatar}`;
-
-
 
   return (
     <View style={styles.container}>
@@ -62,6 +54,7 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
     alignItems: 'center',
+    marginBottom: 0,
     //margin: 10,
   },
   avatar: {

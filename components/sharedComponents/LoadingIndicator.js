@@ -1,31 +1,23 @@
-import {StatusBar} from 'expo-status-bar';
-import Navigator from './navigators/Navigator';
-import {MainProvider} from './contexts/MainContext';
-import {SafeAreaProvider} from 'react-native-safe-area-context';
+import React from 'react';
+import {View, Text, StyleSheet, Dimensions} from 'react-native';
+import LottieView from 'lottie-react-native';
 
-/* import LottieView from 'lottie-react-native';
-import {View, StyleSheet, Dimensions, Text} from 'react-native';
-const {width, height} = Dimensions.get('window'); */
+const {width, height} = Dimensions.get('window');
 
-const App = () => {
-  return (
-    <SafeAreaProvider>
-      <MainProvider>
-        <Navigator />
-        <StatusBar style="light" translucent backgroundColor="transparent" />
-      </MainProvider>
-    </SafeAreaProvider>
-  );
-};
-
-/* const App = () => (
+const LoadingIndicator = () => (
   <View style={styles.container}>
+    <Text style={styles.title} bold>
+      QUIZ KING
+    </Text>
     <LottieView
-      source={require('./assets/animations/correct.json')}
+      source={require('../../assets/animations/loadingTravel.json')}
       autoPlay
       loop
       style={styles.animation}
     />
+    <Text style={styles.text} bold>
+      Loading...
+    </Text>
   </View>
 );
 const styles = StyleSheet.create({
@@ -40,7 +32,7 @@ const styles = StyleSheet.create({
     width: '100%', // Make the animation take the full width
     height: '100%', // Make the animation take the full height
     position: 'absolute', // Ensure the animation is positioned absolutely
-    zIndex: 1, // Send the animation to the back
+    zIndex: -1, // Send the animation to the back
     top: 50,
   },
   text: {
@@ -53,8 +45,7 @@ const styles = StyleSheet.create({
     fontSize: 54,
     fontWeight: 'bold',
     top: 100,
-    color: 'lightgreen',
   },
-}); */
+});
 
-export default App;
+export default LoadingIndicator;

@@ -1,34 +1,28 @@
 // views/HomePage.js
-import React, {useContext, useEffect} from 'react';
-import {ScrollView, StyleSheet} from 'react-native';
+import React from 'react';
+import {StyleSheet, View} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import UserProfile from '../components/homeScreenComponents/UserProfile';
-import GameModeCard from '../components/homeScreenComponents/GameModeCard';
+
 import Inventory from '../components/homeScreenComponents/inventory';
+import {Button} from '@rneui/themed';
+import PropTypes from 'prop-types';
 
-const HomePage = () => {
-  const gameModes = [
-    {title: 'Classic', description: 'Classic trivia mode'},
-    {title: 'Timed', description: 'Answer before time runs out!'},
-  ];
-
+const HomePage = ({navigation, route}) => {
   return (
     <SafeAreaView style={styles.container}>
-      <UserProfile />
-      <Inventory />
-      <ScrollView
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        contentContainerStyle={styles.gameModesScrollView}
-      >
-        {gameModes.map((mode, index) => (
-          <GameModeCard
-            key={index}
-            title={mode.title}
-            description={mode.description}
-          />
-        ))}
-      </ScrollView>
+      <View style={styles.contentContainer}>
+        <UserProfile />
+        <Inventory />
+        <Button
+          onPress={() => navigation.navigate('GameModeScreen')}
+          large
+          color={'green'}
+          style={styles.playButton}
+        >
+          Play
+        </Button>
+      </View>
     </SafeAreaView>
   );
 };
@@ -36,12 +30,25 @@ const HomePage = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  contentContainer: {
+    flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  gameModesScrollView: {
-    flexDirection: 'row',
+  playButton: {
+    height: 70,
+    width: 300,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 10,
+    borderWidth: 1,
+    backgroundColor: 'green',
+    marginBottom: 50,
   },
 });
+HomePage.propTypes = {
+  navigation: PropTypes.object,
+};
 
 export default HomePage;
