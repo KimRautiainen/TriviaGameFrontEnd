@@ -14,6 +14,7 @@ import CorrectAnswer from '../sharedComponents/CorrectAnswer';
 import InCorrectAnswer from '../sharedComponents/IncorrectAnswer';
 import GameCompletedComponent from '../sharedComponents/GameCompletedComponent';
 import {useNavigation} from '@react-navigation/native';
+import {Divider} from '@rneui/base';
 
 const ClassicModeComponent = () => {
   const [questions, setQuestions] = useState([]);
@@ -100,6 +101,8 @@ const ClassicModeComponent = () => {
       <GameCompletedComponent
         correctAnswers={correctAnswersCount}
         incorrectAnswers={incorrectAnswersCount}
+        goldCoins={correctAnswersCount * 8}
+        experiencePoints={correctAnswersCount * 11}
         onPlayAgain={hadlePlayAgain}
         onReturnHome={handleReturnHome}
       />
@@ -119,6 +122,7 @@ const ClassicModeComponent = () => {
             <Text style={styles.questionCount}>
               Question {currentQuestionIndex + 1} of {questions.length}
             </Text>
+            <Divider />
             <Text style={styles.questionText}>
               {questions[currentQuestionIndex].question}
             </Text>
@@ -180,15 +184,16 @@ const styles = StyleSheet.create({
     // Increase the size of the question card
     width: '100%', // Adjust based on your needs
     minWidth: '100%', // Added minWidth to prevent 'width' from being '0
-    minHeight: 180,
+    minHeight: 200,
     padding: 20,
-    marginBottom: 20, // Added more margin-bottom for separation
+    marginBottom: 80, // Added more margin-bottom for separation
     borderRadius: 8,
     backgroundColor: 'white',
     elevation: 5,
     justifyContent: 'center', // Ensure the content is centered
     alignItems: 'center', // Center content horizontally
     paddingTop: 40, // Added paddingTop to ensure space for the question count
+    position: 'relative', // Ensure the question count is positioned correctly
   },
   questionText: {
     fontSize: 18,
