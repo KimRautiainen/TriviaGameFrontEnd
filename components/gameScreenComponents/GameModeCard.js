@@ -22,7 +22,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 20,
-    // Removed verticalAlign as it's not a valid React Native style property
     borderWidth: 2, // Set the width of the border
     borderColor: '#000', // Set the color of the border to black
     borderRadius: 12, // Slightly larger than cardContainer to create a border effect around the rounded corners

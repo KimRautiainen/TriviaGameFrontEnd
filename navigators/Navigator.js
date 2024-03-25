@@ -48,7 +48,19 @@ const Stackscreen = () => {
           <Stack.Screen
             name="GameModeScreen"
             component={GameModeScreen}
-            options={{headerShown: false}}
+            options={{
+              headerShown: true,
+              title: 'Game Modes',
+              headerStyle: {
+                backgroundColor: '#000000',
+              },
+              headerTintColor: '#fff', // Customize header text and icons color
+              headerTitleStyle: {
+                fontWeight: 'bold', // Customize header title text style
+              },
+              headerBackTitleVisible: false, // Hide the back label text to show only the icon
+              // Additional customization can be added here
+            }}
           />
           <Stack.Screen
             name="GameScreen"

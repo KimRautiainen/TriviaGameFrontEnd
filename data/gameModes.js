@@ -41,6 +41,6 @@ const gameModes = [
     detailedDescription:
       'Tournament mode is for the competitive spirit. Enter into a series of rounds where only the top scorers advance. Do you have what it takes to outlast your competitors and take home the crown?',
     image: require('../assets/images/tournamentGladiators.jpg'),
-    },
+  },
 ];
 export default gameModes;

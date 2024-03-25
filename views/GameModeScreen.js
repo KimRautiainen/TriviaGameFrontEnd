@@ -56,9 +56,11 @@ const GameModeScreen = ({navigation, route}) => {
                 imageStyle={styles.modalBackgroundImageStyle}
               >
                 <Text style={styles.modalTitle}>{selectedGameMode.title}</Text>
-                <Text style={styles.modalDescription}>
-                  {selectedGameMode.detailedDescription}
-                </Text>
+                <View style={styles.modalTextContainer}>
+                  <Text style={styles.modalDescription}>
+                    {selectedGameMode.detailedDescription}
+                  </Text>
+                </View>
                 <TouchableOpacity
                   onPress={() => {
                     setModalVisible(!isModalVisible);
@@ -93,7 +95,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#e0f7fa', // Light grey
   },
   gameModesScrollView: {
-    paddingVertical: 60,
+    paddingVertical: 10,
   },
   modalBackgroundImage: {
     width: '100%', // Ensure the image covers the modalView
@@ -167,6 +169,11 @@ const styles = StyleSheet.create({
     fontSize: 20, // Larger font for better visibility
     textAlign: 'center',
     fontWeight: 'bold',
+  },
+  modalTextContainer: {
+    alignItems: 'flex-start', // Aligns text to the start
+    width: '100%', // Ensures the container takes up the full width of its parent
+    padding: 25, // Adds padding inside the container for spacing
   },
 });
 GameModeScreen.propTypes = {

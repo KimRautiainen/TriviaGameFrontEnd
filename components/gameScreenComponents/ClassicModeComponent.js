@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState, useLayoutEffect} from 'react';
 import {
   View,
   Text,
@@ -42,6 +42,33 @@ const ClassicModeComponent = () => {
     setGameCompleted(false);
     await fetchQuestions();
   };
+
+  useLayoutEffect(() => {
+    // If the game is completed, hide the header
+    if (gameCompleted) {
+      navigation.setOptions({
+        headerShown: false,
+      });
+    } else if (
+      questions.length > 0 &&
+      currentQuestionIndex < questions.length
+    ) {
+      // If the game is not completed and questions are available, show the header with the current category
+      const currentCategory = questions[currentQuestionIndex].category;
+      navigation.setOptions({
+        headerShown: true,
+        headerTitle: currentCategory,
+        headerStyle: {
+          backgroundColor: '#1e90ff',
+        },
+        headerTintColor: '#ffffff',
+        headerTitleStyle: {
+          fontWeight: 'bold',
+        },
+        headerBackTitleVisible: false,
+      });
+    }
+  }, [questions, currentQuestionIndex, gameCompleted, navigation]); // Depend on gameCompleted now as well
 
   const handleReturnHome = () => {
     // Navigate to home screen
@@ -115,7 +142,7 @@ const ClassicModeComponent = () => {
       {showAnswer &&
         (isCorrectAnswer ? <CorrectAnswer /> : <InCorrectAnswer />)}
       <ScrollView style={styles.container}>
-        <Text style={styles.title}>Classic Mode</Text>
+        {/*  <Text style={styles.title}>Classic Mode</Text> */}
         {questions.length > 0 && (
           <View style={styles.card}>
             {/* Display the question count here */}
@@ -128,26 +155,28 @@ const ClassicModeComponent = () => {
             </Text>
           </View>
         )}
-        {questions.length > 0 &&
-          questions[currentQuestionIndex].answers.map((answer, idx) => (
-            <TouchableOpacity
-              key={idx}
-              style={[
-                styles.answerCard,
-                showAnswer
-                  ? answer === questions[currentQuestionIndex].correct_answer
-                    ? styles.correctAnswer
-                    : selectedAnswer === answer
-                      ? styles.wrongAnswer
-                      : {}
-                  : {},
-              ]}
-              onPress={() => handleAnswerSelection(answer)}
-              disabled={showAnswer}
-            >
-              <Text style={styles.answerText}>{answer}</Text>
-            </TouchableOpacity>
-          ))}
+        <View style={styles.answerTextContainer}>
+          {questions.length > 0 &&
+            questions[currentQuestionIndex].answers.map((answer, idx) => (
+              <TouchableOpacity
+                key={idx}
+                style={[
+                  styles.answerCard,
+                  showAnswer
+                    ? answer === questions[currentQuestionIndex].correct_answer
+                      ? styles.correctAnswer
+                      : selectedAnswer === answer
+                        ? styles.wrongAnswer
+                        : {}
+                    : {},
+                ]}
+                onPress={() => handleAnswerSelection(answer)}
+                disabled={showAnswer}
+              >
+                <Text style={styles.answerText}>{answer}</Text>
+              </TouchableOpacity>
+            ))}
+        </View>
       </ScrollView>
     </View>
   );
@@ -156,7 +185,8 @@ const ClassicModeComponent = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 10,
+    padding: 30,
+    // backgroundColor: '#BEE1E6',
   },
   loadingContainer: {
     flex: 1,
@@ -184,10 +214,10 @@ const styles = StyleSheet.create({
     // Increase the size of the question card
     width: '100%', // Adjust based on your needs
     minWidth: '100%', // Added minWidth to prevent 'width' from being '0
-    minHeight: 200,
+    minHeight: 250,
     padding: 20,
-    marginBottom: 80, // Added more margin-bottom for separation
-    borderRadius: 8,
+    marginBottom: 120, // Added more margin-bottom for separation
+    borderRadius: 20,
     backgroundColor: 'white',
     elevation: 5,
     justifyContent: 'center', // Ensure the content is centered
@@ -199,26 +229,31 @@ const styles = StyleSheet.create({
     fontSize: 18,
     textAlign: 'center', // Center text for better readability
   },
+  answerTextContainer: {
+    flex: 1,
+    justifyContent: 'flex-end',
+  },
   answerCard: {
     // Fixed size for answer cards to prevent flickering
-    minHeight: 60, // Adjust based on your needs
-    padding: 20,
-    marginBottom: 10,
-    borderRadius: 8,
-    backgroundColor: 'white',
+    //minHeight: 20, // Adjust based on your needs
+    padding: 15,
+    marginBottom: 15,
+    borderRadius: 30,
     elevation: 5,
     justifyContent: 'center', // Center the text vertically
     alignItems: 'center', // Center the text horizontally
+    backgroundColor: 'white', // Light grey background
   },
   correctAnswer: {
-    backgroundColor: 'lightgreen',
+    backgroundColor: '#a5d6a7',
   },
   wrongAnswer: {
-    backgroundColor: 'tomato',
+    backgroundColor: '#ef9a9a',
   },
   answerText: {
     fontSize: 16,
     textAlign: 'center', // Center text for better readability
+    color: '#333', // Darker text for better readability on pastel backgrounds
   },
   statsContainer: {
     flex: 1,
