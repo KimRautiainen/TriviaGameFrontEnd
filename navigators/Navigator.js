@@ -8,6 +8,7 @@ import {Icon} from '@rneui/themed';
 import HomePage from '../views/Home';
 import GameModeScreen from '../views/GameModeScreen';
 import GameScreen from '../views/GameScreen';
+import AchievementScreen from '../views/AchievementScreen';
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -66,6 +67,23 @@ const Stackscreen = () => {
             name="GameScreen"
             component={GameScreen}
             options={{headerShown: false}}
+          />
+          <Stack.Screen
+            name="AchievementScreen"
+            component={AchievementScreen}
+            options={{
+              headerShown: true,
+              title: 'Achievements',
+              headerStyle: {
+                backgroundColor: '#000000',
+              },
+              headerTintColor: '#fff', // Customize header text and icons color
+              headerTitleStyle: {
+                fontWeight: 'bold', // Customize header title text style
+              },
+              headerBackTitleVisible: true,
+              // Additional customization can be added here
+            }}
           />
         </>
       ) : (

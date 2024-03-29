@@ -1,12 +1,13 @@
 // views/HomePage.js
 import React from 'react';
-import {StyleSheet, View} from 'react-native';
+import {StyleSheet, View, TouchableOpacity} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import UserProfile from '../components/homeScreenComponents/UserProfile';
 
 import Inventory from '../components/homeScreenComponents/inventory';
 import {Button} from '@rneui/themed';
 import PropTypes from 'prop-types';
+import {Icon} from 'react-native-elements';
 
 const HomePage = ({navigation, route}) => {
   return (
@@ -14,6 +15,17 @@ const HomePage = ({navigation, route}) => {
       <View style={styles.contentContainer}>
         <UserProfile />
         <Inventory />
+        <TouchableOpacity
+          style={styles.achievementContainer}
+          onPress={() => navigation.navigate('AchievementScreen')}
+        >
+          <Icon
+            name="trophy"
+            type="font-awesome" // Specify the icon set
+            color="#FFD43B"
+            size={24} // Adjust size as needed
+          />
+        </TouchableOpacity>
         <Button
           onPress={() => navigation.navigate('GameModeScreen')}
           large
@@ -35,6 +47,12 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  achievementContainer: {
+    position: 'absolute',
+    top: 0,
+    right: 0,
+    padding: 10,
   },
   playButton: {
     height: 70,
