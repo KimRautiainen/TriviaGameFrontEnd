@@ -7,6 +7,7 @@ import {
   Modal,
   Button,
   Text,
+  ImageBackground,
 } from 'react-native';
 import GameModeCard from '../components/gameScreenComponents/GameModeCard';
 import gameModes from '../data/gameModes';
@@ -26,38 +27,60 @@ const GameModeScreen = ({navigation, route}) => {
       <ScrollView
         showsHorizontalScrollIndicator={false}
         contentContainerStyle={styles.gameModesScrollView}
+        showsVerticalScrollIndicator={false}
       >
         {gameModes.map((mode, index) => (
           <TouchableOpacity key={index} onPress={() => gameModePressed(mode)}>
-            <GameModeCard title={mode.title} description={mode.description} />
+            <GameModeCard
+              title={mode.title}
+              description={mode.description}
+              imageSource={mode.image}
+            />
           </TouchableOpacity>
         ))}
       </ScrollView>
       {selectedGameMode && (
         <Modal
-          animationType="slide"
+          animationType="fade"
           transparent={true}
           visible={isModalVisible}
           onRequestClose={() => {
             setModalVisible(!isModalVisible);
           }}
         >
-          <View style={styles.modalView}>
-            <Text style={styles.modalTitle}>{selectedGameMode.title}</Text>
-            <Text style={styles.modalDescription}>
-              {selectedGameMode.detailedDescription}
-            </Text>
-            <Button
-              title="Play"
-              onPress={() => {
-                setModalVisible(!isModalVisible);
-                navigation.navigate('GameScreen', {
-                  gameMode: selectedGameMode.title,
-                });
-                // Navigate to the game screen with selectedGameMode.title
-              }}
-            />
-            <Button title="Close" onPress={() => setModalVisible(false)} />
+          <View style={styles.centeredView}>
+            <View style={styles.modalView}>
+              <ImageBackground
+                source={selectedGameMode.image}
+                style={styles.modalBackgroundImage}
+                imageStyle={styles.modalBackgroundImageStyle}
+              >
+                <Text style={styles.modalTitle}>{selectedGameMode.title}</Text>
+                <View style={styles.modalTextContainer}>
+                  <Text style={styles.modalDescription}>
+                    {selectedGameMode.detailedDescription}
+                  </Text>
+                </View>
+                <TouchableOpacity
+                  onPress={() => {
+                    setModalVisible(!isModalVisible);
+                    navigation.navigate('GameScreen', {
+                      gameMode: selectedGameMode.title,
+                    });
+                  }}
+                  style={styles.buttonStyle}
+                >
+                  <Text style={styles.buttonText}>Play</Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  onPress={() => setModalVisible(false)}
+                  style={styles.buttonStyle}
+                >
+                  <Text style={styles.buttonText}>Close</Text>
+                </TouchableOpacity>
+              </ImageBackground>
+            </View>
           </View>
         </Modal>
       )}
@@ -69,13 +92,33 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor: '#e0f7fa', // Light grey
   },
   gameModesScrollView: {
-    paddingBottom: 20, // Adjust this value as needed
+    paddingVertical: 10,
+  },
+  modalBackgroundImage: {
+    width: '100%', // Ensure the image covers the modalView
+    height: '100%', // Ensure the image covers the modalView
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 20, // Match the borderRadius of modalView for consistency
+    overflow: 'hidden', // Needed to apply borderRadius to ImageBackground
+  },
+  modalBackgroundImageStyle: {
+    borderRadius: 20,
+  },
+  centeredView: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.7)', // Semi-transparent background for the modal overlay
   },
   modalView: {
     margin: 20,
-    backgroundColor: 'white',
+    width: '100%', // Set a fixed width for the modal
+    height: '70%', // Set a fixed height for the modal
+    backgroundColor: 'transparent', // Ensure modalView itself has a transparent background
     borderRadius: 20,
     padding: 35,
     alignItems: 'center',
@@ -87,22 +130,50 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 4,
     elevation: 5,
-    alignSelf: 'stretch', // Ensures modal stretches horizontally
-    marginLeft: 30,
-    marginRight: 30, // Adjust margins to control modal width
   },
   modalTitle: {
-    marginBottom: 15,
-    textAlign: 'center',
-    fontWeight: 'bold',
-    fontSize: 24,
-    color: '#333', // Dark text color for better readability
-  },
-  modalDescription: {
+    letterSpacing: 2,
     marginBottom: 20,
     textAlign: 'center',
-    fontSize: 16,
-    color: '#666', // Slightly lighter text color for descriptions
+    fontWeight: 'bold',
+    fontSize: 32,
+    color: '#FFFFFF', // Dark text color for better readability
+    textShadowColor: 'rgba(0, 0, 0, 0.9)',
+    textShadowOffset: {width: -1, height: 1},
+    textShadowRadius: 10,
+  },
+  modalDescription: {
+    letterSpacing: 1,
+    marginBottom: 20,
+    textAlign: 'center',
+    fontSize: 18,
+    color: '#FFFFFF', // Slightly lighter text color for descriptions
+    textShadowColor: 'rgba(0, 0, 0, 0.9)',
+    textShadowOffset: {width: -1, height: 1},
+    textShadowRadius: 10,
+  },
+  buttonStyle: {
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 5,
+    margin: 5, // Adds spacing between buttons
+    elevation: 2, // Adds shadow for Android
+    shadowColor: '#000', // Adds shadow for iOS
+    shadowOffset: {width: 0, height: 2},
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+  },
+
+  buttonText: {
+    color: '#FFFFFF',
+    fontSize: 20, // Larger font for better visibility
+    textAlign: 'center',
+    fontWeight: 'bold',
+  },
+  modalTextContainer: {
+    alignItems: 'flex-start', // Aligns text to the start
+    width: '100%', // Ensures the container takes up the full width of its parent
+    padding: 25, // Adds padding inside the container for spacing
   },
 });
 GameModeScreen.propTypes = {

@@ -33,16 +33,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  playButton: {
-    height: 70,
-    width: 300,
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderRadius: 10,
-    borderWidth: 1,
-    backgroundColor: 'green',
-    marginBottom: 50,
-  },
 });
 GameScreen.propTypes = {
   navigation: PropTypes.object,

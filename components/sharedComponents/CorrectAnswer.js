@@ -22,9 +22,10 @@ const styles = StyleSheet.create({
   animation: {
     width: '100%', // Make the animation take the full width
     height: '100%', // Make the animation take the full height
+    alignSelf: 'center', // Center the animation
     position: 'absolute', // Ensure the animation is positioned absolutely
     zIndex: 1, // Send the animation to the back
-    top: 50,
+    top: 30,
   },
 });
 export default CorrectAnswer;
