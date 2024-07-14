@@ -36,10 +36,42 @@ const useAchievements = () => {
       options,
     );
   };
-  // 
+  // update user achievement progress
+  const updateAchievementProgress = async (id, achievementId, data, token) => {
+    const options = {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(data),
+    };
+    return await doFetch(
+      apiUrl + 'user/' + id + '/achievements/' + achievementId + '/progress',
+      options,
+    );
+  };
+  // complete achievement
+  const completeAchievement = async (id, achievementId, token) => {
+    const options = {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    };
+    return await doFetch(
+      apiUrl + 'user/' + id + '/achievements/' + achievementId + '/complete',
+      options,
+    );
+  };
 
-  return {getAchievements, getAchievementsByUser, getAchievementProgress};
+  return {
+    getAchievements,
+    getAchievementsByUser,
+    getAchievementProgress,
+    updateAchievementProgress,
+    completeAchievement,
+  };
 };
-
 
 export {useAchievements};
