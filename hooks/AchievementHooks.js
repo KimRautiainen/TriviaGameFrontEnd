@@ -1,7 +1,9 @@
-import {triviaUrl, apiUrl, authUrl, mediaUrl} from '../utils/app-config';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {apiUrl} from '../utils/app-config';
 import {doFetch} from '../utils/functions';
 
 const useAchievements = () => {
+
   // get all achievements from database
   const getAchievements = async (token) => {
     const options = {
@@ -10,7 +12,7 @@ const useAchievements = () => {
         Authorization: `Bearer ${token}`,
       },
     };
-    return await doFetch(apiUrl + 'achievements', options);
+    return await doFetch(apiUrl + 'user/achievements', options);
   };
   // get users earned achievements
   const getAchievementsByUser = async (id, token) => {
