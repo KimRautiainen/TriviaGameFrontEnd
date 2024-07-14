@@ -21,18 +21,15 @@ const AchievementsComponent = () => {
     try {
       setLoading(true);
       const token = await AsyncStorage.getItem('userToken');
-      console.log('Token:', token);
       if (!token) {
         throw new Error('Token not found');
       }
-      console.log('Fetching achievements...');
+
       const achievements = await getAchievements(token);
       setAchievements(achievements);
-      console.log('Achievements fetched:', achievements);
 
       const completedAchievements = await getAchievementsByUser(userId, token);
       setCompletedAchievements(completedAchievements);
-      console.log('Completed achievements fetched:', completedAchievements);
     } catch (e) {
       console.log('Error fetching achievements:', e.message);
     } finally {

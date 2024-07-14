@@ -22,6 +22,7 @@ const items = [
 const iconPressed = (iconName) => {
   console.log('Icon pressed:', iconName);
 };
+
 const Inventory = () => {
   return (
     <View style={styles.container}>

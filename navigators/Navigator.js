@@ -9,6 +9,7 @@ import HomePage from '../views/Home';
 import GameModeScreen from '../views/GameModeScreen';
 import GameScreen from '../views/GameScreen';
 import AchievementScreen from '../views/AchievementScreen';
+import ShopComponent from '../views/Shop';
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -27,6 +28,14 @@ const Tabscreen = () => {
         component={HomePage}
         options={{
           tabBarIcon: ({color}) => <Icon name="home" color={color} />,
+          tabBarVisible: false, // this hides the tab bar only for this screen
+        }}
+      />
+      <Tab.Screen
+        name="Shop"
+        component={ShopComponent}
+        options={{
+          tabBarIcon: ({color}) => <Icon name="shop" color={color} />,
           tabBarVisible: false, // this hides the tab bar only for this screen
         }}
       />
