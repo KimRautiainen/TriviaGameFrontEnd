@@ -36,7 +36,7 @@ const useUser = () => {
       },
       body: JSON.stringify(userData),
     };
-    return await doFetch(apiUrl + 'users', options);
+    return await doFetch(authUrl + 'register', options);
   };
 
   const putUser = async (userData, token) => {
@@ -53,13 +53,14 @@ const useUser = () => {
 
   const checkUsername = async (username) => {
     try {
-      const response = await doFetch(`${apiUrl}users/username/${username}`);
+      const response = await doFetch(
+        `${apiUrl}check/username?username=${username}`,
+      );
       return response.available;
     } catch (error) {
-      throw new Error('checkusername Error ' + error.message);
+      throw new Error('checkUsername Error: ' + error.message);
     }
   };
-
   const getUserById = async (id, token) => {
     const options = {
       method: 'GET',

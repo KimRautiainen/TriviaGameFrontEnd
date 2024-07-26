@@ -64,6 +64,7 @@ const RegisterForm = ({setToggleRegister}) => {
             validate: async (value) => {
               try {
                 const isAvailable = await checkUsername(value);
+                console.log(isAvailable);
                 return isAvailable ? isAvailable : 'Username taken';
               } catch (error) {
                 Alert.alert('Username is taken');

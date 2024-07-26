@@ -81,7 +81,6 @@ const ShopComponent = () => {
           </View>
         ))}
       </ScrollView>
-     
     </SafeAreaView>
   );
 };
