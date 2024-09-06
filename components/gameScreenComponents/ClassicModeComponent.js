@@ -1,4 +1,4 @@
-import React, {useEffect, useState, useLayoutEffect} from 'react';
+import React, {useEffect, useState, useLayoutEffect, useContext} from 'react';
 import {
   View,
   Text,
@@ -15,6 +15,9 @@ import InCorrectAnswer from '../sharedComponents/IncorrectAnswer';
 import GameCompletedComponent from '../sharedComponents/GameCompletedComponent';
 import {useNavigation} from '@react-navigation/native';
 import {Divider} from '@rneui/base';
+import {MainContext} from '../../contexts/MainContext';
+import {useUser} from '../../hooks/ApiHooks';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const ClassicModeComponent = () => {
   const [questions, setQuestions] = useState([]);
@@ -29,6 +32,10 @@ const ClassicModeComponent = () => {
   const [incorrectAnswersCount, setIncorrectAnswersCount] = useState(0);
   const [gameCompleted, setGameCompleted] = useState(false);
   const navigation = useNavigation();
+
+  // Context and hooks
+  const {user} = useContext(MainContext); // Get user from MainContext
+  const {awardXp} = useUser(); // Get the awardXp function from the useUser hook
 
   const hadlePlayAgain = async () => {
     setQuestions([]);
@@ -68,7 +75,7 @@ const ClassicModeComponent = () => {
         headerBackTitleVisible: false,
       });
     }
-  }, [questions, currentQuestionIndex, gameCompleted, navigation]); // Depend on gameCompleted now as well
+  }, [questions, currentQuestionIndex, gameCompleted, navigation]);
 
   const handleReturnHome = () => {
     // Navigate to home screen
@@ -113,9 +120,33 @@ const ClassicModeComponent = () => {
       if (currentQuestionIndex < questions.length - 1) {
         setCurrentQuestionIndex((prevIndex) => prevIndex + 1);
       } else {
+        // Set game state to completed and award user rewards
         setGameCompleted(true);
+        // Award XP after the game is completed
+        awardXpAfterGameCompletion();
       }
     }, 2000);
+  };
+
+  // Function to award Xp after game is completed
+  const awardXpAfterGameCompletion = async () => {
+    try {
+      const token = await AsyncStorage.getItem('userToken');
+      if (token) {
+        const xp = correctAnswersCount * 11;
+        const userId = user.userId;
+        console.log('EXP: ', xp);
+
+        const response = await awardXp(token, xp, userId);
+        if (response) {
+          console.log(`Successfully awarded ${xp} XP to user ${userId}`);
+        } else {
+          console.log(`Failed to award ${xp} XP to user ${userId}`);
+        }
+      }
+    } catch (error) {
+      console.log('Error awarding xp');
+    }
   };
 
   // Show loading screen if loading is true
