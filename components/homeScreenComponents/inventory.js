@@ -1,6 +1,9 @@
-import React from 'react';
+import React, {useContext, useEffect} from 'react';
 import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
 import {Icon} from '@rneui/themed';
+import {useInventory} from '../../hooks/InventoryHooks';
+import {MainContext} from '../../contexts/MainContext';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const items = [
   {
@@ -22,7 +25,22 @@ const items = [
 const iconPressed = (iconName) => {
   console.log('Icon pressed:', iconName);
 };
+
 const Inventory = () => {
+  const {user, loading} = useContext(MainContext);
+  const token = AsyncStorage.getItem('userId');
+  const {getUserInventory, addItemsToInventory, deductItemsFromInventory} =
+    useInventory;
+
+  useEffect(() => {
+    getInventory();
+  }, []);
+
+  const getInventory = async () => {
+    const inventory = await getUserInventory(token);
+    console.log(inventory);
+    return inventory;
+  };
   return (
     <View style={styles.container}>
       <View style={styles.itemsContainer}>

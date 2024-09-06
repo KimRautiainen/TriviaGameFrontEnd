@@ -8,6 +8,8 @@ import {Icon} from '@rneui/themed';
 import HomePage from '../views/Home';
 import GameModeScreen from '../views/GameModeScreen';
 import GameScreen from '../views/GameScreen';
+import AchievementScreen from '../views/AchievementScreen';
+import ShopComponent from '../views/Shop';
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -29,13 +31,21 @@ const Tabscreen = () => {
           tabBarVisible: false, // this hides the tab bar only for this screen
         }}
       />
+      <Tab.Screen
+        name="Shop"
+        component={ShopComponent}
+        options={{
+          tabBarIcon: ({color}) => <Icon name="shop" color={color} />,
+          tabBarVisible: false, // this hides the tab bar only for this screen
+        }}
+      />
     </Tab.Navigator>
   );
 };
 
 const Stackscreen = () => {
   const {isLoggedIn} = useContext(MainContext);
-  // const isLoggedIn = true;
+  // const isLoggedIn = false;
   return (
     <Stack.Navigator>
       {isLoggedIn ? (
@@ -66,6 +76,23 @@ const Stackscreen = () => {
             name="GameScreen"
             component={GameScreen}
             options={{headerShown: false}}
+          />
+          <Stack.Screen
+            name="AchievementScreen"
+            component={AchievementScreen}
+            options={{
+              headerShown: true,
+              title: 'Achievements',
+              headerStyle: {
+                backgroundColor: '#000000',
+              },
+              headerTintColor: '#fff', // Customize header text and icons color
+              headerTitleStyle: {
+                fontWeight: 'bold', // Customize header title text style
+              },
+              headerBackTitleVisible: true,
+              // Additional customization can be added here
+            }}
           />
         </>
       ) : (

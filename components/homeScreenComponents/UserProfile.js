@@ -55,7 +55,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: 0,
-    //margin: 10,
   },
   avatar: {
     marginRight: 10,
