@@ -1,4 +1,3 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import {apiUrl} from '../utils/app-config';
 import {doFetch} from '../utils/functions';
 
