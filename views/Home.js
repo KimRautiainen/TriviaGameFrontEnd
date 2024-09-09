@@ -1,15 +1,49 @@
-// views/HomePage.js
-import React from 'react';
+import React, {useCallback, useContext} from 'react';
 import {StyleSheet, View, TouchableOpacity} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import UserProfile from '../components/homeScreenComponents/UserProfile';
-
 import Inventory from '../components/homeScreenComponents/inventory';
 import {Button} from '@rneui/themed';
 import PropTypes from 'prop-types';
 import {Icon} from 'react-native-elements';
+import {useFocusEffect} from '@react-navigation/native'; // Import useFocusEffect
+import {MainContext} from '../contexts/MainContext';
+import {useUser} from '../hooks/ApiHooks'; // Hook for user API
+import {useInventory} from '../hooks/InventoryHooks'; // Hook for inventory API
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const HomePage = ({navigation, route}) => {
+  const {setUser, setInventoryData} = useContext(MainContext); // Get context methods to update user and inventory
+  const {getUserByToken} = useUser(); // Hook to get user data
+  const {getUserInventory} = useInventory(); // Hook to get inventory data
+
+  const fetchUpdatedData = async () => {
+    try {
+      const token = await AsyncStorage.getItem('userToken');
+      if (token) {
+        // Fetch user data
+        const updatedUser = await getUserByToken(token);
+        setUser(updatedUser.user[0]); // Update the user in context
+
+        // Fetch inventory data
+        const updatedInventory = await getUserInventory(token);
+        setInventoryData({
+          goldCoins: updatedInventory.goldCoins || 0,
+          tournamentTickets: updatedInventory.tournamentTickets || 0,
+        });
+      }
+    } catch (error) {
+      console.error('Error fetching updated data:', error);
+    }
+  };
+
+  useFocusEffect(
+    useCallback(() => {
+      // Fetch the updated user and inventory data when the screen is focused
+      fetchUpdatedData();
+    }, []),
+  );
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.contentContainer}>
@@ -19,12 +53,7 @@ const HomePage = ({navigation, route}) => {
           style={styles.achievementContainer}
           onPress={() => navigation.navigate('AchievementScreen')}
         >
-          <Icon
-            name="trophy"
-            type="font-awesome" // Specify the icon set
-            color="#FFD43B"
-            size={24} // Adjust size as needed
-          />
+          <Icon name="trophy" type="font-awesome" color="#FFD43B" size={24} />
         </TouchableOpacity>
         <Button
           onPress={() => navigation.navigate('GameModeScreen')}
@@ -65,6 +94,7 @@ const styles = StyleSheet.create({
     marginBottom: 50,
   },
 });
+
 HomePage.propTypes = {
   navigation: PropTypes.object,
 };

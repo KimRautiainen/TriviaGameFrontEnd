@@ -11,6 +11,12 @@ const MainProvider = (props) => {
   const [update, setUpdate] = useState(false);
   const [height, setHeight] = useState(0);
   const [loading, setLoading] = useState(true);
+  const [userToken, setUserToken] = useState('');
+  const [inventoryData, setInventoryData] = useState({
+    goldCoins: 0,
+    tournamentTickets: 0,
+    otherItems: {},
+  });
 
   return (
     <MainContext.Provider
@@ -27,6 +33,10 @@ const MainProvider = (props) => {
         setHeight,
         loading,
         setLoading,
+        userToken,
+        setUserToken,
+        inventoryData,
+        setInventoryData,
       }}
     >
       {props.children}
