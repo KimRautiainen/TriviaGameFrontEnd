@@ -7,7 +7,7 @@ const LevelUpScreen = () => {
   const {user, setShowLevelUp} = useContext(MainContext);
 
   useEffect(() => {
-    // Automatically hide the Level Up screen after 3 seconds
+    // Automatically hide the Level Up screen after 4 seconds
     const timer = setTimeout(() => {
       setShowLevelUp(false);
     }, 4000);

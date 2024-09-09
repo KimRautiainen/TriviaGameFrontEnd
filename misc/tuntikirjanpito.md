@@ -4,13 +4,20 @@
 | :----:|:-----| :-----|
 | 06.9. | 4    | xp hook and handler  |
 | 09.9  | 4    | User rewards after completing game(classic). Show real data from backend in inventory  |
-| 20.2. | 3    | käyttäjänhallinta, tallennus tiedostoon, rakenteen refaktorointi |
-|       | 2    | sovelluksen rakenteen refaktorointi |
-|       | 2    | määrittelydokumentti |
-| 21.2. | 4    | arkkitehtuurikuvaus |
-|       | 5    | testaus |
-| 4.3.  | 1    | koodin refaktorointia |
-| 5.3.  | 2    | arkkitehtuurikuvauksen tarkennus |
-|       | 1    | käyttöohje |
-| 6.3.  | 2    | testaus |
+|       | 4    | Rerender homescreen when xp or inventory changes. Level up screen |
+|       |      | |
+|       |      | |
+|       |      | |
+|       |      | |
+|       |      | |
+|       |      | |
+|       |      | |
+|       |      | |
+|       |      | |
+|       |      | |
+|       |      | |
+|       |      | |
+|       |      | |
+|       |      | |
+|       |      | |
 | yht   | 28   | |
