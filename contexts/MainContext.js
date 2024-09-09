@@ -11,7 +11,7 @@ const MainProvider = (props) => {
   const [update, setUpdate] = useState(false);
   const [height, setHeight] = useState(0);
   const [loading, setLoading] = useState(true);
-  // const [currentVideo, setCurrentVideo] = useState(null);
+
   return (
     <MainContext.Provider
       value={{

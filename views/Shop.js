@@ -33,7 +33,7 @@ const ShopComponent = () => {
       iconColor: '#FF0000', // Red color for heart
       price: 20,
     },
-    // Add more items as needed
+    
   ];
 
   const handlePurchase = async (item) => {

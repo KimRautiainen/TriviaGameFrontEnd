@@ -34,16 +34,20 @@ const LoginForm = () => {
   // Function to handle user login
   const logIn = async (loginData) => {
     try {
-      // Attempting to log in with provided data
-      const loginResponse = await postLogin(loginData);
+      console.log('Login data:', loginData);  // Check form data being sent
 
-      // Storing the received token in AsyncStorage for future authenticated requests
+      // Make the API call to login
+      const loginResponse = await postLogin(loginData);
+      console.log('Login response:', loginResponse);  // Check API response
+
+      // Store the token in AsyncStorage
       await AsyncStorage.setItem('userToken', loginResponse.token);
 
-      // Setting the logged-in state and user details in the global context
+      // Update the app state
       setIsLoggedIn(true);
       setUser(loginResponse.user);
     } catch (error) {
+      console.log('Login Error:', error);  // Log the error message
       Alert.alert('Error', error.message);
     }
   };

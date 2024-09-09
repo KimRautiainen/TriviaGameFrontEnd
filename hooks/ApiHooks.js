@@ -18,6 +18,21 @@ const useAuthentication = () => {
 };
 
 const useUser = () => {
+  // Award experience points to user
+  const awardXp = async (token, xp, userId) => {
+    const options = {
+      method: 'PUT',
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+
+      body: JSON.stringify({xp}),
+    };
+    console.log(JSON.stringify({xp}));
+    return await doFetch(apiUrl + 'user/' + userId + '/levels', options);
+  };
+
   const getUserByToken = async (token) => {
     const options = {
       method: 'GET',
@@ -77,6 +92,7 @@ const useUser = () => {
     checkUsername,
     putUser,
     getUserById,
+    awardXp,
   };
 };
 export {useAuthentication, useUser};
