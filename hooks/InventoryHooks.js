@@ -5,6 +5,7 @@ import {doFetch} from '../utils/functions';
 const useInventory = () => {
   // get users items in inventory
   const getUserInventory = async (token) => {
+    console.log('Token:', token);
     const options = {
       method: 'GET',
       headers: {
@@ -12,7 +13,7 @@ const useInventory = () => {
       },
     };
     try {
-      return await doFetch(apiUrl + 'inventory/getInvetory', options);
+      return await doFetch(apiUrl + 'inventory/getInventory', options);
     } catch (error) {
       throw new Error('Get user inventory error', error.message);
     }

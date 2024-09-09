@@ -1,64 +1,79 @@
-import React, {useContext, useEffect} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
 import {Icon} from '@rneui/themed';
 import {useInventory} from '../../hooks/InventoryHooks';
 import {MainContext} from '../../contexts/MainContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const items = [
-  {
-    name: 'Lives',
-    quantity: 10,
-    iconName: 'favorite',
-    iconType: 'material',
-    iconColor: '#FF0000',
-  }, // Red color for Lives
-  {
-    name: 'Coins',
-    quantity: 20,
-    iconName: 'monetization-on',
-    iconType: 'material',
-    iconColor: '#FFD700',
-  }, // Gold color for Coins
-];
-
-const iconPressed = (iconName) => {
-  console.log('Icon pressed:', iconName);
-};
-
 const Inventory = () => {
-  const {user, loading} = useContext(MainContext);
-  const token = AsyncStorage.getItem('userId');
-  const {getUserInventory, addItemsToInventory, deductItemsFromInventory} =
-    useInventory;
+  const {user, loading} = useContext(MainContext); // Get the user data from MainContext
+  const [inventoryData, setInventoryData] = useState({
+    goldCoins: 0,
+    tournamentTickets: 0,
+  }); // State for inventory data
+
+  const {getUserInventory} = useInventory(); // Hook to get user inventory from backend
 
   useEffect(() => {
-    getInventory();
+    const fetchInventory = async () => {
+      try {
+        const token = await AsyncStorage.getItem('userToken'); // Retrieve token from AsyncStorage
+        const inventory = await getUserInventory(token); // Fetch inventory data from backend
+        console.log('Fetched inventory:', inventory);
+
+        if (inventory) {
+          setInventoryData({
+            goldCoins: inventory.goldCoins || 0,
+            tournamentTickets: inventory.tournamentTickets || 0,
+          });
+        }
+      } catch (error) {
+        console.error('Error fetching inventory:', error);
+      }
+    };
+
+    fetchInventory();
   }, []);
 
-  const getInventory = async () => {
-    const inventory = await getUserInventory(token);
-    console.log(inventory);
-    return inventory;
+  const iconPressed = (iconName) => {
+    console.log('Icon pressed:', iconName);
   };
+
   return (
     <View style={styles.container}>
       <View style={styles.itemsContainer}>
-        {items.map((item, index) => (
-          <View key={index} style={styles.item}>
-            <TouchableOpacity onPress={() => iconPressed(item.iconName)}>
-              <Icon
-                name={item.iconName}
-                type={item.iconType}
-                size={34}
-                color={item.iconColor}
-              />
-            </TouchableOpacity>
-            <Text
-              style={styles.itemText}
-            >{`${item.quantity} ${item.name}`}</Text>
-          </View>
-        ))}
+        {/* Lives (Hardcoded for now) */}
+        <View style={styles.item}>
+          <TouchableOpacity onPress={() => iconPressed('favorite')}>
+            <Icon name="favorite" type="material" size={34} color="#FF0000" />
+          </TouchableOpacity>
+          <Text style={styles.itemText}>{`10 Lives`}</Text>
+        </View>
+
+        {/* Gold Coins (Fetched from backend) */}
+        <View style={styles.item}>
+          <TouchableOpacity onPress={() => iconPressed('monetization-on')}>
+            <Icon
+              name="monetization-on"
+              type="material"
+              size={34}
+              color="#FFD700"
+            />
+          </TouchableOpacity>
+          <Text
+            style={styles.itemText}
+          >{`${inventoryData.goldCoins} Coins`}</Text>
+        </View>
+
+        {/* Tournament Tickets (Fetched from backend) */}
+        <View style={styles.item}>
+          <TouchableOpacity onPress={() => iconPressed('ticket')}>
+            <Icon name="ticket" type="font-awesome" size={34} color="#4CAF50" />
+          </TouchableOpacity>
+          <Text
+            style={styles.itemText}
+          >{`${inventoryData.tournamentTickets} Tickets`}</Text>
+        </View>
       </View>
     </View>
   );

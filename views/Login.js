@@ -30,18 +30,32 @@ const Login = ({navigation}) => {
     try {
       setLoading(true); // Start loading
       const token = await AsyncStorage.getItem('userToken');
+      console.log('Token from AsyncStorage:', token);
+
+      if (!token) {
+        console.log('No token found');
+        setIsLoggedIn(false);
+        return;
+      }
+
       const userData = await getUserByToken(token);
-      console.log('userdata', userData);
-      if (userData) {
+      console.log('Fetched user data:', userData);
+
+      if (userData && userData.user && userData.user.length > 0) {
         setIsLoggedIn(true);
-        setUser(userData.user[0]); // Assuming you want the first user
+        setUser(userData.user[0]);
+      } else {
+        console.log('Invalid user data structure or empty user array');
+        setIsLoggedIn(false);
       }
     } catch (error) {
-      console.log('checkToken', error);
+      console.log('checkToken error:', error);
+      setIsLoggedIn(false);
     } finally {
       setLoading(false); // Data is fetched, loading is done
     }
   };
+
 
   useEffect(() => {
     checkToken();
