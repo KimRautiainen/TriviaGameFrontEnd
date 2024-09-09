@@ -17,6 +17,7 @@ import {useNavigation} from '@react-navigation/native';
 import {Divider} from '@rneui/base';
 import {MainContext} from '../../contexts/MainContext';
 import {useUser} from '../../hooks/ApiHooks';
+import {useInventory} from '../../hooks/InventoryHooks';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const ClassicModeComponent = () => {
@@ -36,6 +37,7 @@ const ClassicModeComponent = () => {
   // Context and hooks
   const {user} = useContext(MainContext); // Get user from MainContext
   const {awardXp} = useUser(); // Get the awardXp function from the useUser hook
+  const {addItemsToInventory} = useInventory(); // Get the addItemsToInventory function from the useInventory hook
 
   const hadlePlayAgain = async () => {
     setQuestions([]);
@@ -124,6 +126,8 @@ const ClassicModeComponent = () => {
         setGameCompleted(true);
         // Award XP after the game is completed
         awardXpAfterGameCompletion();
+        // Award goldcoins after game is completed
+        addItemsToInventoryAfterGameCompletion();
       }
     }, 2000);
   };
@@ -146,6 +150,29 @@ const ClassicModeComponent = () => {
       }
     } catch (error) {
       console.log('Error awarding xp');
+    }
+  };
+  // Function to add items to inventory after game is completed
+  const addItemsToInventoryAfterGameCompletion = async () => {
+    try {
+      const token = await AsyncStorage.getItem('userToken');
+      if (token) {
+        const items = {
+          goldCoins: correctAnswersCount * 8,
+        };
+        const response = await addItemsToInventory(items, token);
+        if (response) {
+          console.log(
+            `Successfully added ${correctAnswersCount * 8} gold coins to inventory`,
+          );
+        } else {
+          console.log(
+            `Failed to add ${correctAnswersCount * 8} gold coins to inventory`,
+          );
+        }
+      }
+    } catch (error) {
+      console.log('Error adding items to inventory');
     }
   };
 

@@ -3,7 +3,7 @@
 | päivä | aika | mitä tein  |
 | :----:|:-----| :-----|
 | 06.9. | 4    | xp hook and handler  |
-| 19.2. | 3    | käyttöliittymän alustava toteutus, todojen luominen |
+| 09.9  | 4    | User rewards after completing game(classic). Show real data from backend in inventory  |
 | 20.2. | 3    | käyttäjänhallinta, tallennus tiedostoon, rakenteen refaktorointi |
 |       | 2    | sovelluksen rakenteen refaktorointi |
 |       | 2    | määrittelydokumentti |
