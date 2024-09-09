@@ -17,6 +17,7 @@ const MainProvider = (props) => {
     tournamentTickets: 0,
     otherItems: {},
   });
+  const [showLevelUp, setShowLevelUp] = useState(true);
 
   return (
     <MainContext.Provider
@@ -37,6 +38,8 @@ const MainProvider = (props) => {
         setUserToken,
         inventoryData,
         setInventoryData,
+        showLevelUp,
+        setShowLevelUp,
       }}
     >
       {props.children}

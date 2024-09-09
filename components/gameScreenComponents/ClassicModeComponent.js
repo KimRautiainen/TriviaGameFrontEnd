@@ -35,9 +35,12 @@ const ClassicModeComponent = () => {
   const navigation = useNavigation();
 
   // Context and hooks
-  const {user} = useContext(MainContext); // Get user from MainContext
+  const {user, setUser, setShowLevelUp} = useContext(MainContext);
   const {awardXp} = useUser(); // Get the awardXp function from the useUser hook
   const {addItemsToInventory} = useInventory(); // Get the addItemsToInventory function from the useInventory hook
+  const {getUserByToken} = useUser(); // Get the getUserByToken function from the useUser hook
+
+  const previousLevel = user.level; // Store the previous level to check for level up
 
   const hadlePlayAgain = async () => {
     setQuestions([]);
@@ -137,19 +140,27 @@ const ClassicModeComponent = () => {
     try {
       const token = await AsyncStorage.getItem('userToken');
       if (token) {
-        const xp = correctAnswersCount * 11;
+        const xp = correctAnswersCount * 111;
         const userId = user.userId;
-        console.log('EXP: ', xp);
-
         const response = await awardXp(token, xp, userId);
+
         if (response) {
           console.log(`Successfully awarded ${xp} XP to user ${userId}`);
+
+          // Simulate fetching the updated user info with the new XP and level
+          const updatedUser = await getUserByToken(token);
+          setUser(updatedUser.user[0]);
+
+          // Check if the user's level has changed
+          if (updatedUser.user[0].level > previousLevel) {
+            setShowLevelUp(true); // Trigger the Level Up screen
+          }
         } else {
           console.log(`Failed to award ${xp} XP to user ${userId}`);
         }
       }
     } catch (error) {
-      console.log('Error awarding xp');
+      console.log('Error awarding xp:', error);
     }
   };
   // Function to add items to inventory after game is completed

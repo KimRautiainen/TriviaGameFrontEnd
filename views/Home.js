@@ -11,9 +11,11 @@ import {MainContext} from '../contexts/MainContext';
 import {useUser} from '../hooks/ApiHooks'; // Hook for user API
 import {useInventory} from '../hooks/InventoryHooks'; // Hook for inventory API
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import LevelUpScreen from './LevelUpScreen';
 
 const HomePage = ({navigation, route}) => {
-  const {setUser, setInventoryData} = useContext(MainContext); // Get context methods to update user and inventory
+  const {setUser, user, setInventoryData, showLevelUp, setShowLevelUp} =
+    useContext(MainContext);
   const {getUserByToken} = useUser(); // Hook to get user data
   const {getUserInventory} = useInventory(); // Hook to get inventory data
 
@@ -23,6 +25,13 @@ const HomePage = ({navigation, route}) => {
       if (token) {
         // Fetch user data
         const updatedUser = await getUserByToken(token);
+        const newUserLevel = updatedUser.user[0].level;
+
+        // Check if level has increased
+        if (newUserLevel > user.level) {
+          setShowLevelUp(true); // Trigger Level Up Screen
+        }
+
         setUser(updatedUser.user[0]); // Update the user in context
 
         // Fetch inventory data
@@ -49,6 +58,7 @@ const HomePage = ({navigation, route}) => {
       <View style={styles.contentContainer}>
         <UserProfile />
         <Inventory />
+        {showLevelUp && <LevelUpScreen />}
         <TouchableOpacity
           style={styles.achievementContainer}
           onPress={() => navigation.navigate('AchievementScreen')}
