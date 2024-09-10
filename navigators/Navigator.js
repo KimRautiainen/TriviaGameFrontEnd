@@ -91,7 +91,7 @@ const Stackscreen = () => {
                 fontWeight: 'bold', // Customize header title text style
               },
               headerBackTitleVisible: true,
-              
+
             }}
           />
         </>

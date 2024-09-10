@@ -6,7 +6,8 @@
 | 09.9  | 4    | User rewards after completing game(classic). Show real data from backend in inventory  |
 |       | 4    | Rerender homescreen when xp or inventory changes. Level up screen |
 | 10.9  | 4    | Shop now works with backend and not with hardcoded data|
-|       | 4    | classic game mode ui |
+|       | 3    | classic game mode ui |
+| 11.9  | 2    | classic game mode ui |
 |       |      | |
 |       |      | |
 |       |      | |
@@ -19,5 +20,4 @@
 |       |      | |
 |       |      | |
 |       |      | |
-|       |      | |
-| yht   | 28   | |
+| yht   | 21   | |

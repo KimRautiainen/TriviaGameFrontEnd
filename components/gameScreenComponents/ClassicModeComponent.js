@@ -6,7 +6,7 @@ import {
   ScrollView,
   TouchableOpacity,
   Dimensions,
-  ImageBackground, // Import ImageBackground
+  ImageBackground,
 } from 'react-native';
 import {useTrivia} from '../../hooks/TriviaHooks';
 import {decodeQuestionsArray} from '../../utils/decodeQuestions';
@@ -20,6 +20,8 @@ import {MainContext} from '../../contexts/MainContext';
 import {useUser} from '../../hooks/ApiHooks';
 import {useInventory} from '../../hooks/InventoryHooks';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import {SafeAreaView} from 'react-native-safe-area-context';
+
 const {width, height} = Dimensions.get('window');
 
 const ClassicModeComponent = () => {
@@ -68,6 +70,7 @@ const ClassicModeComponent = () => {
       navigation.setOptions({
         headerShown: true,
         headerTitle: currentCategory,
+        headerTransparent: true,
         headerStyle: {
           backgroundColor: '#1e90ff',
         },
@@ -175,58 +178,58 @@ const ClassicModeComponent = () => {
   }
 
   return (
-    <ImageBackground
-      source={require('../../assets/images/quizBackground.jpg')}
-      style={styles.background}
-      resizeMode="cover"
-      position="absolute"
-      top={0}
-    >
-      <View style={styles.overlay} />
-      <View style={{flex: 1}}>
-        {showAnswer &&
-          (isCorrectAnswer ? <CorrectAnswer /> : <InCorrectAnswer />)}
-        <ScrollView
-          style={styles.container}
-          contentContainerStyle={{flexGrow: 1}}
-        >
-          {questions.length > 0 && (
-            <View style={styles.card}>
-              <Text style={styles.questionCount}>
-                Question {currentQuestionIndex + 1} of {questions.length}
-              </Text>
-              <Divider />
-              <Text style={styles.questionText}>
-                {questions[currentQuestionIndex].question}
-              </Text>
+    <SafeAreaView style={{flex: 1}}>
+      <ImageBackground
+        source={require('../../assets/images/quizBackground.jpg')}
+        style={styles.background}
+        resizeMode="cover"
+      >
+        <View style={styles.overlay} />
+        <View style={{flex: 1}}>
+          {showAnswer &&
+            (isCorrectAnswer ? <CorrectAnswer /> : <InCorrectAnswer />)}
+          <ScrollView
+            style={styles.container}
+            contentContainerStyle={{flexGrow: 1}}
+          >
+            {questions.length > 0 && (
+              <View style={styles.card}>
+                <Text style={styles.questionCount}>
+                  Question {currentQuestionIndex + 1} of {questions.length}
+                </Text>
+                <Divider />
+                <Text style={styles.questionText}>
+                  {questions[currentQuestionIndex].question}
+                </Text>
+              </View>
+            )}
+            <View style={styles.answerTextContainer}>
+              {questions.length > 0 &&
+                questions[currentQuestionIndex].answers.map((answer, idx) => (
+                  <TouchableOpacity
+                    key={idx}
+                    style={[
+                      styles.answerCard,
+                      showAnswer
+                        ? answer ===
+                          questions[currentQuestionIndex].correct_answer
+                          ? styles.correctAnswer
+                          : selectedAnswer === answer
+                            ? styles.wrongAnswer
+                            : {}
+                        : {},
+                    ]}
+                    onPress={() => handleAnswerSelection(answer)}
+                    disabled={showAnswer}
+                  >
+                    <Text style={styles.answerText}>{answer}</Text>
+                  </TouchableOpacity>
+                ))}
             </View>
-          )}
-          <View style={styles.answerTextContainer}>
-            {questions.length > 0 &&
-              questions[currentQuestionIndex].answers.map((answer, idx) => (
-                <TouchableOpacity
-                  key={idx}
-                  style={[
-                    styles.answerCard,
-                    showAnswer
-                      ? answer ===
-                        questions[currentQuestionIndex].correct_answer
-                        ? styles.correctAnswer
-                        : selectedAnswer === answer
-                          ? styles.wrongAnswer
-                          : {}
-                      : {},
-                  ]}
-                  onPress={() => handleAnswerSelection(answer)}
-                  disabled={showAnswer}
-                >
-                  <Text style={styles.answerText}>{answer}</Text>
-                </TouchableOpacity>
-              ))}
-          </View>
-        </ScrollView>
-      </View>
-    </ImageBackground>
+          </ScrollView>
+        </View>
+      </ImageBackground>
+    </SafeAreaView>
   );
 };
 
@@ -235,11 +238,10 @@ const styles = StyleSheet.create({
     flex: 1,
     width: width,
     height: height,
-    justifyContent: 'center',
-    alignItems: 'center',
   },
   overlay: {
     position: 'absolute',
+    height: height,
     top: 0,
     left: 0,
     right: 0,
