@@ -6,6 +6,7 @@ import {
   ScrollView,
   TouchableOpacity,
   Dimensions,
+  ImageBackground, // Import ImageBackground
 } from 'react-native';
 import {useTrivia} from '../../hooks/TriviaHooks';
 import {decodeQuestionsArray} from '../../utils/decodeQuestions';
@@ -19,6 +20,7 @@ import {MainContext} from '../../contexts/MainContext';
 import {useUser} from '../../hooks/ApiHooks';
 import {useInventory} from '../../hooks/InventoryHooks';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+const {width, height} = Dimensions.get('window');
 
 const ClassicModeComponent = () => {
   const [questions, setQuestions] = useState([]);
@@ -28,7 +30,6 @@ const ClassicModeComponent = () => {
   const [selectedAnswer, setSelectedAnswer] = useState(null);
   const [showAnswer, setShowAnswer] = useState(false);
   const [isCorrectAnswer, setIsCorrectAnswer] = useState(false);
-  const {width, height} = Dimensions.get('window');
   const [correctAnswersCount, setCorrectAnswersCount] = useState(0);
   const [incorrectAnswersCount, setIncorrectAnswersCount] = useState(0);
   const [gameCompleted, setGameCompleted] = useState(false);
@@ -36,11 +37,10 @@ const ClassicModeComponent = () => {
 
   // Context and hooks
   const {user, setUser, setShowLevelUp} = useContext(MainContext);
-  const {awardXp} = useUser(); // Get the awardXp function from the useUser hook
-  const {addItemsToInventory} = useInventory(); // Get the addItemsToInventory function from the useInventory hook
-  const {getUserByToken} = useUser(); // Get the getUserByToken function from the useUser hook
-
-  const previousLevel = user.level; // Store the previous level to check for level up
+  const {awardXp} = useUser();
+  const {addItemsToInventory} = useInventory();
+  const {getUserByToken} = useUser();
+  const previousLevel = user.level;
 
   const hadlePlayAgain = async () => {
     setQuestions([]);
@@ -56,7 +56,6 @@ const ClassicModeComponent = () => {
   };
 
   useLayoutEffect(() => {
-    // If the game is completed, hide the header
     if (gameCompleted) {
       navigation.setOptions({
         headerShown: false,
@@ -65,7 +64,6 @@ const ClassicModeComponent = () => {
       questions.length > 0 &&
       currentQuestionIndex < questions.length
     ) {
-      // If the game is not completed and questions are available, show the header with the current category
       const currentCategory = questions[currentQuestionIndex].category;
       navigation.setOptions({
         headerShown: true,
@@ -83,14 +81,12 @@ const ClassicModeComponent = () => {
   }, [questions, currentQuestionIndex, gameCompleted, navigation]);
 
   const handleReturnHome = () => {
-    // Navigate to home screen
     navigation.navigate('Home');
   };
 
-  // Fetch questions from the API
   const fetchQuestions = async () => {
     setLoading(true);
-    await new Promise((resolve) => setTimeout(resolve, 2000)); // Simulate delay
+    await new Promise((resolve) => setTimeout(resolve, 2000));
     const response = await getRandomQuestions(10);
     if (response.results) {
       setQuestions(decodeQuestionsArray(response.results));
@@ -98,26 +94,22 @@ const ClassicModeComponent = () => {
     }
   };
 
-  // Fetch questions when the component mounts
   useEffect(() => {
     fetchQuestions();
-  }, []); // Dependencies remain empty for initial load
+  }, []);
 
-  // Handle answer selection
   const handleAnswerSelection = (answer) => {
     const isCorrect = answer === questions[currentQuestionIndex].correct_answer;
     setSelectedAnswer(answer);
     setShowAnswer(true);
-    setIsCorrectAnswer(isCorrect); // Set correct answer state
+    setIsCorrectAnswer(isCorrect);
 
-    // Update correct/incorrect counts
     if (isCorrect) {
       setCorrectAnswersCount((prevCount) => prevCount + 1);
     } else {
       setIncorrectAnswersCount((prevCount) => prevCount + 1);
     }
 
-    // Move to the next question after 2 seconds
     setTimeout(() => {
       setShowAnswer(false);
       setSelectedAnswer(null);
@@ -125,17 +117,13 @@ const ClassicModeComponent = () => {
       if (currentQuestionIndex < questions.length - 1) {
         setCurrentQuestionIndex((prevIndex) => prevIndex + 1);
       } else {
-        // Set game state to completed and award user rewards
         setGameCompleted(true);
-        // Award XP after the game is completed
         awardXpAfterGameCompletion();
-        // Award goldcoins after game is completed
         addItemsToInventoryAfterGameCompletion();
       }
     }, 2000);
   };
 
-  // Function to award Xp after game is completed
   const awardXpAfterGameCompletion = async () => {
     try {
       const token = await AsyncStorage.getItem('userToken');
@@ -145,53 +133,34 @@ const ClassicModeComponent = () => {
         const response = await awardXp(token, xp, userId);
 
         if (response) {
-          console.log(`Successfully awarded ${xp} XP to user ${userId}`);
-
-          // Simulate fetching the updated user info with the new XP and level
           const updatedUser = await getUserByToken(token);
           setUser(updatedUser.user[0]);
-
-          // Check if the user's level has changed
           if (updatedUser.user[0].level > previousLevel) {
-            setShowLevelUp(true); // Trigger the Level Up screen
+            setShowLevelUp(true);
           }
-        } else {
-          console.log(`Failed to award ${xp} XP to user ${userId}`);
         }
       }
     } catch (error) {
       console.log('Error awarding xp:', error);
     }
   };
-  // Function to add items to inventory after game is completed
+
   const addItemsToInventoryAfterGameCompletion = async () => {
     try {
       const token = await AsyncStorage.getItem('userToken');
       if (token) {
-        const items = {
-          goldCoins: correctAnswersCount * 8,
-        };
-        const response = await addItemsToInventory(items, token);
-        if (response) {
-          console.log(
-            `Successfully added ${correctAnswersCount * 8} gold coins to inventory`,
-          );
-        } else {
-          console.log(
-            `Failed to add ${correctAnswersCount * 8} gold coins to inventory`,
-          );
-        }
+        const items = {goldCoins: correctAnswersCount * 8};
+        await addItemsToInventory(items, token);
       }
     } catch (error) {
       console.log('Error adding items to inventory');
     }
   };
 
-  // Show loading screen if loading is true
   if (loading) {
     return <LoadingIndicator />;
   }
-  // Show game completed screen if game is completed
+
   if (gameCompleted) {
     return (
       <GameCompletedComponent
@@ -205,113 +174,119 @@ const ClassicModeComponent = () => {
     );
   }
 
-  // Show the game screen
   return (
-    <View style={{flex: 1}}>
-      {showAnswer &&
-        (isCorrectAnswer ? <CorrectAnswer /> : <InCorrectAnswer />)}
-      <ScrollView style={styles.container}>
-        {/*  <Text style={styles.title}>Classic Mode</Text> */}
-        {questions.length > 0 && (
-          <View style={styles.card}>
-            {/* Display the question count here */}
-            <Text style={styles.questionCount}>
-              Question {currentQuestionIndex + 1} of {questions.length}
-            </Text>
-            <Divider />
-            <Text style={styles.questionText}>
-              {questions[currentQuestionIndex].question}
-            </Text>
+    <ImageBackground
+      source={require('../../assets/images/quizBackground.jpg')}
+      style={styles.background}
+      resizeMode="cover"
+      position="absolute"
+      top={0}
+    >
+      <View style={styles.overlay} />
+      <View style={{flex: 1}}>
+        {showAnswer &&
+          (isCorrectAnswer ? <CorrectAnswer /> : <InCorrectAnswer />)}
+        <ScrollView
+          style={styles.container}
+          contentContainerStyle={{flexGrow: 1}}
+        >
+          {questions.length > 0 && (
+            <View style={styles.card}>
+              <Text style={styles.questionCount}>
+                Question {currentQuestionIndex + 1} of {questions.length}
+              </Text>
+              <Divider />
+              <Text style={styles.questionText}>
+                {questions[currentQuestionIndex].question}
+              </Text>
+            </View>
+          )}
+          <View style={styles.answerTextContainer}>
+            {questions.length > 0 &&
+              questions[currentQuestionIndex].answers.map((answer, idx) => (
+                <TouchableOpacity
+                  key={idx}
+                  style={[
+                    styles.answerCard,
+                    showAnswer
+                      ? answer ===
+                        questions[currentQuestionIndex].correct_answer
+                        ? styles.correctAnswer
+                        : selectedAnswer === answer
+                          ? styles.wrongAnswer
+                          : {}
+                      : {},
+                  ]}
+                  onPress={() => handleAnswerSelection(answer)}
+                  disabled={showAnswer}
+                >
+                  <Text style={styles.answerText}>{answer}</Text>
+                </TouchableOpacity>
+              ))}
           </View>
-        )}
-        <View style={styles.answerTextContainer}>
-          {questions.length > 0 &&
-            questions[currentQuestionIndex].answers.map((answer, idx) => (
-              <TouchableOpacity
-                key={idx}
-                style={[
-                  styles.answerCard,
-                  showAnswer
-                    ? answer === questions[currentQuestionIndex].correct_answer
-                      ? styles.correctAnswer
-                      : selectedAnswer === answer
-                        ? styles.wrongAnswer
-                        : {}
-                    : {},
-                ]}
-                onPress={() => handleAnswerSelection(answer)}
-                disabled={showAnswer}
-              >
-                <Text style={styles.answerText}>{answer}</Text>
-              </TouchableOpacity>
-            ))}
-        </View>
-      </ScrollView>
-    </View>
+        </ScrollView>
+      </View>
+    </ImageBackground>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
+  background: {
     flex: 1,
-    padding: 30,
-    // backgroundColor: '#BEE1E6',
-  },
-  loadingContainer: {
-    flex: 1,
+    width: width,
+    height: height,
     justifyContent: 'center',
     alignItems: 'center',
   },
-  loadingText: {
-    marginTop: 10,
-    fontSize: 16,
+  overlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
+  container: {
+    flex: 1,
+    paddingHorizontal: 30,
+    paddingVertical: 10,
+  },
+  card: {
+    width: '100%',
+    minHeight: 250,
+    padding: 20,
     marginBottom: 20,
+    borderRadius: 20,
+    backgroundColor: 'rgba(255, 255, 255, 0.9)',
+    elevation: 5,
+    justifyContent: 'center',
+    alignItems: 'center',
+    position: 'relative',
   },
   questionCount: {
     fontSize: 16,
     fontWeight: 'bold',
-    position: 'absolute', // Position it absolutely within the card
-    top: 10, // Adjust as needed to position correctly within the card
-    alignSelf: 'center', // Center it horizontally
-    color: '#3b5998', // Example color, adjust as needed
-  },
-  card: {
-    // Increase the size of the question card
-    width: '100%', // Adjust based on your needs
-    minWidth: '100%', // Added minWidth to prevent 'width' from being '0
-    minHeight: 250,
-    padding: 20,
-    marginBottom: 120, // Added more margin-bottom for separation
-    borderRadius: 20,
-    backgroundColor: 'white',
-    elevation: 5,
-    justifyContent: 'center', // Ensure the content is centered
-    alignItems: 'center', // Center content horizontally
-    paddingTop: 40, // Added paddingTop to ensure space for the question count
-    position: 'relative', // Ensure the question count is positioned correctly
+    position: 'absolute',
+    top: 10,
+    alignSelf: 'center',
+    color: '#3b5998',
   },
   questionText: {
     fontSize: 18,
-    textAlign: 'center', // Center text for better readability
+    textAlign: 'center',
   },
   answerTextContainer: {
     flex: 1,
     justifyContent: 'flex-end',
   },
   answerCard: {
-    // Fixed size for answer cards to prevent flickering
-    //minHeight: 20, // Adjust based on your needs
     padding: 15,
     marginBottom: 15,
     borderRadius: 30,
     elevation: 5,
-    justifyContent: 'center', // Center the text vertically
-    alignItems: 'center', // Center the text horizontally
-    backgroundColor: 'white', // Light grey background
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'white',
   },
   correctAnswer: {
     backgroundColor: '#a5d6a7',
@@ -321,18 +296,8 @@ const styles = StyleSheet.create({
   },
   answerText: {
     fontSize: 16,
-    textAlign: 'center', // Center text for better readability
-    color: '#333', // Darker text for better readability on pastel backgrounds
-  },
-  statsContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 20,
-  },
-  statsText: {
-    fontSize: 20,
-    margin: 10,
+    textAlign: 'center',
+    color: '#333',
   },
 });
 

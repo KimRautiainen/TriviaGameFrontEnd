@@ -17,7 +17,7 @@ const MainProvider = (props) => {
     tournamentTickets: 0,
     otherItems: {},
   });
-  const [showLevelUp, setShowLevelUp] = useState(true);
+  const [showLevelUp, setShowLevelUp] = useState(false);
 
   return (
     <MainContext.Provider
