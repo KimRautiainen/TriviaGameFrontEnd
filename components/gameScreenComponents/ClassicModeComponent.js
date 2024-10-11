@@ -131,20 +131,19 @@ const ClassicModeComponent = () => {
     try {
       const token = await AsyncStorage.getItem('userToken');
       if (token) {
-        const xp = correctAnswersCount * 111;
+        const xp = correctAnswersCount * 111; // Calculate XP
         const userId = user.userId;
+
+        // Award XP, don't worry about level here
         const response = await awardXp(token, xp, userId);
 
         if (response) {
-          const updatedUser = await getUserByToken(token);
-          setUser(updatedUser.user[0]);
-          if (updatedUser.user[0].level > previousLevel) {
-            setShowLevelUp(true);
-          }
+          // Optionally, you can log success or update any local XP value
+          console.log(`Successfully awarded ${xp} XP to user ${userId}`);
         }
       }
     } catch (error) {
-      console.log('Error awarding xp:', error);
+      console.log('Error awarding XP:', error);
     }
   };
 

@@ -70,6 +70,19 @@ const ShopComponent = () => {
           type: 'success',
           text1: 'Purchase Successful',
           text2: `You have successfully purchased ${item.name}!`,
+          visibilityTime: 4000,
+          text1Style: {
+            fontSize: 18, // Increase font size for the title
+            fontWeight: 'bold',
+          },
+          text2Style: {
+            fontSize: 16, // Increase font size for the message
+          },
+          style: {
+            padding: 15, // Increase padding for a larger toast
+            borderRadius: 10, // Customize border radius
+            minHeight: 80, // Increase height of the toast box
+          },
         });
       } catch (error) {
         console.error('Error during purchase transaction:', error.message);
@@ -79,6 +92,19 @@ const ShopComponent = () => {
         type: 'error',
         text1: 'Not Enough Coins',
         text2: 'You do not have enough gold coins to make this purchase.',
+        visibilityTime: 4000,
+        text1Style: {
+          fontSize: 18, // Increase font size for the title
+          fontWeight: 'bold',
+        },
+        text2Style: {
+          fontSize: 16, // Increase font size for the message
+        },
+        style: {
+          padding: 15, // Increase padding for a larger toast
+          borderRadius: 10, // Customize border radius
+          minHeight: 80, // Increase height of the toast box
+        },
       });
     }
   };
@@ -198,9 +224,14 @@ const styles = StyleSheet.create({
   },
   itemIconContainer: {
     marginRight: 16,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: '#fff', // Use pure white for background
     padding: 10,
     borderRadius: 10,
+    elevation: 3, // Adds elevation to give a subtle 3D effect on Android
+    shadowColor: '#000', // Adds shadow for iOS
+    shadowOffset: {width: 0, height: 2}, // Adds shadow offset for iOS
+    shadowOpacity: 0.2, // Adjusts shadow opacity for iOS
+    shadowRadius: 3, // Controls the blur of the shadow on iOS
   },
   itemDetails: {
     flex: 1,

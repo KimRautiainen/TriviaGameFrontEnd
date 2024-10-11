@@ -26,11 +26,13 @@ const HomePage = ({navigation, route}) => {
         // Fetch user data
         const updatedUser = await getUserByToken(token);
         const newUserLevel = updatedUser.user[0].level;
-
+        console.log({'Level from mainContext': user.level});
+        console.log('Updated user new level: ' + newUserLevel);
         // Check if level has increased
         if (newUserLevel > user.level) {
           setShowLevelUp(true); // Trigger Level Up Screen
         }
+        console.log(showLevelUp);
 
         setUser(updatedUser.user[0]); // Update the user in context
 

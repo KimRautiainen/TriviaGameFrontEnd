@@ -8,7 +8,7 @@
 | 10.9  | 4    | Shop now works with backend and not with hardcoded data|
 |       | 3    | classic game mode ui |
 | 11.9  | 2    | classic game mode ui |
-|       |      | |
+| 11.10 | 3    | Fixed state issue with triggering levelup screen, level up screen ui|
 |       |      | |
 |       |      | |
 |       |      | |
