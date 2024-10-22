@@ -38,11 +38,9 @@ const ClassicModeComponent = () => {
   const navigation = useNavigation();
 
   // Context and hooks
-  const {user, setUser, setShowLevelUp} = useContext(MainContext);
+  const {user} = useContext(MainContext);
   const {awardXp} = useUser();
   const {addItemsToInventory} = useInventory();
-  const {getUserByToken} = useUser();
-  const previousLevel = user.level;
 
   const hadlePlayAgain = async () => {
     setQuestions([]);

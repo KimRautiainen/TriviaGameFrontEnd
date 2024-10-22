@@ -64,7 +64,6 @@ const styles = StyleSheet.create({
   item: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#F0F0F0', // Light grey background for the item boxes
     borderRadius: 5,
     padding: 8,
     marginHorizontal: 4, // Spacing between items

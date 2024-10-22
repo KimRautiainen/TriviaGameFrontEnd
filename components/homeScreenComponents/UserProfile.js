@@ -1,5 +1,11 @@
 import React, {useContext} from 'react';
-import {View, Text, StyleSheet, ActivityIndicator} from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  ActivityIndicator,
+  ImageBackground,
+} from 'react-native';
 import {Avatar, Icon} from 'react-native-elements';
 import {Bar} from 'react-native-progress';
 import PropTypes from 'prop-types';
@@ -15,38 +21,40 @@ const UserProfile = () => {
   const userAvatarUri = `${mediaUrl}${user.userAvatar}`;
 
   return (
-    <View style={styles.container}>
-      <Avatar
-        size={110}
-        rounded
-        source={{uri: userAvatarUri}}
-        containerStyle={styles.avatar}
-      />
-      <View style={styles.userInfo}>
-        <Text style={styles.userText}>{user.username}</Text>
-        <View style={styles.xpBarContainer}>
-          <Text style={styles.levelText}>Lvl {user.level}</Text>
-          <Bar
-            progress={
-              isNaN(user.experiencePoints / user.maxXp)
-                ? 0
-                : user.experiencePoints / user.maxXp
-            }
-            width={200}
-            height={30}
-            color="#4a90e2"
-            unfilledColor="#ccc"
-            borderWidth={0}
-            borderRadius={360}
-          />
-          <Text style={styles.xpText}>
-            {`${
-              Number.isFinite(user.experiencePoints) ? user.experiencePoints : 0
-            }/${Number.isFinite(user.maxXp) ? user.maxXp : 0} XP`}
-          </Text>
+      <View style={styles.container}>
+        <Avatar
+          size={110}
+          rounded
+          source={{uri: userAvatarUri}}
+          containerStyle={styles.avatar}
+        />
+        <View style={styles.userInfo}>
+          <Text style={styles.userText}>{user.username}</Text>
+          <View style={styles.xpBarContainer}>
+            <Text style={styles.levelText}>Lvl {user.level}</Text>
+            <Bar
+              progress={
+                isNaN(user.experiencePoints / user.maxXp)
+                  ? 0
+                  : user.experiencePoints / user.maxXp
+              }
+              width={200}
+              height={30}
+              color="#4a90e2"
+              unfilledColor="#ccc"
+              borderWidth={0}
+              borderRadius={360}
+            />
+            <Text style={styles.xpText}>
+              {`${
+                Number.isFinite(user.experiencePoints)
+                  ? user.experiencePoints
+                  : 0
+              }/${Number.isFinite(user.maxXp) ? user.maxXp : 0} XP`}
+            </Text>
+          </View>
         </View>
       </View>
-    </View>
   );
 };
 

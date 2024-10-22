@@ -10,7 +10,7 @@
 | 11.9  | 2    | classic game mode ui |
 | 11.10 | 3    | Fixed state issue with triggering levelup screen, level up screen ui|
 | 12.10 | 2    | Game completed screen UI|
-| 12.10 |      | |
+| 22.10 | 4    | Home screen UI, Styled bottom tab bar|
 |       |      | |
 |       |      | |
 |       |      | |

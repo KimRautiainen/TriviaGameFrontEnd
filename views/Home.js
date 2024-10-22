@@ -1,5 +1,10 @@
 import React, {useCallback, useContext} from 'react';
-import {StyleSheet, View, TouchableOpacity} from 'react-native';
+import {
+  StyleSheet,
+  View,
+  TouchableOpacity,
+  ImageBackground,
+} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import UserProfile from '../components/homeScreenComponents/UserProfile';
 import Inventory from '../components/homeScreenComponents/inventory';
@@ -19,6 +24,7 @@ const HomePage = ({navigation, route}) => {
   const {getUserByToken} = useUser(); // Hook to get user data
   const {getUserInventory} = useInventory(); // Hook to get inventory data
 
+  console.log('USERDATA:', user);
   const fetchUpdatedData = async () => {
     try {
       const token = await AsyncStorage.getItem('userToken');
@@ -26,7 +32,9 @@ const HomePage = ({navigation, route}) => {
         // Fetch user data
         const updatedUser = await getUserByToken(token);
         const newUserLevel = updatedUser.user[0].level;
-        console.log({'Level from mainContext': user.level});
+        console.log('USERDATA2:', user);
+        console.log({'Level from mainContext': user});
+        console.log(user.level);
         console.log('Updated user new level: ' + newUserLevel);
         // Check if level has increased
         if (newUserLevel > user.level) {
@@ -56,33 +64,44 @@ const HomePage = ({navigation, route}) => {
   );
 
   return (
-    <SafeAreaView style={styles.container}>
-      <View style={styles.contentContainer}>
-        <UserProfile />
-        <Inventory />
-        {showLevelUp && <LevelUpScreen />}
-        <TouchableOpacity
-          style={styles.achievementContainer}
-          onPress={() => navigation.navigate('AchievementScreen')}
-        >
-          <Icon name="trophy" type="font-awesome" color="#FFD43B" size={24} />
-        </TouchableOpacity>
-        <Button
-          onPress={() => navigation.navigate('GameModeScreen')}
-          large
-          color={'green'}
-          style={styles.playButton}
-        >
-          Play
-        </Button>
-      </View>
-    </SafeAreaView>
+    <ImageBackground
+      source={require('../assets/images/HomeBackground.jpg')} // Add your background image here
+      style={styles.background}
+      resizeMode="cover"
+    >
+      <SafeAreaView style={styles.container}>
+        <View style={styles.contentContainer}>
+          <UserProfile />
+          <Inventory />
+          {showLevelUp && <LevelUpScreen />}
+          <TouchableOpacity
+            style={styles.achievementContainer}
+            onPress={() => navigation.navigate('AchievementScreen')}
+          >
+            <Icon name="trophy" type="font-awesome" color="#FFD43B" size={24} />
+          </TouchableOpacity>
+          <Button
+            onPress={() => navigation.navigate('GameModeScreen')}
+            large
+            color={'green'}
+            style={styles.playButton}
+          >
+            Play
+          </Button>
+        </View>
+      </SafeAreaView>
+    </ImageBackground>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  background: {
+    flex: 1,
+    width: '100%',
+    height: '100%',
   },
   contentContainer: {
     flex: 1,
@@ -103,7 +122,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     borderWidth: 1,
     backgroundColor: 'green',
-    marginBottom: 50,
+    marginBottom: 100,
   },
 });
 
