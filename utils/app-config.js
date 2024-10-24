@@ -1,7 +1,8 @@
 // Custom Backend API URLs
-//const apiUrl = 'http://192.168.101.100:3000/'; // Base api url
+const apiUrl = 'http://192.168.101.205:3000/'; // Base api url
 // Lapotop IP:
-const apiUrl = 'http://192.168.0.103:3000/'; // Base api url
+//const apiUrl = 'http://192.168.0.101:3000/';
+
 const authUrl = apiUrl + 'auth/';
 const mediaUrl = apiUrl + 'uploads/';
 

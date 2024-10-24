@@ -4,39 +4,47 @@ import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import Login from '../views/Login';
 import {MainContext} from '../contexts/MainContext';
-import {Icon} from '@rneui/themed';
 import HomePage from '../views/Home';
 import GameModeScreen from '../views/GameModeScreen';
 import GameScreen from '../views/GameScreen';
 import AchievementScreen from '../views/AchievementScreen';
 import ShopComponent from '../views/Shop';
+import TabMenu from './TabMenu';
+import {StyleSheet} from 'react-native';
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
 
+// Custom Tab Bar setup
 const Tabscreen = () => {
   return (
     <Tab.Navigator
       screenOptions={{
-        activeTintColor: '#FFFFFF',
-        headerShown: false,
-        tabBarStyle: {backgroundColor: '#000000'},
+        tabBarShowLabel: false, // Hide the default labels
+        tabBarStyle: {...styles.tabContainer}, // Apply custom styles
       }}
     >
+      {/* Home Tab */}
       <Tab.Screen
         name="Home"
         component={HomePage}
         options={{
-          tabBarIcon: ({color}) => <Icon name="home" color={color} />,
-          tabBarVisible: false, // this hides the tab bar only for this screen
+          headerShown: false,
+          tabBarIcon: ({focused}) => (
+            <TabMenu screen="Home" focused={focused} />
+          ),
         }}
       />
+
+      {/* Shop Tab */}
       <Tab.Screen
         name="Shop"
         component={ShopComponent}
         options={{
-          tabBarIcon: ({color}) => <Icon name="shop" color={color} />,
-          tabBarVisible: false, // this hides the tab bar only for this screen
+          headerShown: false,
+          tabBarIcon: ({focused}) => (
+            <TabMenu screen="Shop" focused={focused} />
+          ),
         }}
       />
     </Tab.Navigator>
@@ -45,7 +53,6 @@ const Tabscreen = () => {
 
 const Stackscreen = () => {
   const {isLoggedIn} = useContext(MainContext);
-  // const isLoggedIn = false;
   return (
     <Stack.Navigator>
       {isLoggedIn ? (
@@ -64,12 +71,11 @@ const Stackscreen = () => {
               headerStyle: {
                 backgroundColor: '#000000',
               },
-              headerTintColor: '#fff', // Customize header text and icons color
+              headerTintColor: '#fff',
               headerTitleStyle: {
-                fontWeight: 'bold', // Customize header title text style
+                fontWeight: 'bold',
               },
-              headerBackTitleVisible: false, // Hide the back label text to show only the icon
-              // Additional customization can be added here
+              headerBackTitleVisible: false,
             }}
           />
           <Stack.Screen
@@ -86,12 +92,11 @@ const Stackscreen = () => {
               headerStyle: {
                 backgroundColor: '#000000',
               },
-              headerTintColor: '#fff', // Customize header text and icons color
+              headerTintColor: '#fff',
               headerTitleStyle: {
-                fontWeight: 'bold', // Customize header title text style
+                fontWeight: 'bold',
               },
               headerBackTitleVisible: true,
-              // Additional customization can be added here
             }}
           />
         </>
@@ -106,6 +111,7 @@ const Stackscreen = () => {
   );
 };
 
+// Navigation Container
 const Navigator = () => {
   return (
     <NavigationContainer>
@@ -115,3 +121,18 @@ const Navigator = () => {
 };
 
 export default Navigator;
+
+const styles = StyleSheet.create({
+  tabContainer: {
+    position: 'absolute',
+    bottom: 0,
+    width: '100%',
+    height: 70,
+    borderRadius: 30,
+    elevation: 5,
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    paddingHorizontal: 20,
+    alignItems: 'center',
+  },
+});
