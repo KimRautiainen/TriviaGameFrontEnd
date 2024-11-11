@@ -84,9 +84,11 @@ const AchievementsComponent = () => {
                     <Text style={styles.achievementDescription}>
                       {achievement.description}
                     </Text>
-                    <Text style={styles.achievementProgress}>
-                      Progress: {progress}/{achievement.requirement}
-                    </Text>
+                    {isCompleted && (
+                      <Text style={styles.achievementProgress}>
+                        Progress: {progress}/{achievement.requirement}
+                      </Text>
+                    )}
                   </View>
                 </View>
               );
@@ -110,6 +112,9 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
+    borderRadius: 10,
+    borderColor: 'black',
+    backgroundColor: '#f9f9f9',
   },
   title: {
     fontSize: 24,
