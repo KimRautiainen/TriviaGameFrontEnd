@@ -24,75 +24,89 @@ const GameModeScreen = ({navigation, route}) => {
 
   return (
     <View style={styles.container}>
-      <ScrollView
-        showsHorizontalScrollIndicator={false}
-        contentContainerStyle={styles.gameModesScrollView}
-        showsVerticalScrollIndicator={false}
+      <ImageBackground
+        source={require('../assets/images/blueSky.jpeg')}
+        style={styles.background}
+        resizeMode="cover"
       >
-        {gameModes.map((mode, index) => (
-          <TouchableOpacity key={index} onPress={() => gameModePressed(mode)}>
-            <GameModeCard
-              title={mode.title}
-              description={mode.description}
-              imageSource={mode.image}
-            />
-          </TouchableOpacity>
-        ))}
-      </ScrollView>
-      {selectedGameMode && (
-        <Modal
-          animationType="fade"
-          transparent={true}
-          visible={isModalVisible}
-          onRequestClose={() => {
-            setModalVisible(!isModalVisible);
-          }}
+        <ScrollView
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.gameModesScrollView}
+          showsVerticalScrollIndicator={false}
         >
-          <View style={styles.centeredView}>
-            <View style={styles.modalView}>
-              <ImageBackground
-                source={selectedGameMode.image}
-                style={styles.modalBackgroundImage}
-                imageStyle={styles.modalBackgroundImageStyle}
-              >
-                <Text style={styles.modalTitle}>{selectedGameMode.title}</Text>
-                <View style={styles.modalTextContainer}>
-                  <Text style={styles.modalDescription}>
-                    {selectedGameMode.detailedDescription}
+          {gameModes.map((mode, index) => (
+            <TouchableOpacity key={index} onPress={() => gameModePressed(mode)}>
+              <GameModeCard
+                title={mode.title}
+                description={mode.description}
+                imageSource={mode.image}
+              />
+            </TouchableOpacity>
+          ))}
+        </ScrollView>
+        {selectedGameMode && (
+          <Modal
+            animationType="fade"
+            transparent={true}
+            visible={isModalVisible}
+            onRequestClose={() => {
+              setModalVisible(!isModalVisible);
+            }}
+          >
+            <View style={styles.centeredView}>
+              <View style={styles.modalView}>
+                <ImageBackground
+                  source={selectedGameMode.image}
+                  style={styles.modalBackgroundImage}
+                  imageStyle={styles.modalBackgroundImageStyle}
+                >
+                  <Text style={styles.modalTitle}>
+                    {selectedGameMode.title}
                   </Text>
-                </View>
-                <TouchableOpacity
-                  onPress={() => {
-                    setModalVisible(!isModalVisible);
-                    navigation.navigate('GameScreen', {
-                      gameMode: selectedGameMode.title,
-                    });
-                  }}
-                  style={styles.buttonStyle}
-                >
-                  <Text style={styles.buttonText}>Play</Text>
-                </TouchableOpacity>
+                  <View style={styles.modalTextContainer}>
+                    <Text style={styles.modalDescription}>
+                      {selectedGameMode.detailedDescription}
+                    </Text>
+                  </View>
+                  <TouchableOpacity
+                    onPress={() => {
+                      setModalVisible(!isModalVisible);
+                      navigation.navigate('GameScreen', {
+                        gameMode: selectedGameMode.title,
+                      });
+                    }}
+                    style={styles.buttonStyle}
+                  >
+                    <Text style={styles.buttonText}>Play</Text>
+                  </TouchableOpacity>
 
-                <TouchableOpacity
-                  onPress={() => setModalVisible(false)}
-                  style={styles.buttonStyle}
-                >
-                  <Text style={styles.buttonText}>Close</Text>
-                </TouchableOpacity>
-              </ImageBackground>
+                  <TouchableOpacity
+                    onPress={() => setModalVisible(false)}
+                    style={styles.buttonStyle}
+                  >
+                    <Text style={styles.buttonText}>Close</Text>
+                  </TouchableOpacity>
+                </ImageBackground>
+              </View>
             </View>
-          </View>
-        </Modal>
-      )}
+          </Modal>
+        )}
+      </ImageBackground>
     </View>
   );
 };
 const styles = StyleSheet.create({
+  background: {
+    flex: 1,
+    width: '100%',
+    height: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   container: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#e0f7fa', // Light grey
   },
   gameModesScrollView: {
     paddingVertical: 10,

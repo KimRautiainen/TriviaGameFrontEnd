@@ -4,6 +4,7 @@ import {
   View,
   TouchableOpacity,
   ImageBackground,
+  Image,
 } from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import UserProfile from '../components/homeScreenComponents/UserProfile';
@@ -65,9 +66,8 @@ const HomePage = ({navigation, route}) => {
 
   return (
     <ImageBackground
-      source={require('../assets/images/HomeBackground.jpg')} // Add your background image here
+      source={require('../assets/images/Quizking.png')} // Add your background image here
       style={styles.background}
-      resizeMode="cover"
     >
       <SafeAreaView style={styles.container}>
         <View style={styles.contentContainer}>
@@ -100,7 +100,6 @@ const styles = StyleSheet.create({
   },
   background: {
     flex: 1,
-    width: '100%',
     height: '100%',
   },
   contentContainer: {

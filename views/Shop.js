@@ -6,7 +6,7 @@ import {
   ScrollView,
   TouchableOpacity,
   ImageBackground,
-  StatusBar, // Import StatusBar to manage the space
+  StatusBar, 
   Platform,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -110,18 +110,18 @@ const ShopComponent = () => {
   };
 
   return (
-    <View style={styles.safeArea}>
-      <StatusBar
-        translucent
-        backgroundColor="transparent"
-        barStyle="light-content"
-      />
+    <ImageBackground
+      source={require('../assets/images/pet_toys.jpg')}
+      style={styles.headerBackground}
+    >
+      <View style={styles.safeArea}>
+        <StatusBar
+          translucent
+          backgroundColor="transparent"
+          barStyle="light-content"
+        />
 
-      {/* Header Section */}
-      <ImageBackground
-        source={require('../assets/images/pet_toys.jpg')}
-        style={styles.headerBackground}
-      >
+        {/* Header Section */}
         <View style={styles.titleContainer}>
           <Text style={styles.title}>Welcome to the Shop</Text>
         </View>
@@ -131,52 +131,52 @@ const ShopComponent = () => {
             {inventoryData.goldCoins} Gold Coins
           </Text>
         </View>
-      </ImageBackground>
 
-      {/* Shop Items Section */}
-      <ScrollView contentContainerStyle={styles.container}>
-        {shopItems.map((item) => (
-          <View key={item.id} style={styles.shopItem}>
-            <View style={styles.itemIconContainer}>
-              <Icon
-                name={item.icon}
-                type="font-awesome"
-                size={50}
-                color={item.iconColor}
-                style={styles.itemIcon}
-              />
+        {/* Shop Items Section */}
+        <ScrollView contentContainerStyle={styles.container}>
+          {shopItems.map((item) => (
+            <View key={item.id} style={styles.shopItem}>
+              <View style={styles.itemIconContainer}>
+                <Icon
+                  name={item.icon}
+                  type="font-awesome"
+                  size={50}
+                  color={item.iconColor}
+                  style={styles.itemIcon}
+                />
+              </View>
+              <View style={styles.itemDetails}>
+                <Text style={styles.itemName}>{item.name}</Text>
+                <Text style={styles.itemDescription}>{item.description}</Text>
+                <Text style={styles.itemPrice}>{item.price} Gold Coins</Text>
+                <TouchableOpacity
+                  style={styles.purchaseButton}
+                  onPress={() => handlePurchase(item)}
+                >
+                  <Text style={styles.purchaseButtonText}>Buy Now</Text>
+                </TouchableOpacity>
+              </View>
             </View>
-            <View style={styles.itemDetails}>
-              <Text style={styles.itemName}>{item.name}</Text>
-              <Text style={styles.itemDescription}>{item.description}</Text>
-              <Text style={styles.itemPrice}>{item.price} Gold Coins</Text>
-              <TouchableOpacity
-                style={styles.purchaseButton}
-                onPress={() => handlePurchase(item)}
-              >
-                <Text style={styles.purchaseButtonText}>Buy Now</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        ))}
-      </ScrollView>
-    </View>
+          ))}
+        </ScrollView>
+      </View>
+    </ImageBackground>
   );
 };
 
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: '#f9f9f9',
   },
   headerBackground: {
     width: '100%',
-    height: 250,
+    height: '100%',
     justifyContent: 'center',
     alignItems: 'center',
-    paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0, // Padding for Android status bar
+    paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 25, // Padding for Android status bar
   },
   titleContainer: {
+    marginTop: 50,
     paddingVertical: 10,
     paddingHorizontal: 20,
     borderRadius: 10,
@@ -207,7 +207,7 @@ const styles = StyleSheet.create({
   },
   container: {
     flexGrow: 1,
-    padding: 16,
+    justifyContent: 'center',
   },
   shopItem: {
     flexDirection: 'row',

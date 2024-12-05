@@ -49,8 +49,8 @@ const Tabscreen = () => {
         }}
       />
 
-       {/* Profile Tab */}
-       <Tab.Screen
+      {/* Profile Tab */}
+      <Tab.Screen
         name="Profile"
         component={ProfileScreen}
         options={{
@@ -147,5 +147,6 @@ const styles = StyleSheet.create({
     justifyContent: 'space-around',
     paddingHorizontal: 20,
     alignItems: 'center',
+    backgroundColor: '#B3EBF2',
   },
 });

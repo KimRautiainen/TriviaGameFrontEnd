@@ -75,7 +75,7 @@ const styles = StyleSheet.create({
     marginBottom: 25,
     fontSize: 25,
     fontWeight: 'bold',
-    color: 'black',
+    color: 'white',
     justifyContent: 'center',
   },
   achievementsIcon: {
@@ -88,7 +88,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     marginLeft: 10,
     bottom: 30, // Adjust this value based on your layout to position the level text correctly above the progress bar
-    color: 'black',
+    color: 'white',
     fontWeight: 'bold',
   },
   xpText: {
