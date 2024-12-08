@@ -1,4 +1,4 @@
-import React, {useContext} from 'react';
+import React, {useContext, useState} from 'react';
 import {
   View,
   Text,
@@ -7,11 +7,15 @@ import {
   ScrollView,
   ImageBackground,
   Image,
+  TouchableOpacity,
+  Modal,
+  TextInput,
 } from 'react-native';
-import {Avatar} from 'react-native-elements';
+import {Avatar, Button, Icon} from 'react-native-elements';
 import {MainContext} from '../contexts/MainContext';
 import {Bar} from 'react-native-progress';
 import {mediaUrl} from '../utils/app-config';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const rankImages = {
   1: require('../assets/icons/Novice.webp'), // Novice icon
@@ -34,8 +38,25 @@ const rankRequirements = {
 };
 
 const ProfileScreen = () => {
-  const {user, loading} = useContext(MainContext);
+  const {user, loading, setUser, setIsLoggedIn} = useContext(MainContext);
   const userAvatarUri = `${mediaUrl}${user.userAvatar}`;
+  const [isModalVisible, setModalVisible] = useState(false);
+  const [username, setUsername] = useState(user.username);
+
+  const handleLogout = async () => {
+    try {
+      await AsyncStorage.removeItem('userToken'); // Remove token from storage
+      setUser(null); // Clear user context
+      setIsLoggedIn(false); // Update login state
+    } catch (error) {
+      console.error('Logout error:', error.message);
+    }
+  };
+
+  const handleSaveProfile = () => {
+    // TODO
+    setModalVisible(false);
+  };
 
   if (loading) {
     return <ActivityIndicator size="large" color="#0000ff" />;
@@ -137,6 +158,15 @@ const ProfileScreen = () => {
       resizeMode="cover"
     >
       <ScrollView contentContainerStyle={styles.container}>
+        {/* Edit Profile Icon */}
+        <TouchableOpacity
+          style={styles.editProfileContainer}
+          onPress={() => setModalVisible(true)}
+        >
+          <Icon name="edit" type="font-awesome" color="#000" size={18} />
+          <Text style={styles.editProfileText}>Edit Profile</Text>
+        </TouchableOpacity>
+
         {/* Avatar and User Info */}
         <View style={styles.profileHeader}>
           <Avatar
@@ -150,6 +180,37 @@ const ProfileScreen = () => {
             <Text style={styles.levelText}>Lvl {user.level}</Text>
           </View>
         </View>
+        {/* Edit Profile Modal */}
+        <Modal
+          visible={isModalVisible}
+          animationType="slide"
+          transparent={true}
+          onRequestClose={() => setModalVisible(false)}
+        >
+          <View style={styles.modalContainer}>
+            <View style={styles.modalContent}>
+              <Text style={styles.modalHeader}>Edit Profile</Text>
+              <TextInput
+                style={styles.input}
+                placeholder="Username"
+                value={username}
+                onChangeText={setUsername}
+              />
+              <View style={styles.modalButtons}>
+                <Button
+                  title="Save"
+                  onPress={handleSaveProfile}
+                  buttonStyle={styles.saveButton}
+                />
+                <Button
+                  title="Logout"
+                  onPress={handleLogout}
+                  buttonStyle={styles.logoutButton}
+                />
+              </View>
+            </View>
+          </View>
+        </Modal>
 
         {/* Rank Timeline */}
         <View style={styles.timelineSection}>
@@ -289,7 +350,7 @@ const styles = StyleSheet.create({
   currentRankLabel: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#4a90e2',
+    color: '#333',
   },
   inactiveRankLabel: {
     color: 'gray',
@@ -384,6 +445,55 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
     color: '#333',
+  },
+  editProfileContainer: {
+    position: 'absolute',
+    top: 30,
+    right: 10,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  editProfileText: {
+    marginLeft: 5,
+    fontSize: 14,
+    color: '#000',
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
+  modalContent: {
+    width: '80%',
+    backgroundColor: '#fff',
+    borderRadius: 10,
+    padding: 20,
+    alignItems: 'center',
+  },
+  modalHeader: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginBottom: 20,
+  },
+  input: {
+    width: '100%',
+    borderBottomWidth: 1,
+    borderBottomColor: '#ccc',
+    marginBottom: 20,
+    fontSize: 16,
+  },
+  modalButtons: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: '100%',
+  },
+  saveButton: {
+    backgroundColor: '#4CAF50',
+    marginRight: 10,
+  },
+  logoutButton: {
+    backgroundColor: '#f44336',
   },
 });
 

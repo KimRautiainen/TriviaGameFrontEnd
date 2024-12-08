@@ -56,7 +56,6 @@ const Login = ({navigation}) => {
     }
   };
 
-
   useEffect(() => {
     checkToken();
   }, []);

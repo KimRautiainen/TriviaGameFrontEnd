@@ -15,8 +15,8 @@
 | 02.11 | 1    | Backend: getting user now returns user rank and rankpoints|
 | 03.12 | 4    | Home screen UI, Shop UI|
 | 05.12 | 8    | Profile screen. UI, rank logic, achievements UI|
-|       |      | |
-|       |      | |
+| 08.12 | 2    | Classic Gamemode Bug fixes|
+| 08.12 |      | |
 |       |      | |
 |       |      | |
 |       |      | |
