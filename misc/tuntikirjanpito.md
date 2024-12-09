@@ -16,7 +16,7 @@
 | 03.12 | 4    | Home screen UI, Shop UI|
 | 05.12 | 8    | Profile screen. UI, rank logic, achievements UI|
 | 08.12 | 2    | Classic Gamemode Bug fixes|
-| 08.12 |      | |
+| 09.12 | 4    | Backend: Automatically increase / decrease rank level depending on rank points. User skill system created|
 |       |      | |
 |       |      | |
 |       |      | |
