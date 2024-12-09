@@ -14,6 +14,10 @@ const TabMenu = ({screen, focused}) => {
       image = require('../assets/icons/store.png'); // Shop icon
       label = 'Shop'; // Text label for Shop
       break;
+    case 'Profile':
+      image = require('../assets/icons/profile.png');
+      label = 'Profile';
+      break;
     default:
       image = require('../assets/icons/reward.svg'); // Default icon
       label = 'Rewards'; // Default label

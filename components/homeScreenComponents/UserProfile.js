@@ -21,40 +21,38 @@ const UserProfile = () => {
   const userAvatarUri = `${mediaUrl}${user.userAvatar}`;
 
   return (
-      <View style={styles.container}>
-        <Avatar
-          size={110}
-          rounded
-          source={{uri: userAvatarUri}}
-          containerStyle={styles.avatar}
-        />
-        <View style={styles.userInfo}>
-          <Text style={styles.userText}>{user.username}</Text>
-          <View style={styles.xpBarContainer}>
-            <Text style={styles.levelText}>Lvl {user.level}</Text>
-            <Bar
-              progress={
-                isNaN(user.experiencePoints / user.maxXp)
-                  ? 0
-                  : user.experiencePoints / user.maxXp
-              }
-              width={200}
-              height={30}
-              color="#4a90e2"
-              unfilledColor="#ccc"
-              borderWidth={0}
-              borderRadius={360}
-            />
-            <Text style={styles.xpText}>
-              {`${
-                Number.isFinite(user.experiencePoints)
-                  ? user.experiencePoints
-                  : 0
-              }/${Number.isFinite(user.maxXp) ? user.maxXp : 0} XP`}
-            </Text>
-          </View>
+    <View style={styles.container}>
+      <Avatar
+        size={110}
+        rounded
+        source={{uri: userAvatarUri}}
+        containerStyle={styles.avatar}
+      />
+      <View style={styles.userInfo}>
+        <Text style={styles.userText}>{user.username}</Text>
+        <View style={styles.xpBarContainer}>
+          <Text style={styles.levelText}>Lvl {user.level}</Text>
+          <Bar
+            progress={
+              isNaN(user.experiencePoints / user.maxXp)
+                ? 0
+                : user.experiencePoints / user.maxXp
+            }
+            width={200}
+            height={30}
+            color="#4a90e2"
+            unfilledColor="#ccc"
+            borderWidth={0}
+            borderRadius={360}
+          />
+          <Text style={styles.xpText}>
+            {`${
+              Number.isFinite(user.experiencePoints) ? user.experiencePoints : 0
+            }/${Number.isFinite(user.maxXp) ? user.maxXp : 0} XP`}
+          </Text>
         </View>
       </View>
+    </View>
   );
 };
 
@@ -77,7 +75,7 @@ const styles = StyleSheet.create({
     marginBottom: 25,
     fontSize: 25,
     fontWeight: 'bold',
-    color: 'black',
+    color: 'white',
     justifyContent: 'center',
   },
   achievementsIcon: {
@@ -90,7 +88,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     marginLeft: 10,
     bottom: 30, // Adjust this value based on your layout to position the level text correctly above the progress bar
-    color: 'black',
+    color: 'white',
     fontWeight: 'bold',
   },
   xpText: {

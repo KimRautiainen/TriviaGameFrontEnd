@@ -9,6 +9,7 @@ import GameModeScreen from '../views/GameModeScreen';
 import GameScreen from '../views/GameScreen';
 import AchievementScreen from '../views/AchievementScreen';
 import ShopComponent from '../views/Shop';
+import ProfileScreen from '../views/ProfileScreen';
 import TabMenu from './TabMenu';
 import {StyleSheet} from 'react-native';
 
@@ -44,6 +45,18 @@ const Tabscreen = () => {
           headerShown: false,
           tabBarIcon: ({focused}) => (
             <TabMenu screen="Shop" focused={focused} />
+          ),
+        }}
+      />
+
+      {/* Profile Tab */}
+      <Tab.Screen
+        name="Profile"
+        component={ProfileScreen}
+        options={{
+          headerShown: false,
+          tabBarIcon: ({focused}) => (
+            <TabMenu screen="Profile" focused={focused} />
           ),
         }}
       />
@@ -134,5 +147,6 @@ const styles = StyleSheet.create({
     justifyContent: 'space-around',
     paddingHorizontal: 20,
     alignItems: 'center',
+    backgroundColor: '#B3EBF2',
   },
 });

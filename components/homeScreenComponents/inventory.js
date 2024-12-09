@@ -57,9 +57,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   itemsContainer: {
+    padding: 5,
     flexDirection: 'row',
     justifyContent: 'space-around',
     width: '80%', // Adjust based on your preference
+    backgroundColor: 'rgba(0, 0, 0, 0.12)', // Semi-transparent background for the gold container
+    borderRadius: 25,
+    marginTop: 50,
   },
   item: {
     flexDirection: 'row',
@@ -70,6 +74,7 @@ const styles = StyleSheet.create({
   },
   itemText: {
     marginLeft: 5, // Spacing between icon and text
+    color: 'white',
   },
 });
 

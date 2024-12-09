@@ -4,6 +4,7 @@ import {
   View,
   TouchableOpacity,
   ImageBackground,
+  Image,
 } from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import UserProfile from '../components/homeScreenComponents/UserProfile';
@@ -32,17 +33,15 @@ const HomePage = ({navigation, route}) => {
         // Fetch user data
         const updatedUser = await getUserByToken(token);
         const newUserLevel = updatedUser.user[0].level;
-        console.log('USERDATA2:', user);
-        console.log({'Level from mainContext': user});
-        console.log(user.level);
-        console.log('Updated user new level: ' + newUserLevel);
         // Check if level has increased
         if (newUserLevel > user.level) {
+          setUser(updatedUser.user[0]); // Update the user in context
           setShowLevelUp(true); // Trigger Level Up Screen
         }
         console.log(showLevelUp);
 
         setUser(updatedUser.user[0]); // Update the user in context
+        console.log('USER LEVEL AFTER FUCNTION:', user.level);
 
         // Fetch inventory data
         const updatedInventory = await getUserInventory(token);
@@ -65,9 +64,8 @@ const HomePage = ({navigation, route}) => {
 
   return (
     <ImageBackground
-      source={require('../assets/images/HomeBackground.jpg')} // Add your background image here
+      source={require('../assets/images/Quizking.png')} // Add your background image here
       style={styles.background}
-      resizeMode="cover"
     >
       <SafeAreaView style={styles.container}>
         <View style={styles.contentContainer}>
@@ -100,7 +98,6 @@ const styles = StyleSheet.create({
   },
   background: {
     flex: 1,
-    width: '100%',
     height: '100%',
   },
   contentContainer: {

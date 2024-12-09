@@ -6,7 +6,6 @@ import {
   Text,
   TouchableOpacity,
   ImageBackground,
-  StatusBar,
 } from 'react-native';
 import LottieView from 'lottie-react-native';
 import PropTypes from 'prop-types';
@@ -20,9 +19,6 @@ const GameCompletedComponent = ({
   onReturnHome,
 }) => (
   <>
-    {/* Transparent status bar */}
-    <StatusBar translucent backgroundColor="transparent" barStyle="light-content" />
-
     <ImageBackground
       source={require('../../assets/images/treasureChest.jpg')}
       style={styles.background}
@@ -87,7 +83,6 @@ const styles = StyleSheet.create({
     flex: 1,
     width: Dimensions.get('window').width,
     height: Dimensions.get('window').height,
-    position: 'absolute',
   },
   animation: {
     width: 300,
