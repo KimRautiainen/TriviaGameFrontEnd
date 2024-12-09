@@ -4,6 +4,7 @@ import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import Login from '../views/Login';
 import {MainContext} from '../contexts/MainContext';
+import {MusicContext} from '../contexts/MusicContext';
 import HomePage from '../views/Home';
 import GameModeScreen from '../views/GameModeScreen';
 import GameScreen from '../views/GameScreen';
@@ -66,8 +67,21 @@ const Tabscreen = () => {
 
 const Stackscreen = () => {
   const {isLoggedIn} = useContext(MainContext);
+  const {playMusic, stopMusic} = useContext(MusicContext); // Access MusicContext
   return (
-    <Stack.Navigator>
+    <Stack.Navigator
+      screenListeners={{
+        state: async (e) => {
+          const routeName = e.data.state.routes[e.data.state.index].name;
+          // Stop music on game screens, otherwise play
+          if (['GameScreen'].includes(routeName)) {
+            await stopMusic();
+          } else {
+            await playMusic();
+          }
+        },
+      }}
+    >
       {isLoggedIn ? (
         <>
           <Stack.Screen

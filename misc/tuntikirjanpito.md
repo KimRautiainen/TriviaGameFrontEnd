@@ -17,7 +17,7 @@
 | 05.12 | 8    | Profile screen. UI, rank logic, achievements UI|
 | 08.12 | 2    | Classic Gamemode Bug fixes|
 | 09.12 | 4    | Backend: Automatically increase / decrease rank level depending on rank points. User skill system created|
+| 09.12 | 2    | Background music for every screen but game screens|
 |       |      | |
 |       |      | |
-|       |      | |
-| yht   | 42   | |
+| yht   | 54   | |
