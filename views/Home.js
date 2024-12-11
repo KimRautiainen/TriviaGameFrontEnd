@@ -18,14 +18,20 @@ import {useUser} from '../hooks/ApiHooks'; // Hook for user API
 import {useInventory} from '../hooks/InventoryHooks'; // Hook for inventory API
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import LevelUpScreen from './LevelUpScreen';
+import {SoundContext} from '../contexts/SoundContext';
 
 const HomePage = ({navigation, route}) => {
   const {setUser, user, setInventoryData, showLevelUp, setShowLevelUp} =
     useContext(MainContext);
   const {getUserByToken} = useUser(); // Hook to get user data
   const {getUserInventory} = useInventory(); // Hook to get inventory data
+  const {playButtonSound} = useContext(SoundContext);
 
-  console.log('USERDATA:', user);
+  const handleNavigate = async (screen) => {
+    await playButtonSound(); // play sound before navigating
+    navigation.navigate(screen);
+  };
+
   const fetchUpdatedData = async () => {
     try {
       const token = await AsyncStorage.getItem('userToken');
@@ -38,10 +44,8 @@ const HomePage = ({navigation, route}) => {
           setUser(updatedUser.user[0]); // Update the user in context
           setShowLevelUp(true); // Trigger Level Up Screen
         }
-        console.log(showLevelUp);
 
         setUser(updatedUser.user[0]); // Update the user in context
-        console.log('USER LEVEL AFTER FUCNTION:', user.level);
 
         // Fetch inventory data
         const updatedInventory = await getUserInventory(token);
@@ -64,7 +68,7 @@ const HomePage = ({navigation, route}) => {
 
   return (
     <ImageBackground
-      source={require('../assets/images/Quizking.png')} // Add your background image here
+      source={require('../assets/images/Quizking.png')}
       style={styles.background}
     >
       <SafeAreaView style={styles.container}>
@@ -79,7 +83,7 @@ const HomePage = ({navigation, route}) => {
             <Icon name="trophy" type="font-awesome" color="#FFD43B" size={24} />
           </TouchableOpacity>
           <Button
-            onPress={() => navigation.navigate('GameModeScreen')}
+            onPress={() => handleNavigate('GameModeScreen')}
             large
             color={'green'}
             style={styles.playButton}

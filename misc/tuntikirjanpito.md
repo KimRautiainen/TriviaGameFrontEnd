@@ -18,6 +18,6 @@
 | 08.12 | 2    | Classic Gamemode Bug fixes|
 | 09.12 | 4    | Backend: Automatically increase / decrease rank level depending on rank points. User skill system created|
 | 09.12 | 2    | Background music for every screen but game screens|
+| 10.12 | 1    | Context to manage sound effects |
 |       |      | |
-|       |      | |
-| yht   | 54   | |
+| yht   | 55   | |
