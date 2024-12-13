@@ -1,4 +1,4 @@
-import React, {useContext} from 'react';
+import React, {useContext, useEffect} from 'react';
 import {
   View,
   Text,
@@ -8,9 +8,15 @@ import {
 } from 'react-native';
 import LottieView from 'lottie-react-native';
 import {MainContext} from '../contexts/MainContext';
+import {SoundContext} from '../contexts/SoundContext';
 
 const LevelUpScreen = () => {
   const {user, setShowLevelUp} = useContext(MainContext);
+  const {playLevelUpSound} = useContext(SoundContext);
+
+  useEffect(() => {
+    playLevelUpSound();
+  }, [playLevelUpSound]);
 
   // Manually close the Level Up screen
   const handleContinue = () => {

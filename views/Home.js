@@ -25,7 +25,7 @@ const HomePage = ({navigation, route}) => {
     useContext(MainContext);
   const {getUserByToken} = useUser(); // Hook to get user data
   const {getUserInventory} = useInventory(); // Hook to get inventory data
-  const {playButtonSound} = useContext(SoundContext);
+  const {playButtonSound, playLevelUpSound} = useContext(SoundContext);
 
   const handleNavigate = async (screen) => {
     await playButtonSound(); // play sound before navigating
@@ -39,13 +39,14 @@ const HomePage = ({navigation, route}) => {
         // Fetch user data
         const updatedUser = await getUserByToken(token);
         const newUserLevel = updatedUser.user[0].level;
-        // Check if level has increased
-        if (newUserLevel > user.level) {
-          setUser(updatedUser.user[0]); // Update the user in context
-          setShowLevelUp(true); // Trigger Level Up Screen
-        }
 
-        setUser(updatedUser.user[0]); // Update the user in context
+        // Use a functional update to ensure you work with the latest state
+        setUser((prevUser) => {
+          if (newUserLevel > prevUser.level) {
+            setShowLevelUp(true); // Trigger Level Up Screen
+          }
+          return updatedUser.user[0]; // Update the user in context
+        });
 
         // Fetch inventory data
         const updatedInventory = await getUserInventory(token);
@@ -58,6 +59,7 @@ const HomePage = ({navigation, route}) => {
       console.error('Error fetching updated data:', error);
     }
   };
+
 
   useFocusEffect(
     useCallback(() => {

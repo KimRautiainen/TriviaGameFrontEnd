@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useContext, useState} from 'react';
 import {
   View,
   ScrollView,
@@ -12,14 +12,22 @@ import {
 import GameModeCard from '../components/gameScreenComponents/GameModeCard';
 import gameModes from '../data/gameModes';
 import PropTypes from 'prop-types';
+import {SoundContext} from '../contexts/SoundContext';
 
 const GameModeScreen = ({navigation, route}) => {
   const [isModalVisible, setModalVisible] = useState(false);
   const [selectedGameMode, setSelectedGameMode] = useState(null);
+  const {playButtonSound, playCloseButtonSound} = useContext(SoundContext);
 
-  const gameModePressed = (mode) => {
+  const gameModePressed = async (mode) => {
+    await playButtonSound();
     setSelectedGameMode(mode);
     setModalVisible(true);
+  };
+
+  const gameModeClosed = async () => {
+    await playCloseButtonSound();
+    setModalVisible(!isModalVisible);
   };
 
   return (
@@ -50,7 +58,7 @@ const GameModeScreen = ({navigation, route}) => {
             transparent={true}
             visible={isModalVisible}
             onRequestClose={() => {
-              setModalVisible(!isModalVisible);
+              gameModeClosed();
             }}
           >
             <View style={styles.centeredView}>
@@ -69,7 +77,8 @@ const GameModeScreen = ({navigation, route}) => {
                     </Text>
                   </View>
                   <TouchableOpacity
-                    onPress={() => {
+                    onPress={async () => {
+                      await playButtonSound();
                       setModalVisible(!isModalVisible);
                       navigation.navigate('GameScreen', {
                         gameMode: selectedGameMode.title,
@@ -81,7 +90,7 @@ const GameModeScreen = ({navigation, route}) => {
                   </TouchableOpacity>
 
                   <TouchableOpacity
-                    onPress={() => setModalVisible(false)}
+                    onPress={() => gameModeClosed()}
                     style={styles.buttonStyle}
                   >
                     <Text style={styles.buttonText}>Close</Text>

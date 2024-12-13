@@ -74,7 +74,7 @@ const Stackscreen = () => {
         state: async (e) => {
           const routeName = e.data.state.routes[e.data.state.index].name;
           // Stop music on game screens, otherwise play
-          if (['GameScreen'].includes(routeName)) {
+          if (['GameScreen', 'Login'].includes(routeName)) {
             await stopMusic();
           } else {
             await playMusic();
@@ -131,7 +131,15 @@ const Stackscreen = () => {
         <Stack.Screen
           name="Login"
           component={Login}
-          options={{headerShown: false}}
+          options={{
+            headerShown: false,
+          }}
+          listeners={{
+            focus: async () => {
+              // Always stop the music when the Login screen is focused
+              await stopMusic();
+            },
+          }}
         />
       )}
     </Stack.Navigator>

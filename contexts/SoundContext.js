@@ -5,12 +5,16 @@ export const SoundContext = createContext();
 
 export const SoundProvider = ({children}) => {
   const buttonPressSound = useRef();
+  const closeButtonSound = useRef();
+  const correctSound = useRef();
+  const incorrectSound = useRef();
+  const levelUpSound = useRef();
 
   const playButtonSound = async () => {
     try {
       if (!buttonPressSound.current) {
         const {sound} = await Audio.Sound.createAsync(
-          require('../assets/soundEffects/clickPop.mp3'), // Replace with your button click sound
+          require('../assets/soundEffects/clickPop.mp3'),
         );
         buttonPressSound.current = sound;
       }
@@ -20,10 +24,85 @@ export const SoundProvider = ({children}) => {
     }
   };
 
+  const playCloseButtonSound = async () => {
+    try {
+      if (!closeButtonSound.current) {
+        const {sound} = await Audio.Sound.createAsync(
+          require('../assets/soundEffects/closButton.mp3'),
+        );
+        closeButtonSound.current = sound;
+      }
+      await closeButtonSound.current.replayAsync();
+    } catch (error) {
+      console.error('Error playing close button sound:', error);
+    }
+  };
+
+  const playCorrectSound = async () => {
+    try {
+      if (!correctSound.current) {
+        const {sound} = await Audio.Sound.createAsync(
+          require('../assets/soundEffects/correct.mp3'),
+        );
+        correctSound.current = sound;
+      }
+      await correctSound.current.replayAsync();
+    } catch (error) {
+      console.error('Error playing correct sound:', error);
+    }
+  };
+
+  const playIncorrectSound = async () => {
+    try {
+      if (!incorrectSound.current) {
+        const {sound} = await Audio.Sound.createAsync(
+          require('../assets/soundEffects/incorrect.mp3'),
+        );
+        incorrectSound.current = sound;
+      }
+      await incorrectSound.current.replayAsync();
+    } catch (error) {
+      console.error('Error playing incorrect sound:', error);
+    }
+  };
+  const playLevelUpSound = async () => {
+    try {
+      if (!levelUpSound.current) {
+        const {sound} = await Audio.Sound.createAsync(
+          require('../assets/soundEffects/levelUp2.mp3'),
+        );
+        levelUpSound.current = sound;
+      }
+      await levelUpSound.current.replayAsync();
+    } catch (error) {
+      console.error('Error playing incorrect sound:', error);
+    }
+  };
+
   const unloadSounds = async () => {
-    if (buttonPressSound.current) {
-      await buttonPressSound.current.unloadAsync();
-      buttonPressSound.current = null;
+    try {
+      if (buttonPressSound.current) {
+        await buttonPressSound.current.unloadAsync();
+        buttonPressSound.current = null;
+      }
+      if (closeButtonSound.current) {
+        await closeButtonSound.current.unloadAsync();
+        closeButtonSound.current = null;
+      }
+      if (correctSound.current) {
+        await correctSound.current.unloadAsync();
+        correctSound.current = null;
+      }
+      if (incorrectSound.current) {
+        await incorrectSound.current.unloadAsync();
+        incorrectSound.current = null;
+      }
+      if (levelUpSound.current) {
+        await levelUpSound.current.unloadAsync();
+        levelUpSound.current = null;
+      }
+    } catch (error) {
+      console.error('Error unloading sounds:', error);
     }
   };
 
@@ -34,7 +113,15 @@ export const SoundProvider = ({children}) => {
   }, []);
 
   return (
-    <SoundContext.Provider value={{playButtonSound}}>
+    <SoundContext.Provider
+      value={{
+        playButtonSound,
+        playCloseButtonSound,
+        playCorrectSound,
+        playIncorrectSound,
+        playLevelUpSound,
+      }}
+    >
       {children}
     </SoundContext.Provider>
   );

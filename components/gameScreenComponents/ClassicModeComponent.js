@@ -1,4 +1,10 @@
-import React, {useEffect, useState, useLayoutEffect, useContext} from 'react';
+import React, {
+  useEffect,
+  useState,
+  useLayoutEffect,
+  useContext,
+  useRef,
+} from 'react';
 import {
   View,
   Text,
@@ -20,7 +26,7 @@ import {MainContext} from '../../contexts/MainContext';
 import {useUser} from '../../hooks/ApiHooks';
 import {useInventory} from '../../hooks/InventoryHooks';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
+import {SoundContext} from '../../contexts/SoundContext';
 
 const {width, height} = Dimensions.get('window');
 
@@ -39,6 +45,7 @@ const ClassicModeComponent = () => {
 
   // Context and hooks
   const {user} = useContext(MainContext);
+  const {playCorrectSound, playIncorrectSound} = useContext(SoundContext);
   const {awardXp} = useUser();
   const {addItemsToInventory} = useInventory();
 
@@ -99,16 +106,26 @@ const ClassicModeComponent = () => {
     fetchQuestions();
   }, []);
 
-  const handleAnswerSelection = (answer) => {
+  const answerProcessingRef = useRef(false);
+
+  const handleAnswerSelection = async (answer) => {
+    // Prevent multiple triggers
+    if (answerProcessingRef.current) return;
+    answerProcessingRef.current = true;
+
     const isCorrect = answer === questions[currentQuestionIndex].correct_answer;
     setSelectedAnswer(answer);
     setShowAnswer(true);
     setIsCorrectAnswer(isCorrect);
 
     if (isCorrect) {
-      setCorrectAnswersCount((prevCount) => prevCount + 1);
+      playCorrectSound().then(() => {
+        setCorrectAnswersCount((prevCount) => prevCount + 1);
+      });
     } else {
-      setIncorrectAnswersCount((prevCount) => prevCount + 1);
+      playIncorrectSound().then(() => {
+        setIncorrectAnswersCount((prevCount) => prevCount + 1);
+      });
     }
 
     setTimeout(() => {
@@ -122,6 +139,7 @@ const ClassicModeComponent = () => {
         awardXpAfterGameCompletion();
         addItemsToInventoryAfterGameCompletion();
       }
+      answerProcessingRef.current = false; // Allow further processing
     }, 2000);
   };
 
@@ -132,7 +150,7 @@ const ClassicModeComponent = () => {
         const xp = correctAnswersCount * 111; // Calculate XP
         const userId = user.userId;
 
-        // Award XP, don't worry about level here
+        // Award XP
         const response = await awardXp(token, xp, userId);
 
         if (response) {
