@@ -17,7 +17,14 @@
 | 05.12 | 8    | Profile screen. UI, rank logic, achievements UI|
 | 08.12 | 2    | Classic Gamemode Bug fixes|
 | 09.12 | 4    | Backend: Automatically increase / decrease rank level depending on rank points. User skill system created|
+| 09.12 | 2    | Background music for every screen but game screens|
+| 11.12 | 1    | Context to manage sound effects |
+| 13.12 | 4    | fixed bug where level up state stays true, added sound effect to various opacities|
+| 14.12 | 2    | Animated icons to homescreen |
+| 18.12 |      | |
 |       |      | |
 |       |      | |
 |       |      | |
-| yht   | 42   | |
+|       |      | |
+|       |      | |
+| yht   | 51   | |

@@ -2,6 +2,7 @@ import React, {useContext} from 'react';
 import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
 import {Icon} from '@rneui/themed';
 import {MainContext} from '../../contexts/MainContext'; // Import MainContext
+import LottieView from 'lottie-react-native';
 
 const Inventory = () => {
   const {inventoryData} = useContext(MainContext); // Get the inventory data from MainContext
@@ -21,14 +22,14 @@ const Inventory = () => {
           <Text style={styles.itemText}>{`10 Lives`}</Text>
         </View>
 
-        {/* Gold Coins (Fetched from backend) */}
+        {/* Gold Coins (Animation) */}
         <View style={styles.item}>
-          <TouchableOpacity onPress={() => iconPressed('monetization-on')}>
-            <Icon
-              name="monetization-on"
-              type="material"
-              size={34}
-              color="#FFD700"
+          <TouchableOpacity onPress={() => iconPressed('goldCoins')}>
+            <LottieView
+              source={require('../../assets/animations/goldCoin.json')} // Gold coin animation
+              autoPlay
+              loop
+              style={styles.animation}
             />
           </TouchableOpacity>
           <Text
@@ -36,10 +37,15 @@ const Inventory = () => {
           >{`${inventoryData.goldCoins} Coins`}</Text>
         </View>
 
-        {/* Tournament Tickets (Fetched from backend) */}
+        {/* Tournament Tickets (Animation) */}
         <View style={styles.item}>
-          <TouchableOpacity onPress={() => iconPressed('ticket')}>
-            <Icon name="ticket" type="font-awesome" size={34} color="#4CAF50" />
+          <TouchableOpacity onPress={() => iconPressed('tournamentTickets')}>
+            <LottieView
+              source={require('../../assets/animations/tournamentTicket.json')} // Tournament ticket animation
+              autoPlay
+              loop
+              style={styles.animation}
+            />
           </TouchableOpacity>
           <Text
             style={styles.itemText}
@@ -57,24 +63,28 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   itemsContainer: {
-    padding: 5,
+    padding: 1,
     flexDirection: 'row',
     justifyContent: 'space-around',
     width: '80%', // Adjust based on your preference
     backgroundColor: 'rgba(0, 0, 0, 0.12)', // Semi-transparent background for the gold container
     borderRadius: 25,
-    marginTop: 50,
+    marginTop: 65,
   },
   item: {
     flexDirection: 'row',
     alignItems: 'center',
     borderRadius: 5,
-    padding: 8,
+    padding: 6,
     marginHorizontal: 4, // Spacing between items
   },
   itemText: {
     marginLeft: 5, // Spacing between icon and text
     color: 'white',
+  },
+  animation: {
+    width: 40, // Adjust size as needed
+    height: 40,
   },
 });
 

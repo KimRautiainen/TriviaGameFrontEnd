@@ -23,7 +23,7 @@ const UserProfile = () => {
   return (
     <View style={styles.container}>
       <Avatar
-        size={110}
+        size={100}
         rounded
         source={{uri: userAvatarUri}}
         containerStyle={styles.avatar}
@@ -39,7 +39,7 @@ const UserProfile = () => {
                 : user.experiencePoints / user.maxXp
             }
             width={200}
-            height={30}
+            height={25}
             color="#4a90e2"
             unfilledColor="#ccc"
             borderWidth={0}
