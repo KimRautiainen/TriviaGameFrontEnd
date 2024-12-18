@@ -164,7 +164,7 @@ const HomePage = ({navigation, route}) => {
 
               <TouchableOpacity
                 style={styles.iconContainer}
-                onPress={() => handleNavigate('LeaderboardsScreen')}
+                onPress={() => handleNavigate('LeaderboardScreen')}
               >
                 <LottieView
                   ref={leaderboardsAnimationRef}

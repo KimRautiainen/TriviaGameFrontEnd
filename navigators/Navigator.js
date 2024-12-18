@@ -11,6 +11,7 @@ import GameScreen from '../views/GameScreen';
 import AchievementScreen from '../views/AchievementScreen';
 import ShopComponent from '../views/Shop';
 import ProfileScreen from '../views/ProfileScreen';
+import LeaderboardScreen from '../views/LeaderboardScreen';
 import TabMenu from './TabMenu';
 import {StyleSheet} from 'react-native';
 
@@ -124,6 +125,22 @@ const Stackscreen = () => {
                 fontWeight: 'bold',
               },
               headerBackTitleVisible: true,
+            }}
+          />
+          <Stack.Screen
+            name="LeaderboardScreen"
+            component={LeaderboardScreen}
+            options={{
+              headerShown: true,
+              title: 'Leaderboard',
+              headerStyle: {
+                backgroundColor: '#000000',
+              },
+              headerTintColor: '#fff',
+              headerTitleStyle: {
+                fontWeight: 'bold',
+              },
+              headerBackTitleVisible: false,
             }}
           />
         </>
