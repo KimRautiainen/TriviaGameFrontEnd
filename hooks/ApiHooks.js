@@ -83,7 +83,7 @@ const useUser = () => {
         Authorization: `Bearer ${token}`,
       },
     };
-    return await doFetch(apiUrl + 'users/' + id, options);
+    return await doFetch(apiUrl + 'user/' + id, options);
   };
 
   return {

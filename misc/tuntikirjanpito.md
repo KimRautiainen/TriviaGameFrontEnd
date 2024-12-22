@@ -21,10 +21,10 @@
 | 11.12 | 1    | Context to manage sound effects |
 | 13.12 | 4    | fixed bug where level up state stays true, added sound effect to various opacities|
 | 14.12 | 2    | Animated icons to homescreen |
-| 18.12 |      | |
+| 18.12 | 5    | Leaderboards screen|
 |       |      | |
 |       |      | |
 |       |      | |
 |       |      | |
 |       |      | |
-| yht   | 51   | |
+| yht   | 56   | |
