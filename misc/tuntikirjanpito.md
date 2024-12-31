@@ -22,8 +22,10 @@
 | 13.12 | 4    | fixed bug where level up state stays true, added sound effect to various opacities|
 | 14.12 | 2    | Animated icons to homescreen |
 | 18.12 | 5    | Leaderboards screen|
-|       |      | |
-|       |      | |
+| 28.12 | 6    | Backend: Endpoints for events and postman tests|
+| 30.12 | 8    | Websocket server for live 1v1 ranked matches, User joins pool and when other user with similiar rankpoints
+                 joins the pool they are deleted from matchmaking pool and placed in match room. Contacting with webnsocket
+                 server requires valid token so only users can connect   |
 |       |      | |
 |       |      | |
 |       |      | |
