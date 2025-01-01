@@ -30,5 +30,5 @@
                  all questions, assign scores to leaderboard and mark match completed and save records of the match                  |
 | 01.01 | 4    | Backend: Unit testing for websocket server that simulates two users with simialiar rankpoints join matchmaking pool,
                  matching them and answering all questions for both players simultaing whole lifecycle of a trivia online game       |
-| | | |
+| 01.01 | 6    | Working prototype of 1v1 ranked game full lifecycle |
 | yht | 92 | |
