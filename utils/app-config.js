@@ -10,4 +10,7 @@ const mediaUrl = apiUrl + 'uploads/';
 const categoryUrl = 'https://opentdb.com/api_category.php'; // Open trivia database category URL
 const triviaUrl = 'https://opentdb.com/api.php?'; // Open trivia database API URL
 
-export {triviaUrl, apiUrl, authUrl, mediaUrl, categoryUrl};
+// Websocket server url
+const serverUrl = 'ws://192.168.101.205:3000';
+
+export {triviaUrl, apiUrl, authUrl, mediaUrl, categoryUrl, serverUrl};

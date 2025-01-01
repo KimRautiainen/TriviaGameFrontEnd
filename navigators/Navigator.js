@@ -12,8 +12,10 @@ import AchievementScreen from '../views/AchievementScreen';
 import ShopComponent from '../views/Shop';
 import ProfileScreen from '../views/ProfileScreen';
 import LeaderboardScreen from '../views/LeaderboardScreen';
+import RankedScreen from '../views/RankedScreen';
 import TabMenu from './TabMenu';
 import {StyleSheet} from 'react-native';
+import RankedGameScreen from '../views/RankedGameScreen';
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -133,6 +135,38 @@ const Stackscreen = () => {
             options={{
               headerShown: true,
               title: 'Leaderboard',
+              headerStyle: {
+                backgroundColor: '#000000',
+              },
+              headerTintColor: '#fff',
+              headerTitleStyle: {
+                fontWeight: 'bold',
+              },
+              headerBackTitleVisible: false,
+            }}
+          />
+          <Stack.Screen
+            name="RankedScreen"
+            component={RankedScreen}
+            options={{
+              headerShown: true,
+              title: 'Ranked',
+              headerStyle: {
+                backgroundColor: '#000000',
+              },
+              headerTintColor: '#fff',
+              headerTitleStyle: {
+                fontWeight: 'bold',
+              },
+              headerBackTitleVisible: false,
+            }}
+          />
+          <Stack.Screen
+            name="RankedGameScreen"
+            component={RankedGameScreen}
+            options={{
+              headerShown: false,
+              title: 'Ranked',
               headerStyle: {
                 backgroundColor: '#000000',
               },
