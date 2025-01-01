@@ -24,12 +24,11 @@
 | 18.12 | 5    | Leaderboards screen                                                                                                 |
 | 28.12 | 6    | Backend: Endpoints for events and postman tests                                                                     |
 | 30.12 | 8    | Backend: Websocket server for live 1v1 ranked matches, User joins pool and when other user with similiar rankpoints |
-
                  joins the pool they are deleted from matchmaking pool and placed in match room. Contacting with webnsocket
-                 server requires valid token so only users can connect   |
-
-| 31.12 | 8    | Serve questions to match when match is created, automaticly end the match when both players have answered all
-                 questions, assign scores to leaderboard and mark match completed and save records of the match|
+                 server requires valid token so only users can connect                                                               |
+| 31.12 | 8    | Backend: Serve questions to match when match is created, automaticly end the match when both players have answered
+                 all questions, assign scores to leaderboard and mark match completed and save records of the match                  |
+| 01.01 | 4    | Backend: Unit testing for websocket server that simulates two users with simialiar rankpoints join matchmaking pool,
+                 matching them and answering all questions for both players simultaing whole lifecycle of a trivia online game       |
 | | | |
-| | | |
-| yht | 56 | |
+| yht | 92 | |
