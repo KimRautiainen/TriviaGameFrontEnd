@@ -43,16 +43,20 @@ const useUser = () => {
     return await doFetch(apiUrl + 'user/token', options);
   };
 
-  const postUser = async (userData) => {
+  const postUser = async (userData, isFormData = false) => {
     const options = {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(userData),
+      headers: isFormData
+        ? {} // FormData automatically sets appropriate headers, including boundary
+        : {
+            'Content-Type': 'application/json',
+          },
+      body: isFormData ? userData : JSON.stringify(userData),
     };
+
     return await doFetch(authUrl + 'register', options);
   };
+
 
   const putUser = async (userData, token) => {
     const options = {

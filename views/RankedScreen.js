@@ -1,18 +1,31 @@
 import React, {useContext, useEffect, useState} from 'react';
-import {View, Text, StyleSheet, TouchableOpacity, Alert} from 'react-native';
+import {View, Text, StyleSheet, TouchableOpacity, Alert, Image} from 'react-native';
 import {MainContext} from '../contexts/MainContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {serverUrl} from '../utils/app-config';
 import LottieView from 'lottie-react-native';
+import {Bar} from 'react-native-progress';
+
+const rankImages = {
+  1: require('../assets/icons/Novice.webp'),
+  2: require('../assets/icons/Master.webp'),
+  3: require('../assets/icons/Expert.webp'),
+};
+
+const rankRequirements = {
+  1: 1000,
+  2: 2000,
+  3: Infinity, // No further progress for Expert
+};
 
 const RankedScreen = ({navigation}) => {
   const {user} = useContext(MainContext); // Access user data and token from context
-  const {rank, rankLevel, currentPoints, pointsToNextRank} = user; // Destructure user state
+  const {rankLevel, rankPoints, pointsToNextRank} = user; // Destructure user state
 
   const [ws, setWs] = useState(null); // WebSocket state
   const [isFindingMatch, setIsFindingMatch] = useState(false); // Matchmaking state
   const [timeoutId, setTimeoutId] = useState(null); // Store timeout ID
-  const progress = currentPoints / pointsToNextRank; // Calculate progress for the progress bar
+  const progress = rankPoints / pointsToNextRank; // Calculate progress for the progress bar
 
   useEffect(() => {
     const initializeWebSocket = async () => {
@@ -34,7 +47,7 @@ const RankedScreen = ({navigation}) => {
           setIsFindingMatch(false); // Stop animation
           Alert.alert('Match Found!', 'Opponent Found! Starting the game.');
           navigation.navigate('RankedGameScreen', {
-            gameId: message.payload.gameId, 
+            gameId: message.payload.gameId,
             opponent: message.payload.opponent,
             questions: message.payload.questions, // Pass questions to the game screen
           });
@@ -91,26 +104,45 @@ const RankedScreen = ({navigation}) => {
     Alert.alert('Matchmaking Cancelled', 'You have left the matchmaking pool.');
   };
 
+  const renderRankProgress = () => {
+    const nextRankLevel = rankLevel + 1;
+    const nextRankRequirement = rankRequirements[nextRankLevel] || Infinity;
+
+    // Hide progress section if user is already Expert
+    if (rankLevel === 3) return null;
+
+    return (
+      <View style={styles.rankProgressContainer}>
+        <Image source={rankImages[rankLevel]} style={styles.rankImage}  />
+        <View style={styles.rankProgressBarContainer}>
+          <Bar
+            progress={rankPoints / nextRankRequirement}
+            width={300}
+            height={20}
+            color="#4a90e2"
+            unfilledColor="#ccc"
+            borderWidth={0}
+            borderRadius={10}
+          />
+        </View>
+        <Text style={styles.rankProgressText}>
+          {rankPoints} / {nextRankRequirement} Rank Points
+        </Text>
+      </View>
+    );
+  };
+
   return (
     <View style={styles.container}>
-      {/* Info Section */}
       {!isFindingMatch ? (
         <>
           <Text style={styles.header}>Ranked Game Mode</Text>
           <Text style={styles.info}>
-            Compete against other players to earn points and climb the ranks! Answer
-            trivia questions quickly and accurately to win.
+            Compete against other players to earn points and climb the ranks! Answer trivia questions quickly and accurately to win.
           </Text>
 
           {/* Rank Progression */}
-          <View style={styles.rankSection}>
-            <Text style={styles.rankText}>
-              Current Rank: {rank} (Level {rankLevel})
-            </Text>
-            <Text style={styles.progressText}>
-              {currentPoints} / {pointsToNextRank} Points
-            </Text>
-          </View>
+          {renderRankProgress()}
 
           {/* Find Match Button */}
           <TouchableOpacity style={styles.button} onPress={handleFindMatch}>
@@ -154,18 +186,26 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     textAlign: 'center',
   },
-  rankSection: {
-    marginVertical: 20,
+  rankProgressContainer: {
     alignItems: 'center',
+    marginVertical: 20,
   },
-  rankText: {
-    fontSize: 18,
-    fontWeight: 'bold',
+  rankProgressBarContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginVertical: 10,
+  },
+  rankImage: {
+    width: 100,
+    height: 100,
+    resizeMode: 'contain',
     marginBottom: 10,
+    borderRadius: 60,
   },
-  progressText: {
+  rankProgressText: {
     fontSize: 14,
-    marginBottom: 10,
+    color: '#333',
+    marginTop: 10,
   },
   button: {
     backgroundColor: '#007bff',
