@@ -30,5 +30,13 @@
                  all questions, assign scores to leaderboard and mark match completed and save records of the match                  |
 | 01.01 | 4    | Backend: Unit testing for websocket server that simulates two users with simialiar rankpoints join matchmaking pool,
                  matching them and answering all questions for both players simultaing whole lifecycle of a trivia online game       |
-| 01.01 | 6    | Working prototype of 1v1 ranked game full lifecycle |
+| 01.01 | 6    | Working prototype of 1v1 ranked game full lifecycle                                                                 |
+| 07.01 | 5    | (backend) modified websocket to move to next question when both users have answered                                                             |
+| 07.01 | 2    | Simple register page done                                                                                           |
+| 08.01 | 8    | (fullstack) Send user feedback when user answers question to enable live score for both users.(front) Bug fixing
+                  why game crashes when answering next question and score updating goes to wrong player sometimes                    |
+| 09.01 | 6    | (fullstack) Fixed both bugs. UI to ranked game, animations when user or opponents answers                           |
+| 01.01 |     |                                                               |
+| 01.01 |     |                                                               |
+| 01.01 |     |                                                               |
 | yht | 92 | |

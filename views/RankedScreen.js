@@ -1,8 +1,14 @@
 import React, {useContext, useEffect, useState} from 'react';
-import {View, Text, StyleSheet, TouchableOpacity, Alert, Image} from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  Alert,
+  Image,
+} from 'react-native';
 import {MainContext} from '../contexts/MainContext';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import {serverUrl} from '../utils/app-config';
+import {WebSocketContext} from '../contexts/WebsocketContext';
 import LottieView from 'lottie-react-native';
 import {Bar} from 'react-native-progress';
 
@@ -19,77 +25,56 @@ const rankRequirements = {
 };
 
 const RankedScreen = ({navigation}) => {
-  const {user} = useContext(MainContext); // Access user data and token from context
-  const {rankLevel, rankPoints, pointsToNextRank} = user; // Destructure user state
+  const {user} = useContext(MainContext); // Access user data
+  const {ws} = useContext(WebSocketContext); // Access WebSocket from context
+  const {rankLevel, rankPoints, pointsToNextRank} = user;
 
-  const [ws, setWs] = useState(null); // WebSocket state
-  const [isFindingMatch, setIsFindingMatch] = useState(false); // Matchmaking state
-  const [timeoutId, setTimeoutId] = useState(null); // Store timeout ID
-  const progress = rankPoints / pointsToNextRank; // Calculate progress for the progress bar
+  const [isFindingMatch, setIsFindingMatch] = useState(false);
+  const [timeoutId, setTimeoutId] = useState(null);
+
+  const progress = rankPoints / pointsToNextRank;
 
   useEffect(() => {
-    const initializeWebSocket = async () => {
-      const token = await AsyncStorage.getItem('userToken'); // Retrieve token
-      if (!token) {
-        Alert.alert('Error', 'User token not found. Please log in.');
-        return;
+    if (!ws) {
+      console.error('WebSocket is not available.');
+      return;
+    }
+
+    const handleWebSocketMessage = (event) => {
+      const message = JSON.parse(event.data);
+      console.log('Received message:', message);
+
+      if (message.type === 'match_found') {
+        clearTimeout(timeoutId); // Clear the matchmaking timeout
+        setIsFindingMatch(false); // Stop finding match animation
+        Alert.alert('Match Found!', 'Opponent Found! Starting the game.');
+        navigation.navigate('RankedGameScreen', {
+          gameId: message.payload.gameId,
+          opponent: message.payload.opponent,
+          questions: message.payload.questions,
+        });
       }
-      const websocket = new WebSocket(serverUrl, token);
-
-      websocket.onopen = () => {
-        console.log('WebSocket connection established.');
-      };
-
-      websocket.onmessage = (event) => {
-        const message = JSON.parse(event.data);
-        if (message.type === 'match_found') {
-          clearTimeout(timeoutId); // Clear the timeout when match is found
-          setIsFindingMatch(false); // Stop animation
-          Alert.alert('Match Found!', 'Opponent Found! Starting the game.');
-          navigation.navigate('RankedGameScreen', {
-            gameId: message.payload.gameId,
-            opponent: message.payload.opponent,
-            questions: message.payload.questions, // Pass questions to the game screen
-          });
-        }
-      };
-
-      websocket.onerror = (error) => {
-        console.error('WebSocket error:', error);
-        Alert.alert('Error', 'WebSocket connection failed.');
-      };
-
-      websocket.onclose = () => {
-        console.log('WebSocket connection closed.');
-      };
-
-      setWs(websocket); // Save WebSocket instance in state
     };
 
-    initializeWebSocket();
+    ws.addEventListener('message', handleWebSocketMessage);
 
-    // Cleanup WebSocket on unmount
     return () => {
-      if (ws) {
-        ws.close();
-        console.log('WebSocket connection cleaned up.');
-      }
+      ws.removeEventListener('message', handleWebSocketMessage);
     };
-  }, []);
+  }, [ws, navigation, timeoutId]);
 
   const handleFindMatch = () => {
     if (ws && ws.readyState === WebSocket.OPEN) {
-      setIsFindingMatch(true); // Show animation
+      setIsFindingMatch(true);
       ws.send(JSON.stringify({type: 'join_matchmaking', payload: {}}));
 
-      // Set a timeout to notify the user if no match is found within 20 seconds
       const id = setTimeout(() => {
-        setIsFindingMatch(false); // Stop animation
+        setIsFindingMatch(false);
         Alert.alert('Timeout', 'No match found within 20 seconds.');
-        handleCancelMatchmaking(); // Leave matchmaking pool
+        handleCancelMatchmaking();
       }, 20000);
 
-      setTimeoutId(id); // Store timeout ID
+      setTimeoutId(id);
     } else {
       Alert.alert('Error', 'WebSocket connection is not open.');
     }
@@ -99,8 +84,8 @@ const RankedScreen = ({navigation}) => {
     if (ws && ws.readyState === WebSocket.OPEN) {
       ws.send(JSON.stringify({type: 'leave_matchmaking', payload: {}}));
     }
-    clearTimeout(timeoutId); // Clear the timeout
-    setIsFindingMatch(false); // Stop animation
+    clearTimeout(timeoutId);
+    setIsFindingMatch(false);
     Alert.alert('Matchmaking Cancelled', 'You have left the matchmaking pool.');
   };
 
@@ -108,12 +93,11 @@ const RankedScreen = ({navigation}) => {
     const nextRankLevel = rankLevel + 1;
     const nextRankRequirement = rankRequirements[nextRankLevel] || Infinity;
 
-    // Hide progress section if user is already Expert
     if (rankLevel === 3) return null;
 
     return (
       <View style={styles.rankProgressContainer}>
-        <Image source={rankImages[rankLevel]} style={styles.rankImage}  />
+        <Image source={rankImages[rankLevel]} style={styles.rankImage} />
         <View style={styles.rankProgressBarContainer}>
           <Bar
             progress={rankPoints / nextRankRequirement}
@@ -138,13 +122,11 @@ const RankedScreen = ({navigation}) => {
         <>
           <Text style={styles.header}>Ranked Game Mode</Text>
           <Text style={styles.info}>
-            Compete against other players to earn points and climb the ranks! Answer trivia questions quickly and accurately to win.
+            Compete against other players to earn points and climb the ranks!
           </Text>
 
-          {/* Rank Progression */}
           {renderRankProgress()}
 
-          {/* Find Match Button */}
           <TouchableOpacity style={styles.button} onPress={handleFindMatch}>
             <Text style={styles.buttonText}>Find Match</Text>
           </TouchableOpacity>
@@ -160,7 +142,8 @@ const RankedScreen = ({navigation}) => {
           <Text style={styles.matchingText}>Looking for Opponent...</Text>
           <TouchableOpacity
             style={styles.cancelButton}
-            onPress={handleCancelMatchmaking}>
+            onPress={handleCancelMatchmaking}
+          >
             <Text style={styles.cancelButtonText}>Cancel</Text>
           </TouchableOpacity>
         </View>

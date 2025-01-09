@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useContext} from 'react';
+import React, {useState, useEffect, useContext, useRef} from 'react';
 import {
   View,
   Text,
@@ -6,25 +6,94 @@ import {
   TouchableOpacity,
   Alert,
   Image,
+  Dimensions,
+  ImageBackground,
 } from 'react-native';
 import {MainContext} from '../contexts/MainContext';
+import {WebSocketContext} from '../contexts/WebsocketContext';
 import {mediaUrl} from '../utils/app-config';
+import LottieView from 'lottie-react-native';
 import {useUser} from '../hooks/ApiHooks';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const RankedGameScreen = ({route, navigation}) => {
-  const {user} = useContext(MainContext); // Access user data
-  const {gameId, opponent, questions} = route.params; // Get match data
+const {width, height} = Dimensions.get('window');
 
-  const [opponentData, setOpponentData] = useState(null); // Store opponent info
-  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-  const [timeLeft, setTimeLeft] = useState(10); // Timer for each question
-  const [userScore, setUserScore] = useState(0);
-  const [opponentScore, setOpponentScore] = useState(0);
+const RankedGameScreen = ({route, navigation}) => {
+  const {user} = useContext(MainContext);
+  const {ws} = useContext(WebSocketContext);
+  const {gameId, opponent, questions} = route.params;
   const {getUserById} = useUser();
 
+  const [opponentData, setOpponentData] = useState(null);
+  const [currentQuestion, setCurrentQuestion] = useState(questions[0]);
+  const [userScore, setUserScore] = useState(0);
+  const [opponentScore, setOpponentScore] = useState(0);
+  const [selectedAnswer, setSelectedAnswer] = useState(null);
+  const [showAnswer, setShowAnswer] = useState(false);
+  const [userAnswerCorrect, setUserAnswerCorrect] = useState(null);
+  const [opponentAnswerCorrect, setOpponentAnswerCorrect] = useState(null);
+
+  const userAnimationRef = useRef(null);
+  const opponentAnimationRef = useRef(null);
+
   const userAvatarUri = `${mediaUrl}${user.userAvatar}`;
-  const currentQuestion = questions[currentQuestionIndex];
+
+  useEffect(() => {
+    const handleWebSocketMessage = (event) => {
+      const message = JSON.parse(event.data);
+      console.log('WebSocket message received:', message);
+
+      switch (message.type) {
+        case 'answer_feedback':
+          handleAnswerFeedback(message.payload);
+          break;
+        case 'score_update':
+          updateScores(message.payload);
+          break;
+        case 'next_question':
+          if (message.payload && message.payload.question) {
+            const nextQuestion = message.payload.question;
+
+            // Normalize keys and parse options
+            nextQuestion.order = nextQuestion.questionOrder;
+            if (typeof nextQuestion.options === 'string') {
+              try {
+                nextQuestion.options = JSON.parse(nextQuestion.options);
+              } catch (error) {
+                console.error('Error parsing options:', error.message);
+                nextQuestion.options = [];
+              }
+            }
+
+            setCurrentQuestion(nextQuestion);
+            setShowAnswer(false);
+            setSelectedAnswer(null);
+
+            // Reset feedback states
+            setUserAnswerCorrect(null);
+            setOpponentAnswerCorrect(null);
+          } else {
+            console.error('Invalid next_question payload:', message.payload);
+          }
+          break;
+        case 'game_ended':
+          handleGameEnd(message.payload);
+          break;
+        default:
+          console.log('Unknown message type:', message.type);
+      }
+    };
+
+    ws.addEventListener('message', handleWebSocketMessage);
+
+    return () => {
+      ws.removeEventListener('message', handleWebSocketMessage);
+    };
+  }, [ws]);
+
+  useEffect(() => {
+    console.log('Current Question Updated:', currentQuestion);
+  }, [currentQuestion]);
 
   useEffect(() => {
     // Fetch opponent info when component mounts
@@ -34,7 +103,7 @@ const RankedGameScreen = ({route, navigation}) => {
   const fetchOpponentData = async () => {
     try {
       const token = await AsyncStorage.getItem('userToken');
-      const response = await getUserById(opponent, token); // Fetch opponent info
+      const response = await getUserById(opponent, token);
       if (response) {
         setOpponentData(response);
       } else {
@@ -45,185 +114,210 @@ const RankedGameScreen = ({route, navigation}) => {
     }
   };
 
-  useEffect(() => {
-    // Timer logic
-    const timer = setInterval(() => {
-      setTimeLeft((prevTime) => {
-        if (prevTime <= 1) {
-          handleTimeout();
-          return 0;
-        }
-        return prevTime - 1;
-      });
-    }, 1000);
-
-    return () => clearInterval(timer);
-  }, [currentQuestionIndex]);
-
-  const handleTimeout = () => {
-    // Go to the next question on timeout
-    goToNextQuestion();
-  };
-
-  const handleAnswer = (selectedAnswer) => {
-    if (selectedAnswer === currentQuestion.correctAnswer) {
-      setUserScore((prevScore) => prevScore + 1);
-      Alert.alert('Correct!', 'You got the answer right.');
-    } else {
-      Alert.alert('Wrong!', 'Better luck next time.');
+  const sendAnswer = (selectedAnswer) => {
+    if (!ws || ws.readyState !== WebSocket.OPEN) {
+      console.error('WebSocket is not connected or ready.');
+      return;
     }
-    goToNextQuestion();
-  };
 
-  const goToNextQuestion = () => {
-    if (currentQuestionIndex < questions.length - 1) {
-      setCurrentQuestionIndex((prevIndex) => prevIndex + 1);
-      setTimeLeft(10); // Reset timer
-    } else {
-      endGame();
+    console.log('Current Question Debug:', currentQuestion);
+
+    // Validate the current question
+    if (!currentQuestion || typeof currentQuestion.order === 'undefined') {
+      console.error('Invalid current question:', currentQuestion);
+      return;
+    }
+
+    const message = {
+      type: 'answer_question',
+      payload: {
+        gameId,
+        questionOrder: currentQuestion.order, // Ensure the key aligns with the backend
+        answer: selectedAnswer,
+      },
+    };
+
+    console.log('Sending WebSocket answer message:', message);
+
+    try {
+      ws.send(JSON.stringify(message));
+    } catch (error) {
+      console.error('Error sending answer message:', error.message);
     }
   };
 
-  const endGame = () => {
-    // Navigate to a summary or leaderboard screen
-    Alert.alert(
-      'Game Over',
-      `Your Score: ${userScore}\nOpponent's Score: ${opponentScore}`,
-      [
-        {
-          text: 'OK',
-          onPress: () => navigation.goBack(), // Go back to RankedScreen
-        },
-      ],
-    );
+  const handleAnswerFeedback = ({userId, isCorrect}) => {
+    if (userId === user.userId) {
+      setUserAnswerCorrect(isCorrect);
+      userAnimationRef.current?.play();
+    } else {
+      setOpponentAnswerCorrect(isCorrect);
+      opponentAnimationRef.current?.play();
+    }
+  };
+
+  const updateScores = (payload) => {
+    const {scores} = payload;
+
+    // Determine current user's position
+    if (scores.player1Id === user.userId) {
+      setUserScore(scores.player1Score);
+      setOpponentScore(scores.player2Score);
+    } else if (scores.player2Id === user.userId) {
+      setUserScore(scores.player2Score);
+      setOpponentScore(scores.player1Score);
+    } else {
+      console.error('Current user ID does not match player1Id or player2Id');
+    }
   };
 
   return (
-    <View style={styles.container}>
-      {/* Player Info Section */}
+    <ImageBackground
+      source={require('../assets/images/quizBackground.jpg')}
+      style={styles.background}
+      resizeMode="cover"
+    >
+      <View style={styles.overlay} />
       <View style={styles.playerInfoContainer}>
-        {/* User Info */}
         <View style={styles.playerContainer}>
-          <View style={styles.row}>
-            <Image source={{uri: userAvatarUri}} style={styles.avatar} />
-            <Text style={styles.playerScore}>{userScore}</Text>
-          </View>
+          <Image source={{uri: userAvatarUri}} style={styles.avatar} />
+          {userAnswerCorrect !== null && (
+            <LottieView
+              ref={userAnimationRef}
+              source={
+                userAnswerCorrect
+                  ? require('../assets/animations/correct.json')
+                  : require('../assets/animations/incorrect.json')
+              }
+              style={styles.feedbackAnimation}
+              loop={false}
+            />
+          )}
+          <Text style={styles.playerScore}>{userScore}</Text>
           <Text style={styles.playerName}>{user.username}</Text>
         </View>
 
-        {/* Opponent Info */}
         <View style={styles.playerContainer}>
-          {opponentData ? (
+          {opponentData && (
             <>
-              <View style={styles.row}>
-                <Text style={styles.playerScore}>{opponentScore}</Text>
-                <Image
-                  source={{uri: `${mediaUrl}${opponentData.userAvatar}`}}
-                  style={styles.avatar}
+              <Image
+                source={{uri: `${mediaUrl}${opponentData.userAvatar}`}}
+                style={styles.avatar}
+              />
+              {opponentAnswerCorrect !== null && (
+                <LottieView
+                  ref={opponentAnimationRef}
+                  source={
+                    opponentAnswerCorrect
+                      ? require('../assets/animations/correct.json')
+                      : require('../assets/animations/incorrect.json')
+                  }
+                  style={styles.feedbackAnimation}
+                  loop={false}
                 />
-              </View>
+              )}
+              <Text style={styles.playerScore}>{opponentScore}</Text>
               <Text style={styles.playerName}>{opponentData.username}</Text>
             </>
-          ) : (
-            <Text>Loading opponent data...</Text>
           )}
         </View>
       </View>
 
-      {/* Question Section */}
       <View style={styles.questionContainer}>
         <Text style={styles.questionText}>{currentQuestion.question}</Text>
       </View>
 
-      {/* Answer Options */}
       <View style={styles.optionsContainer}>
         {currentQuestion.options.map((option, index) => (
           <TouchableOpacity
             key={index}
-            style={styles.optionButton}
-            onPress={() => handleAnswer(option)}
+            style={[
+              styles.answerCard,
+              showAnswer &&
+                (option === currentQuestion.correctAnswer
+                  ? styles.correctAnswer
+                  : selectedAnswer === option
+                    ? styles.wrongAnswer
+                    : {}),
+            ]}
+            onPress={() => sendAnswer(option)}
+            disabled={showAnswer}
           >
-            <Text style={styles.optionText}>{option}</Text>
+            <Text style={styles.answerText}>{option}</Text>
           </TouchableOpacity>
         ))}
       </View>
-
-      {/* Timer */}
-      <View style={styles.timerContainer}>
-        <Text style={styles.timerText}>Time Left: {timeLeft}s</Text>
-      </View>
-    </View>
+    </ImageBackground>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
+  background: {
     flex: 1,
-    backgroundColor: '#f8f9fa',
-    padding: 20,
+    width: width,
+    height: height,
+  },
+  overlay: {
+    position: 'absolute',
+    height: height,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
   playerInfoContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginBottom: 20,
-    marginTop: 30,
+    padding: 20,
   },
   playerContainer: {
-    alignItems: 'center',
-  },
-  row: {
-    flexDirection: 'row',
     alignItems: 'center',
   },
   avatar: {
     width: 80,
     height: 80,
     borderRadius: 40,
-    marginHorizontal: 10,
   },
-  playerName: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    marginTop: 10,
+  feedbackAnimation: {
+    width: 50,
+    height: 50,
   },
   playerScore: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: '#333',
+    color: '#fff',
+  },
+  playerName: {
+    fontSize: 16,
+    color: '#fff',
   },
   questionContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 20,
+    paddingHorizontal: 20,
   },
   questionText: {
-    fontSize: 18,
-    fontWeight: 'bold',
+    fontSize: 20,
     textAlign: 'center',
+    color: '#fff',
   },
   optionsContainer: {
-    flex: 2,
-    justifyContent: 'center',
+    padding: 20,
   },
-  optionButton: {
-    backgroundColor: '#007bff',
+  answerCard: {
     padding: 15,
-    borderRadius: 5,
-    marginVertical: 10,
-    alignItems: 'center',
+    marginBottom: 15,
+    borderRadius: 15,
+    backgroundColor: '#fff',
+    elevation: 5,
   },
-  optionText: {
-    color: '#fff',
+  correctAnswer: {
+    backgroundColor: '#a5d6a7',
+  },
+  wrongAnswer: {
+    backgroundColor: '#ef9a9a',
+  },
+  answerText: {
     fontSize: 16,
-  },
-  timerContainer: {
-    alignItems: 'center',
-    marginTop: 20,
-  },
-  timerText: {
-    fontSize: 18,
-    fontWeight: 'bold',
+    textAlign: 'center',
   },
 });
 
