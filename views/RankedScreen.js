@@ -10,7 +10,7 @@ import {
 import {MainContext} from '../contexts/MainContext';
 import {WebSocketContext} from '../contexts/WebsocketContext';
 import LottieView from 'lottie-react-native';
-import {Bar} from 'react-native-progress';
+import {AnimatedCircularProgress} from 'react-native-circular-progress';
 
 const rankImages = {
   1: require('../assets/icons/Novice.webp'),
@@ -27,12 +27,10 @@ const rankRequirements = {
 const RankedScreen = ({navigation}) => {
   const {user} = useContext(MainContext); // Access user data
   const {ws} = useContext(WebSocketContext); // Access WebSocket from context
-  const {rankLevel, rankPoints, pointsToNextRank} = user;
+  const {rankLevel, rankPoints} = user;
 
   const [isFindingMatch, setIsFindingMatch] = useState(false);
   const [timeoutId, setTimeoutId] = useState(null);
-
-  const progress = rankPoints / pointsToNextRank;
 
   useEffect(() => {
     if (!ws) {
@@ -92,23 +90,24 @@ const RankedScreen = ({navigation}) => {
   const renderRankProgress = () => {
     const nextRankLevel = rankLevel + 1;
     const nextRankRequirement = rankRequirements[nextRankLevel] || Infinity;
-
-    if (rankLevel === 3) return null;
+    const progressPercentage = (rankPoints / nextRankRequirement) * 100;
 
     return (
       <View style={styles.rankProgressContainer}>
-        <Image source={rankImages[rankLevel]} style={styles.rankImage} />
-        <View style={styles.rankProgressBarContainer}>
-          <Bar
-            progress={rankPoints / nextRankRequirement}
-            width={300}
-            height={20}
-            color="#4a90e2"
-            unfilledColor="#ccc"
-            borderWidth={0}
-            borderRadius={10}
-          />
-        </View>
+        <AnimatedCircularProgress
+          size={120}
+          width={15}
+          fill={progressPercentage}
+          tintColor="#00e0ff"
+          backgroundColor="#3d5875"
+        >
+          {(fill) => (
+            <Image
+              source={rankImages[rankLevel] || rankImages[1]}
+              style={styles.rankImage}
+            />
+          )}
+        </AnimatedCircularProgress>
         <Text style={styles.rankProgressText}>
           {rankPoints} / {nextRankRequirement} Rank Points
         </Text>
@@ -169,27 +168,6 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     textAlign: 'center',
   },
-  rankProgressContainer: {
-    alignItems: 'center',
-    marginVertical: 20,
-  },
-  rankProgressBarContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginVertical: 10,
-  },
-  rankImage: {
-    width: 100,
-    height: 100,
-    resizeMode: 'contain',
-    marginBottom: 10,
-    borderRadius: 60,
-  },
-  rankProgressText: {
-    fontSize: 14,
-    color: '#333',
-    marginTop: 10,
-  },
   button: {
     backgroundColor: '#007bff',
     padding: 15,
@@ -225,6 +203,22 @@ const styles = StyleSheet.create({
   cancelButtonText: {
     color: '#fff',
     fontSize: 16,
+    fontWeight: 'bold',
+  },
+  rankProgressContainer: {
+    alignItems: 'center',
+    marginVertical: 20,
+  },
+  rankImage: {
+    width: 80,
+    height: 80,
+    resizeMode: 'contain',
+    borderRadius: 40,
+  },
+  rankProgressText: {
+    fontSize: 16,
+    color: '#333',
+    marginTop: 10,
     fontWeight: 'bold',
   },
 });

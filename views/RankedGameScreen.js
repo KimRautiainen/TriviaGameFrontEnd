@@ -4,7 +4,6 @@ import {
   Text,
   StyleSheet,
   TouchableOpacity,
-  Alert,
   Image,
   Dimensions,
   ImageBackground,
@@ -15,6 +14,7 @@ import {mediaUrl} from '../utils/app-config';
 import LottieView from 'lottie-react-native';
 import {useUser} from '../hooks/ApiHooks';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import Icon from 'react-native-vector-icons/FontAwesome';
 
 const {width, height} = Dimensions.get('window');
 
@@ -32,11 +32,22 @@ const RankedGameScreen = ({route, navigation}) => {
   const [showAnswer, setShowAnswer] = useState(false);
   const [userAnswerCorrect, setUserAnswerCorrect] = useState(null);
   const [opponentAnswerCorrect, setOpponentAnswerCorrect] = useState(null);
+  const [timer, setTimer] = useState(30);
 
   const userAnimationRef = useRef(null);
   const opponentAnimationRef = useRef(null);
 
   const userAvatarUri = `${mediaUrl}${user.userAvatar}`;
+
+  // Timer countdown logic
+  useEffect(() => {
+    if (timer > 0) {
+      const interval = setInterval(() => {
+        setTimer((prevTimer) => prevTimer - 1);
+      }, 1000);
+      return () => clearInterval(interval);
+    }
+  }, [timer]);
 
   useEffect(() => {
     const handleWebSocketMessage = (event) => {
@@ -54,7 +65,6 @@ const RankedGameScreen = ({route, navigation}) => {
           if (message.payload && message.payload.question) {
             const nextQuestion = message.payload.question;
 
-            // Normalize keys and parse options
             nextQuestion.order = nextQuestion.questionOrder;
             if (typeof nextQuestion.options === 'string') {
               try {
@@ -68,10 +78,9 @@ const RankedGameScreen = ({route, navigation}) => {
             setCurrentQuestion(nextQuestion);
             setShowAnswer(false);
             setSelectedAnswer(null);
-
-            // Reset feedback states
             setUserAnswerCorrect(null);
             setOpponentAnswerCorrect(null);
+            setTimer(30); // Reset timer for next question
           } else {
             console.error('Invalid next_question payload:', message.payload);
           }
@@ -92,11 +101,6 @@ const RankedGameScreen = ({route, navigation}) => {
   }, [ws]);
 
   useEffect(() => {
-    console.log('Current Question Updated:', currentQuestion);
-  }, [currentQuestion]);
-
-  useEffect(() => {
-    // Fetch opponent info when component mounts
     fetchOpponentData();
   }, []);
 
@@ -114,36 +118,24 @@ const RankedGameScreen = ({route, navigation}) => {
     }
   };
 
-  const sendAnswer = (selectedAnswer) => {
-    if (!ws || ws.readyState !== WebSocket.OPEN) {
-      console.error('WebSocket is not connected or ready.');
+  const sendAnswer = (answer) => {
+    if (!ws || ws.readyState !== WebSocket.OPEN || showAnswer) {
       return;
     }
 
-    console.log('Current Question Debug:', currentQuestion);
-
-    // Validate the current question
-    if (!currentQuestion || typeof currentQuestion.order === 'undefined') {
-      console.error('Invalid current question:', currentQuestion);
-      return;
-    }
+    setSelectedAnswer(answer);
+    setShowAnswer(true);
 
     const message = {
       type: 'answer_question',
       payload: {
         gameId,
-        questionOrder: currentQuestion.order, // Ensure the key aligns with the backend
-        answer: selectedAnswer,
+        questionOrder: currentQuestion.order,
+        answer,
       },
     };
 
-    console.log('Sending WebSocket answer message:', message);
-
-    try {
-      ws.send(JSON.stringify(message));
-    } catch (error) {
-      console.error('Error sending answer message:', error.message);
-    }
+    ws.send(JSON.stringify(message));
   };
 
   const handleAnswerFeedback = ({userId, isCorrect}) => {
@@ -159,15 +151,12 @@ const RankedGameScreen = ({route, navigation}) => {
   const updateScores = (payload) => {
     const {scores} = payload;
 
-    // Determine current user's position
     if (scores.player1Id === user.userId) {
       setUserScore(scores.player1Score);
       setOpponentScore(scores.player2Score);
     } else if (scores.player2Id === user.userId) {
       setUserScore(scores.player2Score);
       setOpponentScore(scores.player1Score);
-    } else {
-      console.error('Current user ID does not match player1Id or player2Id');
     }
   };
 
@@ -179,52 +168,65 @@ const RankedGameScreen = ({route, navigation}) => {
     >
       <View style={styles.overlay} />
       <View style={styles.playerInfoContainer}>
+        {/* User Container */}
         <View style={styles.playerContainer}>
           <Image source={{uri: userAvatarUri}} style={styles.avatar} />
-          {userAnswerCorrect !== null && (
-            <LottieView
-              ref={userAnimationRef}
-              source={
-                userAnswerCorrect
-                  ? require('../assets/animations/correct.json')
-                  : require('../assets/animations/incorrect.json')
-              }
-              style={styles.feedbackAnimation}
-              loop={false}
-            />
-          )}
-          <Text style={styles.playerScore}>{userScore}</Text>
+          <View style={styles.animationContainerUser}>
+            {userAnswerCorrect !== null && (
+              <LottieView
+                ref={userAnimationRef}
+                source={
+                  userAnswerCorrect
+                    ? require('../assets/animations/correct.json')
+                    : require('../assets/animations/incorrect.json')
+                }
+                style={styles.feedbackAnimation}
+                loop={false}
+              />
+            )}
+          </View>
           <Text style={styles.playerName}>{user.username}</Text>
+          <Text style={styles.playerScore}>{userScore}</Text>
         </View>
 
+        {/* Opponent Container */}
         <View style={styles.playerContainer}>
-          {opponentData && (
-            <>
-              <Image
-                source={{uri: `${mediaUrl}${opponentData.userAvatar}`}}
-                style={styles.avatar}
+          <Image
+            source={{uri: `${mediaUrl}${opponentData.userAvatar}`}}
+            style={styles.avatar}
+          />
+          <View style={styles.animationContainerOpponent}>
+            {opponentAnswerCorrect !== null && (
+              <LottieView
+                ref={opponentAnimationRef}
+                source={
+                  opponentAnswerCorrect
+                    ? require('../assets/animations/correct.json')
+                    : require('../assets/animations/incorrect.json')
+                }
+                style={styles.feedbackAnimation}
+                loop={false}
               />
-              {opponentAnswerCorrect !== null && (
-                <LottieView
-                  ref={opponentAnimationRef}
-                  source={
-                    opponentAnswerCorrect
-                      ? require('../assets/animations/correct.json')
-                      : require('../assets/animations/incorrect.json')
-                  }
-                  style={styles.feedbackAnimation}
-                  loop={false}
-                />
-              )}
-              <Text style={styles.playerScore}>{opponentScore}</Text>
-              <Text style={styles.playerName}>{opponentData.username}</Text>
-            </>
-          )}
+            )}
+          </View>
+          <Text style={styles.playerName}>{opponentData?.username}</Text>
+          <Text style={styles.playerScore}>{opponentScore}</Text>
         </View>
       </View>
 
-      <View style={styles.questionContainer}>
+      <View style={styles.questionCard}>
+        <Text style={styles.questionCount}>
+          Question {currentQuestion.order} / {questions.length}
+        </Text>
         <Text style={styles.questionText}>{currentQuestion.question}</Text>
+        <Text style={styles.questionCategory}>
+          Category: {currentQuestion.category.replace(/_/g, ' ')}
+        </Text>
+        {/* Timer */}
+        <View style={styles.timerContainer}>
+          <Icon name="clock-o" size={20} color="#555" />
+          <Text style={styles.timerText}>{timer}s</Text>
+        </View>
       </View>
 
       <View style={styles.optionsContainer}>
@@ -266,6 +268,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     padding: 20,
+    marginTop: 20,
   },
   playerContainer: {
     alignItems: 'center',
@@ -274,10 +277,6 @@ const styles = StyleSheet.create({
     width: 80,
     height: 80,
     borderRadius: 40,
-  },
-  feedbackAnimation: {
-    width: 50,
-    height: 50,
   },
   playerScore: {
     fontSize: 24,
@@ -288,23 +287,48 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#fff',
   },
-  questionContainer: {
-    flex: 1,
-    justifyContent: 'center',
+  questionCard: {
+    backgroundColor: '#fff',
+    position: 'absolute',
+    minHeight: 250,
+    top: height * 0.3,
+    left: 20,
+    right: 20,
+    borderRadius: 15,
+    padding: 20,
+    elevation: 5,
     alignItems: 'center',
-    paddingHorizontal: 20,
+    justifyContent: 'center',
+  },
+  questionCount: {
+    position: 'absolute',
+    top: 10,
+    fontSize: 15,
+    fontWeight: 'bold',
+    color: '#3b5998',
   },
   questionText: {
     fontSize: 20,
     textAlign: 'center',
-    color: '#fff',
+    color: '#333',
+    marginVertical: 15,
+  },
+  questionCategory: {
+    position: 'absolute',
+    bottom: 10,
+    fontSize: 16,
+    fontStyle: 'italic',
+    color: '#555',
   },
   optionsContainer: {
-    padding: 20,
+    position: 'absolute',
+    bottom: 50,
+    width: '100%',
+    paddingHorizontal: 20,
   },
   answerCard: {
     padding: 15,
-    marginBottom: 15,
+    marginBottom: 10,
     borderRadius: 15,
     backgroundColor: '#fff',
     elevation: 5,
@@ -318,6 +342,32 @@ const styles = StyleSheet.create({
   answerText: {
     fontSize: 16,
     textAlign: 'center',
+  },
+  timerContainer: {
+    position: 'absolute',
+    top: 10,
+    right: 10,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  timerText: {
+    marginLeft: 5,
+    fontSize: 16,
+    color: '#555',
+  },
+  animationContainerUser: {
+    position: 'absolute',
+    right: -60, // Adjust as needed for alignment
+    top: 15,
+  },
+  animationContainerOpponent: {
+    position: 'absolute',
+    left: -60, // Adjust as needed for alignment
+    top: 15,
+  },
+  feedbackAnimation: {
+    width: 50,
+    height: 50,
   },
 });
 
