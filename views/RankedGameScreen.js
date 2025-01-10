@@ -7,6 +7,7 @@ import {
   Image,
   Dimensions,
   ImageBackground,
+  Alert,
 } from 'react-native';
 import {MainContext} from '../contexts/MainContext';
 import {WebSocketContext} from '../contexts/WebsocketContext';
@@ -38,7 +39,7 @@ const RankedGameScreen = ({route, navigation}) => {
   const opponentAnimationRef = useRef(null);
 
   const userAvatarUri = `${mediaUrl}${user.userAvatar}`;
-
+  const opponentAvatarUri = `${mediaUrl}${opponentData?.userAvatar}`;
   // Timer countdown logic
   useEffect(() => {
     if (timer > 0) {
@@ -107,14 +108,18 @@ const RankedGameScreen = ({route, navigation}) => {
   const fetchOpponentData = async () => {
     try {
       const token = await AsyncStorage.getItem('userToken');
+      if (!token) throw new Error('No token available.');
       const response = await getUserById(opponent, token);
       if (response) {
         setOpponentData(response);
       } else {
-        Alert.alert('Error', 'Failed to fetch opponent data.');
+        console.warn('Opponent data is empty or invalid.');
+        setOpponentData(null); // Fallback to null
       }
     } catch (error) {
       console.error('Error fetching opponent data:', error.message);
+      Alert.alert('Error', 'Failed to fetch opponent data.');
+      setOpponentData(null); // Fallback to null
     }
   };
 
@@ -191,10 +196,21 @@ const RankedGameScreen = ({route, navigation}) => {
 
         {/* Opponent Container */}
         <View style={styles.playerContainer}>
-          <Image
-            source={{uri: `${mediaUrl}${opponentData.userAvatar}`}}
-            style={styles.avatar}
-          />
+          {opponentData ? (
+            <>
+              <Image
+                source={
+                  opponentAvatarUri
+                    ? {uri: opponentAvatarUri}
+                    : require('../assets/avatar.png')
+                }
+                style={styles.avatar}
+              />
+              <Text style={styles.playerName}>{opponentData.username}</Text>
+            </>
+          ) : (
+            <Text style={styles.loadingText}>Loading Opponent...</Text>
+          )}
           <View style={styles.animationContainerOpponent}>
             {opponentAnswerCorrect !== null && (
               <LottieView
