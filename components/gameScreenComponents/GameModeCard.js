@@ -1,10 +1,9 @@
 import React from 'react';
 import {View, Text, StyleSheet, ImageBackground} from 'react-native';
-import {Card} from 'react-native-elements';
 
-const GameModeCard = ({title, description, imageSource}) => {
+const GameModeCard = ({title, description, imageSource, style}) => {
   return (
-    <View style={styles.gameModeContainer}>
+    <View style={[styles.gameModeContainer, style]}>
       <ImageBackground
         source={imageSource}
         style={styles.cardContainer}
@@ -18,35 +17,33 @@ const GameModeCard = ({title, description, imageSource}) => {
 
 const styles = StyleSheet.create({
   gameModeContainer: {
-    width: 320, // Match the cardContainer's width
-    height: 100, // Match the cardContainer's height
+    width: 350, // Wider card
+    height: 130, // Taller card
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 20,
-    borderWidth: 2, // Set the border width
-    borderColor: '#000', // Border color
-    borderRadius: 12, // Slightly larger radius than cardBackground to ensure a smooth border
-    overflow: 'hidden', // Ensures the border stays within the container
+    marginBottom: 25, // Adjust spacing between cards
+    borderWidth: 2, // Optional border width for card
+    borderColor: '#000', // Optional border color
+    borderRadius: 15, // Smooth rounded corners
+    overflow: 'hidden', // Ensure content respects the rounded corners
   },
   cardContainer: {
-    width: '100%', // Match the parent container's width
-    height: '100%', // Match the parent container's height
-    alignItems: 'center', // Center content horizontally
-    justifyContent: 'center', // Center content vertically
-    borderRadius: 10, // Rounded corners for the ImageBackground
-    overflow: 'hidden', // Ensures the image respects the border radius
+    width: '100%',
+    height: '100%',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   cardTitle: {
     textAlign: 'center',
     fontWeight: 'bold',
-    fontSize: 25, // Adjust font size as needed
-    color: '#FFFFFF', // Title color
-    textShadowColor: 'rgba(0, 0, 0, 0.75)', // Black shadow for contrast
-    textShadowOffset: {width: -1, height: 1}, // Shadow position
-    textShadowRadius: 10, // Blur radius of the shadow
+    fontSize: 30, // Bigger font size for better visibility
+    color: '#FFFFFF',
+    textShadowColor: 'rgba(0, 0, 0, 0.75)', // Subtle shadow for contrast
+    textShadowOffset: {width: -1, height: 1},
+    textShadowRadius: 10,
   },
   cardBackground: {
-    borderRadius: 10, // Match the cardContainer's borderRadius
+    borderRadius: 15, // Match the parent container's borderRadius
   },
 });
 

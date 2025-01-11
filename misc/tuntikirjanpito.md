@@ -37,9 +37,9 @@
                   why game crashes when answering next question and score updating goes to wrong player sometimes                    |
 | 09.01 | 6    | (fullstack) Fixed both bugs. UI to ranked game, animations when user or opponents answers                           |
 | 10.01 | 4    | Prevent user sending more than 1 answer per question. UI for ranked game screen                                     |
-| 10.01 | 4    | Handle disconnection and try to connect back to server. If user doesnt connect back to server, opponent wins. Added
-                 Fallbacks when opponentdata is not availiable not frontend                                                          |
-| 01.01 |     |                                                               |
+| 10.01 | 4    | (backend)Handle disconnection and try to connect back to server. If user doesnt connect back to server, opponent wins. Added
+                 Fallbacks when opponentdata is not availiable on frontend                                                           |
+| 01.01 | 5    | Handle disconnection and reconnection fronted. UI for gamescreen. UI for game modes screen                          |
 | 01.01 |     |                                                               |
 | 01.01 |     |                                                               |
 | 01.01 |     |                                                               |

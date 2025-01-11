@@ -34,7 +34,9 @@ const RankedGameScreen = ({route, navigation}) => {
   const [userAnswerCorrect, setUserAnswerCorrect] = useState(null);
   const [opponentAnswerCorrect, setOpponentAnswerCorrect] = useState(null);
   const [timer, setTimer] = useState(30);
-
+  const [opponentConnected, setOpponentConnected] = useState(true);
+  const [disconnectTimer, setDisconnectTimer] = useState(0);
+  const disconnectTimerRef = useRef(null);
   const userAnimationRef = useRef(null);
   const opponentAnimationRef = useRef(null);
 
@@ -63,31 +65,16 @@ const RankedGameScreen = ({route, navigation}) => {
           updateScores(message.payload);
           break;
         case 'next_question':
-          if (message.payload && message.payload.question) {
-            const nextQuestion = message.payload.question;
-
-            nextQuestion.order = nextQuestion.questionOrder;
-            if (typeof nextQuestion.options === 'string') {
-              try {
-                nextQuestion.options = JSON.parse(nextQuestion.options);
-              } catch (error) {
-                console.error('Error parsing options:', error.message);
-                nextQuestion.options = [];
-              }
-            }
-
-            setCurrentQuestion(nextQuestion);
-            setShowAnswer(false);
-            setSelectedAnswer(null);
-            setUserAnswerCorrect(null);
-            setOpponentAnswerCorrect(null);
-            setTimer(30); // Reset timer for next question
-          } else {
-            console.error('Invalid next_question payload:', message.payload);
-          }
+          handleNextQuestion(message.payload);
           break;
         case 'game_ended':
           handleGameEnd(message.payload);
+          break;
+        case 'player_disconnected':
+          handlePlayerDisconnected(message.payload);
+          break;
+        case 'player_reconnected':
+          handlePlayerReconnected(message.payload);
           break;
         default:
           console.log('Unknown message type:', message.type);
@@ -98,6 +85,9 @@ const RankedGameScreen = ({route, navigation}) => {
 
     return () => {
       ws.removeEventListener('message', handleWebSocketMessage);
+      if (disconnectTimerRef.current) {
+        clearInterval(disconnectTimerRef.current);
+      }
     };
   }, [ws]);
 
@@ -164,6 +154,80 @@ const RankedGameScreen = ({route, navigation}) => {
       setOpponentScore(scores.player1Score);
     }
   };
+  const handleNextQuestion = (payload) => {
+    if (payload && payload.question) {
+      const nextQuestion = payload.question;
+
+      nextQuestion.order = nextQuestion.questionOrder;
+
+      // Ensure options are properly parsed if they are a string
+      if (typeof nextQuestion.options === 'string') {
+        try {
+          nextQuestion.options = JSON.parse(nextQuestion.options);
+        } catch (error) {
+          console.error('Error parsing options:', error.message);
+          nextQuestion.options = [];
+        }
+      }
+
+      setCurrentQuestion(nextQuestion);
+      setShowAnswer(false);
+      setSelectedAnswer(null);
+      setUserAnswerCorrect(null);
+      setOpponentAnswerCorrect(null);
+      setTimer(30); // Reset timer for the next question
+    } else {
+      console.error('Invalid next_question payload:', payload);
+    }
+  };
+
+  const handlePlayerDisconnected = ({opponentId}) => {
+    setOpponentConnected(false);
+    setDisconnectTimer(30); // Start countdown from 30 seconds
+
+    // Clear any existing timer
+    if (disconnectTimerRef.current) {
+      clearInterval(disconnectTimerRef.current);
+    }
+
+    // Start countdown timer
+    disconnectTimerRef.current = setInterval(() => {
+      setDisconnectTimer((prevTimer) => {
+        if (prevTimer > 1) {
+          return prevTimer - 1;
+        } else {
+          clearInterval(disconnectTimerRef.current);
+          disconnectTimerRef.current = null;
+          return 0;
+        }
+      });
+    }, 1000);
+  };
+
+  const handlePlayerReconnected = ({opponentId}) => {
+    setOpponentConnected(true);
+    setDisconnectTimer(0);
+
+    // Clear the disconnect timer
+    if (disconnectTimerRef.current) {
+      clearInterval(disconnectTimerRef.current);
+      disconnectTimerRef.current = null;
+    }
+  };
+
+  const handleGameEnd = (payload) => {
+    const {winner, scores} = payload;
+
+    const winnerUsername =
+      winner === user.userId ? user.username : opponentData?.username;
+
+    navigation.replace('GameOverScreen', {
+      winnerUsername,
+      player1Username: user.username,
+      player2Username: opponentData?.username,
+      scores,
+    });
+  };
 
   return (
     <ImageBackground
@@ -171,6 +235,14 @@ const RankedGameScreen = ({route, navigation}) => {
       style={styles.background}
       resizeMode="cover"
     >
+      {!opponentConnected && (
+        <View style={styles.opponentDisconnectedContainer}>
+          <Text style={styles.opponentDisconnectedText}>
+            Opponent disconnected. Waiting for reconnection ({disconnectTimer}
+            s)...
+          </Text>
+        </View>
+      )}
       <View style={styles.overlay} />
       <View style={styles.playerInfoContainer}>
         {/* User Container */}
@@ -206,7 +278,6 @@ const RankedGameScreen = ({route, navigation}) => {
                 }
                 style={styles.avatar}
               />
-              <Text style={styles.playerName}>{opponentData.username}</Text>
             </>
           ) : (
             <Text style={styles.loadingText}>Loading Opponent...</Text>
@@ -232,7 +303,7 @@ const RankedGameScreen = ({route, navigation}) => {
 
       <View style={styles.questionCard}>
         <Text style={styles.questionCount}>
-          Question {currentQuestion.order} / {questions.length}
+          Question {currentQuestion.order + 1} / {questions.length}
         </Text>
         <Text style={styles.questionText}>{currentQuestion.question}</Text>
         <Text style={styles.questionCategory}>
@@ -261,7 +332,14 @@ const RankedGameScreen = ({route, navigation}) => {
             onPress={() => sendAnswer(option)}
             disabled={showAnswer}
           >
-            <Text style={styles.answerText}>{option}</Text>
+            <Text
+              style={[
+                styles.answerText,
+                {fontSize: option.length > 50 ? 14 : 16}, // Smaller font for longer text
+              ]}
+            >
+              {option}
+            </Text>
           </TouchableOpacity>
         ))}
       </View>
@@ -384,6 +462,22 @@ const styles = StyleSheet.create({
   feedbackAnimation: {
     width: 50,
     height: 50,
+  },
+  opponentDisconnectedContainer: {
+    position: 'absolute',
+    top: height * 0.231,
+    left: 0,
+    right: 0,
+    backgroundColor: 'rgba(255, 69, 58, 0.9)', // Red color with transparency
+    padding: 10,
+    alignItems: 'center',
+    zIndex: 1,
+  },
+
+  opponentDisconnectedText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: 'bold',
   },
 });
 

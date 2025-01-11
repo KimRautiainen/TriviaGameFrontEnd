@@ -95,7 +95,7 @@ const RankedScreen = ({navigation}) => {
     return (
       <View style={styles.rankProgressContainer}>
         <AnimatedCircularProgress
-          size={120}
+          size={110}
           width={15}
           fill={progressPercentage}
           tintColor="#00e0ff"

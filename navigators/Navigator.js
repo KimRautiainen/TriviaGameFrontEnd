@@ -16,6 +16,7 @@ import RankedScreen from '../views/RankedScreen';
 import TabMenu from './TabMenu';
 import {StyleSheet} from 'react-native';
 import RankedGameScreen from '../views/RankedGameScreen';
+import GameOverScreen from '../views/GameOverScreen';
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -164,6 +165,22 @@ const Stackscreen = () => {
           <Stack.Screen
             name="RankedGameScreen"
             component={RankedGameScreen}
+            options={{
+              headerShown: false,
+              title: 'Ranked',
+              headerStyle: {
+                backgroundColor: '#000000',
+              },
+              headerTintColor: '#fff',
+              headerTitleStyle: {
+                fontWeight: 'bold',
+              },
+              headerBackTitleVisible: false,
+            }}
+          />
+           <Stack.Screen
+            name="GameOverScreen"
+            component={GameOverScreen}
             options={{
               headerShown: false,
               title: 'Ranked',
