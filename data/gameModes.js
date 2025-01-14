@@ -6,13 +6,13 @@ const gameModes = [
       'In Classic mode, you will answer a series of questions from a wide range of categories. There is no time limit, allowing you to think through each question carefully. Perfect for those who love traditional trivia!',
     image: require('../assets/images/pixelHouse.png'),
   },
-  {
+ /*  {
     title: 'Timed',
     description: 'Answer before time runs out!',
     detailedDescription:
       'Timed mode adds a thrilling twist to the classic trivia experience. Each question comes with a countdown. Answer quickly to earn bonus points, but be careful, wrong answers may cost you!',
     image: require('../assets/images/timedRace.jpg'),
-  },
+  }, */
   {
     title: 'Survival',
     description:
@@ -28,13 +28,13 @@ const gameModes = [
       'Ranked mode pits you against players from around the globe. Climb the leaderboards by answering questions correctly and quickly. Can you reach the top and become a trivia champion?',
     image: require('../assets/images/rankedChess.png'),
   },
-  {
+ /*  {
     title: 'Categories',
     description: 'Choose a category to play',
     detailedDescription:
       'Prefer to stick to your strengths? Categories mode lets you choose your favorite trivia topics. From science to sports, customize your trivia experience to suit your interests.',
     image: require('../assets/images/categoriesBooks.png'),
-  },
+  }, */
   {
     title: 'Tournament',
     description: 'Only one winner!',

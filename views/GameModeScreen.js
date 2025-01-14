@@ -43,7 +43,11 @@ const GameModeScreen = ({navigation, route}) => {
           showsVerticalScrollIndicator={false}
         >
           {gameModes.map((mode, index) => (
-            <TouchableOpacity key={index} onPress={() => gameModePressed(mode)}>
+            <TouchableOpacity
+              key={index}
+              onPress={() => gameModePressed(mode)}
+              style={styles.gameModeTouchable}
+            >
               <GameModeCard
                 title={mode.title}
                 description={mode.description}
@@ -118,8 +122,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   gameModesScrollView: {
+    flex: 1, // Ensures ScrollView fills the available space
+    justifyContent: 'center', // Centers the content vertically
+    alignItems: 'center', // Centers the content horizontally
     paddingVertical: 10,
   },
+  /* gameModeTouchable: {
+    marginBottom: 20, // Adds larger spacing between game modes
+  }, */
   modalBackgroundImage: {
     width: '100%', // Ensure the image covers the modalView
     height: '100%', // Ensure the image covers the modalView

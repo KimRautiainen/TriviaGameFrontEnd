@@ -1,26 +1,26 @@
-import {useForm, Controller} from 'react-hook-form';
-import {useUser} from '../../hooks/ApiHooks';
-import {useContext} from 'react';
-import {MainContext} from '../../contexts/MainContext';
-import {Card, Input, Button} from '@rneui/themed';
+import React, {useState, useContext} from 'react';
 import {
+  View,
   Alert,
   StyleSheet,
-  KeyboardAvoidingView,
-  Platform,
   ScrollView,
+  Image,
+  TouchableOpacity,
+  Text,
 } from 'react-native';
+import {useForm, Controller} from 'react-hook-form';
+import {useUser} from '../../hooks/ApiHooks';
+import {MainContext} from '../../contexts/MainContext';
+import {Card, Input, Button} from '@rneui/themed';
+import * as ImagePicker from 'expo-image-picker';
 import {PropTypes} from 'prop-types';
 
-// RegisterForm Component for User Registration
 const RegisterForm = ({setToggleRegister}) => {
-  // Fetch user related functions from ApiHooks
   const {postUser, checkUsername} = useUser();
+  const {setIsLoggedIn} = useContext(MainContext);
 
-  // Fetching user-related state methods from MainContext
-  const {setIsLoggedIn, setUser} = useContext(MainContext);
+  const [image, setImage] = useState(null); // To store the selected image
 
-  // Setting up form controls and validation using react-hook-form
   const {
     control,
     handleSubmit,
@@ -31,43 +31,94 @@ const RegisterForm = ({setToggleRegister}) => {
       username: '',
       password: '',
       email: '',
-      full_name: '',
     },
     mode: 'onBlur',
   });
 
-  // Function to handle user registration
-  const register = async (userData) => {
+  // Handle image selection (gallery or camera)
+  const selectImage = async () => {
     try {
-      // Removing the confirm_password field as we don't need it for registration API
-      delete userData.confirm_password;
+      const options = {
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        allowsEditing: true,
+        aspect: [1, 1],
+        quality: 0.7,
+      };
 
-      // Making API call to register the user
-      const registerResponse = await postUser(userData);
-      Alert.alert('Success', registerResponse.message);
-      // Switching back to login form after successful registration
-      setToggleRegister(false);
-      setIsLoggedIn(true);
+      const result = await ImagePicker.launchImageLibraryAsync(options);
+      if (!result.canceled) {
+        setImage(result.assets[0].uri); // Set the selected image URI
+      } else {
+        Alert.alert('Cancelled', 'No image was selected.');
+      }
     } catch (error) {
-      Alert.alert('Error', error.message);
+      console.error('Error selecting image:', error.message);
+      Alert.alert('Error', 'Could not access the image picker.');
     }
   };
+
+  // Handle form submission
+  const register = async (userData) => {
+    try {
+      // Ensure an image is selected
+      if (!image) {
+        Alert.alert('Error', 'Please select a profile picture.');
+        return;
+      }
+
+      // Prepare FormData
+      const formData = new FormData();
+      formData.append('user', {
+        uri: image,
+        type: 'image/jpeg', // Adjust based on the image type
+        name: 'profile.jpg', // Provide a meaningful filename
+      });
+
+      // Add other form fields to FormData
+      for (const key in userData) {
+        if (userData.hasOwnProperty(key)) {
+          formData.append(key, userData[key]);
+        }
+      }
+
+      // Make the API request with FormData
+      const registerResponse = await postUser(formData, true); // Pass `true` to indicate FormData
+      Alert.alert('Success', registerResponse.message);
+      setToggleRegister(false);
+    } catch (error) {
+      console.error('Error during registration:', error.message);
+      Alert.alert('Error', 'Registration failed. Please try again.');
+    }
+  };
+
   return (
     <ScrollView contentContainerStyle={{flexGrow: 1}}>
       <Card containerStyle={styles.card}>
         <Card.Title>Register</Card.Title>
+
+        {/* Image Picker Section */}
+        <View style={styles.imagePickerContainer}>
+          <TouchableOpacity onPress={selectImage} style={styles.placeholder}>
+            {image ? (
+              <Image source={{uri: image}} style={styles.imagePreview} />
+            ) : (
+              <Text style={styles.placeholderText}>Select Image</Text>
+            )}
+          </TouchableOpacity>
+        </View>
+
+        {/* Form Fields */}
         <Controller
           control={control}
           rules={{
-            required: {value: true, message: 'username is required'},
-            minLength: {value: 3, message: 'min length is 3 characters'},
+            required: {value: true, message: 'Username is required'},
+            minLength: {value: 3, message: 'Min length is 3 characters'},
             validate: async (value) => {
               try {
                 const isAvailable = await checkUsername(value);
-                console.log(isAvailable);
-                return isAvailable ? isAvailable : 'Username taken';
+                return isAvailable ? isAvailable : 'Username is already taken';
               } catch (error) {
-                Alert.alert('Username is taken');
+                Alert.alert('Error', 'Username validation failed.');
               }
             },
           }}
@@ -88,12 +139,12 @@ const RegisterForm = ({setToggleRegister}) => {
         <Controller
           control={control}
           rules={{
-            required: {value: true, message: 'password is required'},
-            minLength: {value: 5, message: 'min lenght is 5 characters'},
+            required: {value: true, message: 'Password is required'},
+            minLength: {value: 5, message: 'Min length is 5 characters'},
           }}
           render={({field: {onChange, onBlur, value}}) => (
             <Input
-              placeholder="password"
+              placeholder="Password"
               secureTextEntry
               onBlur={onBlur}
               onChangeText={onChange}
@@ -104,18 +155,22 @@ const RegisterForm = ({setToggleRegister}) => {
           )}
           name="password"
         />
+
         <Controller
           control={control}
           rules={{
-            required: {value: true, message: 'password is required'},
+            required: {
+              value: true,
+              message: 'Password confirmation is required',
+            },
             validate: (value) => {
               const {password} = getValues();
-              return value === password ? true : 'Passwords dont match';
+              return value === password ? true : 'Passwords do not match';
             },
           }}
           render={({field: {onChange, onBlur, value}}) => (
             <Input
-              placeholder="Confirm password"
+              placeholder="Confirm Password"
               secureTextEntry
               onBlur={onBlur}
               onChangeText={onChange}
@@ -130,15 +185,15 @@ const RegisterForm = ({setToggleRegister}) => {
         <Controller
           control={control}
           rules={{
-            required: {value: true, message: 'email is required'},
+            required: {value: true, message: 'Email is required'},
             pattern: {
               value: /\S+@\S+\.\S+$/,
-              message: 'must be valid email',
+              message: 'Must be a valid email',
             },
           }}
           render={({field: {onChange, onBlur, value}}) => (
             <Input
-              placeholder="email"
+              placeholder="Email"
               onBlur={onBlur}
               onChangeText={onChange}
               value={value}
@@ -147,24 +202,6 @@ const RegisterForm = ({setToggleRegister}) => {
             />
           )}
           name="email"
-        />
-
-        <Controller
-          control={control}
-          rules={{
-            minLength: {value: 3, message: 'min length is 3 characters'},
-          }}
-          render={({field: {onChange, onBlur, value}}) => (
-            <Input
-              placeholder="fullname (optional)"
-              onBlur={onBlur}
-              onChangeText={onChange}
-              value={value}
-              errorMessage={errors.full_name?.message}
-              inputStyle={styles.input}
-            />
-          )}
-          name="full_name"
         />
 
         <Button
@@ -193,10 +230,6 @@ const styles = StyleSheet.create({
     shadowRadius: 3.84,
     elevation: 5,
   },
-  buttonText: {
-    fontSize: 18,
-    color: 'white',
-  },
   button: {
     height: 50,
     backgroundColor: '#FF385C',
@@ -204,6 +237,29 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   input: {},
+  imagePickerContainer: {
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  imagePreview: {
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    marginBottom: 10,
+  },
+  placeholder: {
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    backgroundColor: '#eaeaea',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 10,
+  },
+  placeholderText: {
+    color: '#777',
+    textAlign: 'center',
+  },
 });
 
 RegisterForm.propTypes = {
