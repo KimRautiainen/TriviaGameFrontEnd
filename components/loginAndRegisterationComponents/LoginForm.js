@@ -103,7 +103,7 @@ const LoginForm = () => {
                 <TouchableOpacity onPress={togglePasswordVisibility}>
                   <Icon
                     name={passwordVisible ? 'eye' : 'eye-slash'}
-                    type="font-awesome" // Or any other icon type you're using
+                    type="font-awesome"
                   />
                 </TouchableOpacity>
               }
@@ -132,19 +132,19 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     padding: 20,
-    backgroundColor: '"FEFBF6', // or any other suitable background color
+    backgroundColor: '"FEFBF6',
   },
   inputContainer: {
     width: '100%',
     marginBottom: 5,
   },
   input: {
-    backgroundColor: 'white', // or any light shade
+    backgroundColor: 'white',
     paddingHorizontal: 15,
     paddingVertical: 10,
     borderRadius: 10,
     borderWidth: 1,
-    borderColor: '#DDDDDD', // light gray border for the inputs
+    borderColor: '#DDDDDD',
     fontSize: 16,
     height: 50,
   },
@@ -162,13 +162,12 @@ const styles = StyleSheet.create({
     color: 'white',
   },
   forgotPasswordText: {
-    alignSelf: 'flex-end', // Align text to the right
-    color: 'blue', // Make text color blue to indicate it's clickable
-    fontWeight: 'bold', // Bold font weight
-    // Add a little space above the text
-    fontSize: 13, // Optional: adjust font size as needed
-    marginRight: 5, // Optional: space text from right edge of button
-    marginBottom: 5, // Optional: space text from bottom of button
+    alignSelf: 'flex-end', 
+    color: 'blue',
+    fontWeight: 'bold',
+    fontSize: 13,
+    marginRight: 5,
+    marginBottom: 5,
   },
 });
 

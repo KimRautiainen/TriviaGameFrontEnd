@@ -97,25 +97,25 @@ const styles = StyleSheet.create({
   levelText: {
     position: 'absolute',
     marginLeft: 10,
-    bottom: 30, // Adjust this value based on your layout to position the level text correctly above the progress bar
+    bottom: 30,
     color: 'white',
     fontWeight: 'bold',
   },
   xpText: {
     position: 'absolute',
     alignSelf: 'center',
-    top: 5, // Adjust to align inside the progress bar
+    top: 5,
     color: 'white',
     fontWeight: 'bold',
   },
 });
-// Define PropTypes
+
 UserProfile.propTypes = {
   userData: PropTypes.shape({
     username: PropTypes.string,
     userAvatar: PropTypes.oneOfType([
       PropTypes.string,
-      PropTypes.object, // If you're using require/import for images
+      PropTypes.object,
     ]),
     level: PropTypes.number,
     experiencePoints: PropTypes.number,
@@ -124,14 +124,14 @@ UserProfile.propTypes = {
   }),
 };
 
-// Set default props in case they aren't provided
+
 UserProfile.defaultProps = {
   userData: {
     username: '',
     userAvatar: '',
     level: 0,
     experiencePoints: 0,
-    maxXp: 1, // Avoid division by zero
+    maxXp: 1,
     totalCorrectAnswers: 0,
   },
 };

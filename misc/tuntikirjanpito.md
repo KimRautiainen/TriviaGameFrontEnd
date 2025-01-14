@@ -40,15 +40,5 @@
 | 10.01 | 4    | (backend)Handle disconnection and try to connect back to server. If user doesnt connect back to server, opponent wins. Added
                  Fallbacks when opponentdata is not availiable on frontend                                                           |
 | 01.01 | 5    | Handle disconnection and reconnection fronted. UI for gamescreen. UI for game modes screen                          |
-| 01.01 |     |                                                               |
-| 01.01 |     |                                                               |
-| 01.01 |     |                                                               |
-| 01.01 |     |                                                               |
-| 01.01 |     |                                                               |
-| 01.01 |     |                                                               |
-| 01.01 |     |                                                               |
-| 01.01 |     |                                                               |
-| 01.01 |     |                                                               |
-| 01.01 |     |                                                               |
-| 01.01 |     |                                                               |
-| yht | 92 | |
+                                                             |
+| yht   | 132 | |

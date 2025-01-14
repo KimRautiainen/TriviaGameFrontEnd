@@ -66,7 +66,7 @@ const styles = StyleSheet.create({
     padding: 1,
     flexDirection: 'row',
     justifyContent: 'space-around',
-    width: '80%', // Adjust based on your preference
+    width: '80%',
     backgroundColor: 'rgba(0, 0, 0, 0.12)', // Semi-transparent background for the gold container
     borderRadius: 25,
     marginTop: 65,
