@@ -23,22 +23,21 @@
 | 14.12 | 2    | Animated icons to homescreen                                                                                        |
 | 18.12 | 5    | Leaderboards screen                                                                                                 |
 | 28.12 | 6    | Backend: Endpoints for events and postman tests                                                                     |
-| 30.12 | 8    | Backend: Websocket server for live 1v1 ranked matches, User joins pool and when other user with similiar rankpoints 
-                 joins the pool they are deleted from matchmaking pool and placed in match room. Contacting with webnsocket
-                 server requires valid token so only users can connect                                                               |
+| 30.12 | 8    | Backend: Websocket server for live 1v1 ranked matches, User joins pool and when other user with similiar rankpoints |
+|       |      | joins the pool they are deleted from matchmaking pool and placed in match room. Contacting with webnsocket          |
+|       |      |  server requires valid token so only users can connect                                                              |
 | 31.12 | 8    | Backend: Serve questions to match when match is created, automaticly end the match when both players have answered
-                 all questions, assign scores to leaderboard and mark match completed and save records of the match                  |
+|       |      | all questions, assign scores to leaderboard and mark match completed and save records of the match                  |
 | 01.01 | 4    | Backend: Unit testing for websocket server that simulates two users with simialiar rankpoints join matchmaking pool,
-                 matching them and answering all questions for both players simultaing whole lifecycle of a trivia online game       |
+|       |      | matching them and answering all questions for both players simultaing whole lifecycle of a trivia online game       |
 | 01.01 | 6    | Working prototype of 1v1 ranked game full lifecycle                                                                 |
 | 07.01 | 5    | (backend) modified websocket to move to next question when both users have answered                                 |
 | 07.01 | 2    | Simple register page done                                                                                           |
 | 08.01 | 8    | (fullstack) Send user feedback when user answers question to enable live score for both users.(front) Bug fixing
-                  why game crashes when answering next question and score updating goes to wrong player sometimes                    |
+|       |      | why game crashes when answering next question and score updating goes to wrong player sometimes                     |
 | 09.01 | 6    | (fullstack) Fixed both bugs. UI to ranked game, animations when user or opponents answers                           |
 | 10.01 | 4    | Prevent user sending more than 1 answer per question. UI for ranked game screen                                     |
 | 10.01 | 4    | (backend)Handle disconnection and try to connect back to server. If user doesnt connect back to server, opponent wins. Added
-                 Fallbacks when opponentdata is not availiable on frontend                                                           |
-| 01.01 | 5    | Handle disconnection and reconnection fronted. UI for gamescreen. UI for game modes screen                          |
-                                                             |
-| yht   | 132 | |
+|       |      | Fallbacks when opponentdata is not availiable on frontend                                                           |
+| 01.01 | 5    | Handle disconnection and reconnection fronted. UI for gamescreen. UI for game modes screen                          |                                                             
+| yht   | 132  | |
