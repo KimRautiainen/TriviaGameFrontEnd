@@ -23,7 +23,7 @@
 | 14.12 | 2    | Animated icons to homescreen                                                                                        |
 | 18.12 | 5    | Leaderboards screen                                                                                                 |
 | 28.12 | 6    | Backend: Endpoints for events and postman tests                                                                     |
-| 30.12 | 8    | Backend: Websocket server for live 1v1 ranked matches, User joins pool and when other user with similiar rankpoints |
+| 30.12 | 8    | Backend: Websocket server for live 1v1 ranked matches, User joins pool and when other user with similiar rankpoints 
                  joins the pool they are deleted from matchmaking pool and placed in match room. Contacting with webnsocket
                  server requires valid token so only users can connect                                                               |
 | 31.12 | 8    | Backend: Serve questions to match when match is created, automaticly end the match when both players have answered
