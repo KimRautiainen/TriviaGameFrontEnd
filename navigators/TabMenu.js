@@ -1,6 +1,7 @@
 import React from 'react';
 import {Image, StyleSheet, View, Text} from 'react-native';
 
+// -- Custom bottom nav bar styling -- //
 const TabMenu = ({screen, focused}) => {
   let image;
   let label;

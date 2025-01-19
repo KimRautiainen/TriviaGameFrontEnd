@@ -10,6 +10,7 @@ import {
 import LottieView from 'lottie-react-native';
 import PropTypes from 'prop-types';
 
+// -- Game completed component used in classic game mode. Shows user game statistics, Rewards and handles navigation to home or replaying game
 const GameCompletedComponent = ({
   correctAnswers,
   incorrectAnswers,

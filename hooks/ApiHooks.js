@@ -4,6 +4,7 @@ import {doFetch} from '../utils/functions';
 import {MainContext} from '../contexts/MainContext';
 
 const useAuthentication = () => {
+  // Post user body to backend for logging in
   const postLogin = async (user) => {
     return await doFetch(authUrl + 'login', {
       method: 'POST',
@@ -32,7 +33,7 @@ const useUser = () => {
     console.log(JSON.stringify({xp}));
     return await doFetch(apiUrl + 'user/' + userId + '/levels', options);
   };
-
+  // Get users details with token
   const getUserByToken = async (token) => {
     const options = {
       method: 'GET',
@@ -42,7 +43,7 @@ const useUser = () => {
     };
     return await doFetch(apiUrl + 'user/token', options);
   };
-
+  // Register new user
   const postUser = async (userData, isFormData = false) => {
     const options = {
       method: 'POST',
@@ -57,7 +58,7 @@ const useUser = () => {
     return await doFetch(authUrl + 'register', options);
   };
 
-
+  // Modify user details
   const putUser = async (userData, token) => {
     const options = {
       method: 'PUT',
@@ -70,6 +71,7 @@ const useUser = () => {
     return await doFetch(apiUrl + 'users', options);
   };
 
+  // Hook to check from backend if username is available
   const checkUsername = async (username) => {
     try {
       const response = await doFetch(
@@ -80,6 +82,7 @@ const useUser = () => {
       throw new Error('checkUsername Error: ' + error.message);
     }
   };
+  // Get user details with user id
   const getUserById = async (id, token) => {
     const options = {
       method: 'GET',

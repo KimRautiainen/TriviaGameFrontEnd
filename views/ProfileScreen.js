@@ -43,6 +43,7 @@ const ProfileScreen = () => {
   const [isModalVisible, setModalVisible] = useState(false);
   const [username, setUsername] = useState(user.username);
 
+  // Logout function
   const handleLogout = async () => {
     try {
       await AsyncStorage.removeItem('userToken'); // Remove token from storage
@@ -53,15 +54,18 @@ const ProfileScreen = () => {
     }
   };
 
+  // Save user modifications to profile
   const handleSaveProfile = () => {
     // TODO
     setModalVisible(false);
   };
 
+  // Show spinner if loading state is true
   if (loading) {
     return <ActivityIndicator size="large" color="#0000ff" />;
   }
 
+  // Render achievemnts
   const renderAchievements = () => {
     return (
       <View style={styles.achievementsSection}>
@@ -78,6 +82,7 @@ const ProfileScreen = () => {
     );
   };
 
+  // Rennder rank and indicate users current rank
   const renderRankTimeline = () => {
     return (
       <View style={styles.timelineContainer}>
@@ -117,6 +122,7 @@ const ProfileScreen = () => {
     );
   };
 
+  // Shor users progress of rank and needed rankpoints for next level
   const renderRankProgress = () => {
     const currentPoints = user.rankPoints || 0;
     const nextRankLevel = user.rankLevel + 1;

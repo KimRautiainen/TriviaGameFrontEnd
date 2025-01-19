@@ -5,6 +5,7 @@ import {useAchievements} from '../../hooks/AchievementHooks';
 import {MainContext} from '../../contexts/MainContext';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
+// Component to handle achievements
 const AchievementsComponent = () => {
   const [achievements, setAchievements] = useState([]);
   const [completedAchievements, setCompletedAchievements] = useState([]);
@@ -13,21 +14,24 @@ const AchievementsComponent = () => {
   const {user} = useContext(MainContext);
   const userId = user.userId;
 
+  // fetch achievements from backend when component mounts
   useEffect(() => {
     fetchTokenAndAchievements();
   }, []);
 
+  // fetch token from async storage and achievements from backend when component mounts
   const fetchTokenAndAchievements = async () => {
     try {
-      setLoading(true);
+      setLoading(true); // set loading state true while fetching function runs
       const token = await AsyncStorage.getItem('userToken');
       if (!token) {
         throw new Error('Token not found');
       }
-
+      // Get achievements and store them in state
       const achievements = await getAchievements(token);
       setAchievements(achievements);
 
+      // fetch achievements that are already completed and store them in state
       const completedAchievements = await getAchievementsByUser(userId, token);
       setCompletedAchievements(completedAchievements);
     } catch (e) {
@@ -37,19 +41,21 @@ const AchievementsComponent = () => {
     }
   };
 
+  // check if achievement completed
   const isAchievementCompleted = (achievementId) => {
     return completedAchievements.some(
       (achievement) => achievement.achievementId === achievementId,
     );
   };
 
+  // get progress of the achiemevent
   const getAchievementProgress = (achievement) => {
     const completedAchievement = completedAchievements.find(
       (completed) => completed.achievementId === achievement.achievementId,
     );
     return completedAchievement ? completedAchievement.progress : 0;
   };
-
+  // Temporary icons for achievements.
   const getAchievementIcon = (index, isCompleted) => {
     const iconNames = ['trophy', 'star', 'flag', 'certificate', 'thumbs-up'];
     const iconName = iconNames[index % iconNames.length];

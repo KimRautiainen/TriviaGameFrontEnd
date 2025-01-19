@@ -15,25 +15,32 @@ import LoadingIndicator from '../components/sharedComponents/LoadingIndicator';
 import {mediaUrl} from '../utils/app-config';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
+// -- Leaderboard screen to show users current points and ranking for that leaderboard -- //
+// TODO: Make the leaderboard screen to take gameid aswell to have own leaderboard for all different games including custom events
 const LeaderboardScreen = ({navigation, route}) => {
+  // State for leaderboard data, user's score, and loading state
   const [leaderboardData, setLeaderboardData] = useState([]);
   const [userScore, setUserScore] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  // Hooks for API interactions
   const {getLeaderboard, getLeaderboardById} = useLeaderboard();
   const {getUserById} = useUser(); // Fetch user details by ID
-  const {user} = useContext(MainContext);
+  const {user} = useContext(MainContext); // Access the logged-in user's data
 
+  // Function to fetch leaderboard data and user's position
   const fetchLeaderboardData = async () => {
     try {
-      setLoading(true);
-      const token = await AsyncStorage.getItem('userToken');
-      // Fetch top 5 leaderboard data
+      setLoading(true); // Set loading state true during data fetch
+      const token = await AsyncStorage.getItem('userToken'); // Retrieve user token for API authentication
+
+      // Fetch top 5 leaderboard entries
       const leaderboardResponse = await getLeaderboard();
       if (
         Array.isArray(leaderboardResponse) &&
         leaderboardResponse.length > 0
       ) {
+        // Fetch additional details (e.g., username and avatar) for each leaderboard entry
         const leaderboardWithDetails = await Promise.all(
           leaderboardResponse.map(async (entry) => {
             const userDetails = await getUserById(entry.userId, token);
@@ -44,8 +51,7 @@ const LeaderboardScreen = ({navigation, route}) => {
             };
           }),
         );
-        setLeaderboardData(leaderboardWithDetails);
-        console.log('Leaderboard Data:', leaderboardWithDetails);
+        setLeaderboardData(leaderboardWithDetails); // Combine fetched data to state
       } else {
         console.log(
           'Leaderboard response is empty or unsuccessful:',
@@ -53,12 +59,12 @@ const LeaderboardScreen = ({navigation, route}) => {
         );
       }
 
-      // Fetch user's leaderboard data
+      // Fetch the logged-in user's position in the leaderboard
       const userLeaderboardResponse = await getLeaderboardById(user.userId);
       if (userLeaderboardResponse) {
         const userDetails = await getUserById(user.userId, token);
         setUserScore({
-          ...userLeaderboardResponse[0], // Assuming it returns an array of one object
+          ...userLeaderboardResponse[0],
           username: userDetails.username,
           userAvatar: userDetails.userAvatar,
         });
@@ -70,17 +76,19 @@ const LeaderboardScreen = ({navigation, route}) => {
         );
       }
 
-      setLoading(false);
+      setLoading(false); // Data fetched, set loading state false
     } catch (error) {
       console.error('Error fetching leaderboard data:', error);
       setLoading(false);
     }
   };
 
+  // Fetch leaderboard data when the component mounts
   useEffect(() => {
     fetchLeaderboardData();
   }, []);
 
+  // Display a loading spinner while data is being fetched
   if (loading) {
     return <LoadingIndicator />;
   }
@@ -92,7 +100,7 @@ const LeaderboardScreen = ({navigation, route}) => {
       style={styles.background}
     >
       <View style={styles.overlay}>
-        {/* Top 5 Leaderboard Rows */}
+        {/* Top 5 leaderboard entries */}
         {leaderboardData.slice(0, 5).map((player, index) => (
           <View
             key={player.leaderboardId || index}
@@ -101,7 +109,9 @@ const LeaderboardScreen = ({navigation, route}) => {
               {top: 160 + index * 70}, // Adjust the vertical spacing for rows
             ]}
           >
+            {/* Player's rank */}
             <Text style={styles.position}>{index + 1}</Text>
+            {/* Player's avatar */}
             <Image
               source={
                 player.userAvatar
@@ -110,14 +120,16 @@ const LeaderboardScreen = ({navigation, route}) => {
               }
               style={styles.avatar}
             />
+            {/* Player's username */}
             <Text style={styles.username}>
               {player.username || `Player ${player.userId}`}
             </Text>
+            {/* Player's score */}
             <Text style={styles.score}>{player.score}</Text>
           </View>
         ))}
 
-        {/* User's Row */}
+        {/* Logged-in user's leaderboard position (if not in top 5) */}
         {!leaderboardData.some((player) => player.userId === user.userId) ? (
           <View
             style={[
@@ -125,7 +137,9 @@ const LeaderboardScreen = ({navigation, route}) => {
               {top: 160 + 5 * 70}, // Place the user's row immediately below the top 5 rows
             ]}
           >
+            {/* User's position */}
             <Text style={styles.position}>{userScore?.position || '-'}</Text>
+            {/* User's avatar */}
             <Image
               source={
                 userScore?.userAvatar
@@ -134,9 +148,11 @@ const LeaderboardScreen = ({navigation, route}) => {
               }
               style={styles.avatar}
             />
+            {/* User's username */}
             <Text style={styles.username}>
               {userScore?.username || `Player ${user.userId}`}
             </Text>
+            {/* User's score */}
             <Text style={styles.score}>{userScore?.score || 0}</Text>
           </View>
         ) : null}
@@ -145,6 +161,7 @@ const LeaderboardScreen = ({navigation, route}) => {
   );
 };
 
+// Styles for the component
 const styles = StyleSheet.create({
   background: {
     flex: 1,

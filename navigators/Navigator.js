@@ -69,6 +69,7 @@ const Tabscreen = () => {
   );
 };
 
+// -- Contains all navigation logic. If user has not logged in we serve only login screen -- //
 const Stackscreen = () => {
   const {isLoggedIn} = useContext(MainContext);
   const {playMusic, stopMusic} = useContext(MusicContext); // Access MusicContext
@@ -178,7 +179,7 @@ const Stackscreen = () => {
               headerBackTitleVisible: false,
             }}
           />
-           <Stack.Screen
+          <Stack.Screen
             name="GameOverScreen"
             component={GameOverScreen}
             options={{

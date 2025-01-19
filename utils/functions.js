@@ -1,3 +1,4 @@
+// -- Helper function for all hooks -- //
 const doFetch = async (url, options = {}) => {
   try {
     const response = await fetch(url, options);

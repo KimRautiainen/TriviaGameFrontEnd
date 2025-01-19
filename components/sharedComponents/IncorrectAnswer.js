@@ -2,8 +2,7 @@ import React from 'react';
 import {StyleSheet, Dimensions, View, Text} from 'react-native';
 import LottieView from 'lottie-react-native';
 
-
-
+// -- Animation to indicate incorrect answer -- //
 const InCorrectAnswer = () => (
   <LottieView
     source={require('../../assets/animations/incorrect.json')}

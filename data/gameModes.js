@@ -1,3 +1,4 @@
+// -- Data arrays for different gamemode descriptions -- //
 const gameModes = [
   {
     title: 'Classic',

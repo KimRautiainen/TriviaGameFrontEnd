@@ -22,6 +22,8 @@ import LevelUpScreen from './LevelUpScreen';
 import {SoundContext} from '../contexts/SoundContext';
 import LottieView from 'lottie-react-native';
 
+// -- Landing page after logging in -- //
+// Fetches fresh user data when ever component is focused to ensure all data is the lates from backend
 const HomePage = ({navigation, route}) => {
   const {setUser, user, setInventoryData, showLevelUp, setShowLevelUp} =
     useContext(MainContext);
@@ -35,11 +37,13 @@ const HomePage = ({navigation, route}) => {
   const leaderboardsAnimationRef = useRef(null);
   const achievementsAnimationRef = useRef(null);
 
+  // Navigate function that plays button sound and taken screen name as param for where to navigate
   const handleNavigate = async (screen) => {
     await playButtonSound(); // play sound before navigating
     navigation.navigate(screen);
   };
 
+  // Fetch user data and check if user has gained new level and trigger levelup state if true
   const fetchUpdatedData = async () => {
     try {
       const token = await AsyncStorage.getItem('userToken');
@@ -68,6 +72,7 @@ const HomePage = ({navigation, route}) => {
     }
   };
 
+  // When screen is focused for first time FetchUpdatedData() and play animations once
   useFocusEffect(
     useCallback(() => {
       fetchUpdatedData();
@@ -101,13 +106,17 @@ const HomePage = ({navigation, route}) => {
         </View>
 
         <View style={styles.contentContainer}>
+          {/* Render userprofile component for displaying Avatar, level, xp etc */}
           <UserProfile />
+          {/* Render inventory for displaying users gold coins, tournament tickets and lifes */}
           <Inventory />
+          {/* If showLevelUp state is true render Levelup screen */}
           {showLevelUp && <LevelUpScreen />}
 
           {/* Icons Section */}
           <View style={styles.iconRow}>
             {/* Left Column */}
+            {/* Animated Icons and navigators for Events, Quests and Placeholder */}
             <View style={styles.iconColumn}>
               <TouchableOpacity
                 style={styles.iconContainer}
@@ -150,6 +159,7 @@ const HomePage = ({navigation, route}) => {
             </View>
 
             {/* Right Column */}
+            {/* Animated Icons for RankedScreen, Leaderboards screen and Achievements screen */}
             <View style={styles.iconColumn}>
               <TouchableOpacity
                 style={styles.iconContainer}

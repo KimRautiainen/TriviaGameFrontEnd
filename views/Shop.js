@@ -6,7 +6,7 @@ import {
   ScrollView,
   TouchableOpacity,
   ImageBackground,
-  StatusBar, 
+  StatusBar,
   Platform,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -15,10 +15,12 @@ import {MainContext} from '../contexts/MainContext';
 import {useInventory} from '../hooks/InventoryHooks';
 import Toast from 'react-native-toast-message';
 
+// -- Shop screen where players can exchange their goldcoins -- //
 const ShopComponent = () => {
-  const {inventoryData, setInventoryData} = useContext(MainContext);
-  const {deductItemsFromInventory, addItemsToInventory} = useInventory(); // Use both hooks
+  const {inventoryData, setInventoryData} = useContext(MainContext); // get inventory from maincontext
+  const {deductItemsFromInventory, addItemsToInventory} = useInventory(); // Hooks from inventoryhooks
 
+  // Shop items arrays
   const shopItems = [
     {
       id: 1,
@@ -38,12 +40,15 @@ const ShopComponent = () => {
     },
   ];
 
+  // Function to handle purchase in shop
   const handlePurchase = async (item) => {
-    const token = await AsyncStorage.getItem('userToken');
+    const token = await AsyncStorage.getItem('userToken'); // get token
 
+    // Check if user has enough goldcoins before proceeding
     if (inventoryData.goldCoins >= item.price) {
       const itemsToDeduct = {goldCoins: item.price};
 
+      // Deduct the cost of the item from user
       try {
         await deductItemsFromInventory(itemsToDeduct, token);
 
@@ -56,7 +61,7 @@ const ShopComponent = () => {
           tournamentTickets: item.name === 'Tournament Ticket' ? 1 : 0,
           otherItems: item.name === 'Life' ? {lives: 1} : {},
         };
-
+        // add purchased item to inventory
         await addItemsToInventory(itemsToAdd, token);
 
         if (item.name === 'Tournament Ticket') {
@@ -66,6 +71,7 @@ const ShopComponent = () => {
           }));
         }
 
+        // Show toast to user when purchase is succesfull
         Toast.show({
           type: 'success',
           text1: 'Purchase Successful',
@@ -88,6 +94,7 @@ const ShopComponent = () => {
         console.error('Error during purchase transaction:', error.message);
       }
     } else {
+      // Show toast if the purchase is not succesfull
       Toast.show({
         type: 'error',
         text1: 'Not Enough Coins',

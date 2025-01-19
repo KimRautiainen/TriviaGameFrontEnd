@@ -4,6 +4,7 @@ import LottieView from 'lottie-react-native';
 
 const {width, height} = Dimensions.get('window');
 
+// -- Animation to indicate correct answer -- //
 const CorrectAnswer = () => (
   <LottieView
     source={require('../../assets/animations/correct.json')}
