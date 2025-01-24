@@ -42,6 +42,7 @@ const RankedGameScreen = ({route, navigation}) => {
 
   const userAvatarUri = `${mediaUrl}${user.userAvatar}`;
   const opponentAvatarUri = `${mediaUrl}${opponentData?.userAvatar}`;
+
   // Timer countdown logic
   useEffect(() => {
     if (timer > 0) {
@@ -52,36 +53,37 @@ const RankedGameScreen = ({route, navigation}) => {
     }
   }, [timer]);
 
+  // Assign handlers for different messages
   useEffect(() => {
     const handleWebSocketMessage = (event) => {
       const message = JSON.parse(event.data);
       console.log('WebSocket message received:', message);
 
       switch (message.type) {
-        case 'answer_feedback':
+        case 'answer_feedback': // feedback when user submits answer
           handleAnswerFeedback(message.payload);
           break;
-        case 'score_update':
+        case 'score_update': // Score update when user submits answer
           updateScores(message.payload);
           break;
-        case 'next_question':
+        case 'next_question': // After both users have answered, server gives next question
           handleNextQuestion(message.payload);
           break;
-        case 'game_ended':
+        case 'game_ended': // All questions are answered and game is completed
           handleGameEnd(message.payload);
           break;
-        case 'player_disconnected':
+        case 'player_disconnected': // Websocket connection is disconnected
           handlePlayerDisconnected(message.payload);
           break;
-        case 'player_reconnected':
+        case 'player_reconnected': // Websocket connection is reconnected
           handlePlayerReconnected(message.payload);
           break;
         default:
-          console.log('Unknown message type:', message.type);
+          console.log('Unknown message type:', message.type); // Handle uknown message from server
       }
     };
 
-    ws.addEventListener('message', handleWebSocketMessage);
+    ws.addEventListener('message', handleWebSocketMessage); // Listen for messages
 
     return () => {
       ws.removeEventListener('message', handleWebSocketMessage);
@@ -91,10 +93,12 @@ const RankedGameScreen = ({route, navigation}) => {
     };
   }, [ws]);
 
+  // Fetch opponent data when component mounts
   useEffect(() => {
     fetchOpponentData();
   }, []);
 
+  // Fetch opponent data when component mounts
   const fetchOpponentData = async () => {
     try {
       const token = await AsyncStorage.getItem('userToken');
@@ -113,14 +117,17 @@ const RankedGameScreen = ({route, navigation}) => {
     }
   };
 
+  // Send users quiz answer to server
   const sendAnswer = (answer) => {
     if (!ws || ws.readyState !== WebSocket.OPEN || showAnswer) {
       return;
     }
 
+    // update states
     setSelectedAnswer(answer);
     setShowAnswer(true);
 
+    // form message
     const message = {
       type: 'answer_question',
       payload: {
@@ -133,19 +140,22 @@ const RankedGameScreen = ({route, navigation}) => {
     ws.send(JSON.stringify(message));
   };
 
+  // Handle answer feedback
   const handleAnswerFeedback = ({userId, isCorrect}) => {
     if (userId === user.userId) {
       setUserAnswerCorrect(isCorrect);
-      userAnimationRef.current?.play();
+      userAnimationRef.current?.play(); // Show animation whether its correct or incorrect
     } else {
       setOpponentAnswerCorrect(isCorrect);
       opponentAnimationRef.current?.play();
     }
   };
 
+  // update scores to show correct answers count on players
   const updateScores = (payload) => {
     const {scores} = payload;
 
+    // assign scores to right players
     if (scores.player1Id === user.userId) {
       setUserScore(scores.player1Score);
       setOpponentScore(scores.player2Score);
@@ -154,6 +164,7 @@ const RankedGameScreen = ({route, navigation}) => {
       setOpponentScore(scores.player1Score);
     }
   };
+  // Handle when server sends next quiz question
   const handleNextQuestion = (payload) => {
     if (payload && payload.question) {
       const nextQuestion = payload.question;
@@ -170,6 +181,7 @@ const RankedGameScreen = ({route, navigation}) => {
         }
       }
 
+      // Reset states for next round
       setCurrentQuestion(nextQuestion);
       setShowAnswer(false);
       setSelectedAnswer(null);
@@ -181,6 +193,7 @@ const RankedGameScreen = ({route, navigation}) => {
     }
   };
 
+  // Handle when player disconnects from websocket
   const handlePlayerDisconnected = ({opponentId}) => {
     setOpponentConnected(false);
     setDisconnectTimer(30); // Start countdown from 30 seconds
@@ -204,6 +217,7 @@ const RankedGameScreen = ({route, navigation}) => {
     }, 1000);
   };
 
+  // Handler when player reconnects to game
   const handlePlayerReconnected = ({opponentId}) => {
     setOpponentConnected(true);
     setDisconnectTimer(0);
@@ -215,12 +229,14 @@ const RankedGameScreen = ({route, navigation}) => {
     }
   };
 
+  // Handle logic for when game ends
   const handleGameEnd = (payload) => {
     const {winner, scores} = payload;
 
     const winnerUsername =
       winner === user.userId ? user.username : opponentData?.username;
 
+    // navigate to game over screen and send data payload
     navigation.replace('GameOverScreen', {
       winnerUsername,
       player1Username: user.username,
@@ -451,12 +467,12 @@ const styles = StyleSheet.create({
   },
   animationContainerUser: {
     position: 'absolute',
-    right: -60, // Adjust as needed for alignment
+    right: -60, 
     top: 15,
   },
   animationContainerOpponent: {
     position: 'absolute',
-    left: -60, // Adjust as needed for alignment
+    left: -60,
     top: 15,
   },
   feedbackAnimation: {

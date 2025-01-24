@@ -5,9 +5,9 @@ import PropTypes from 'prop-types';
 import ClassicModeComponent from '../components/gameScreenComponents/ClassicModeComponent';
 import RankedScreen from './RankedScreen';
 
+// -- Parent component for game modes screen that renders different game modes pressed -- //
 const GameScreen = ({navigation, route}) => {
   const gameMode = route.params.gameMode;
-  console.log('Game mode:', gameMode);
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.contentContainer}>

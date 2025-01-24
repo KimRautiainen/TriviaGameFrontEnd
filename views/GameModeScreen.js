@@ -5,7 +5,6 @@ import {
   StyleSheet,
   TouchableOpacity,
   Modal,
-  Button,
   Text,
   ImageBackground,
 } from 'react-native';
@@ -14,17 +13,21 @@ import gameModes from '../data/gameModes';
 import PropTypes from 'prop-types';
 import {SoundContext} from '../contexts/SoundContext';
 
+// -- Shows all game modes and opens modals that shows info of that gammemode when pressed on game mode -- //
 const GameModeScreen = ({navigation, route}) => {
-  const [isModalVisible, setModalVisible] = useState(false);
-  const [selectedGameMode, setSelectedGameMode] = useState(null);
-  const {playButtonSound, playCloseButtonSound} = useContext(SoundContext);
+  // States and contexts
+  const [isModalVisible, setModalVisible] = useState(false); // State to control whether modal is shown or not
+  const [selectedGameMode, setSelectedGameMode] = useState(null); // Store selected game mode in state
+  const {playButtonSound, playCloseButtonSound} = useContext(SoundContext); // Use soundcontext to provide button sounds
 
+  // Play button sound when opening game modal and set selected game mode to state
   const gameModePressed = async (mode) => {
     await playButtonSound();
     setSelectedGameMode(mode);
     setModalVisible(true);
   };
 
+  // Play close button sound and hide modal
   const gameModeClosed = async () => {
     await playCloseButtonSound();
     setModalVisible(!isModalVisible);

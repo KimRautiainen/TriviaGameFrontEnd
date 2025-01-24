@@ -3,6 +3,7 @@ import {Audio} from 'expo-av';
 
 export const SoundContext = createContext();
 
+// -- Context for playing sound effects from different components -- //
 export const SoundProvider = ({children}) => {
   const buttonPressSound = useRef();
   const closeButtonSound = useRef();
@@ -10,6 +11,7 @@ export const SoundProvider = ({children}) => {
   const incorrectSound = useRef();
   const levelUpSound = useRef();
 
+  // Click pop button sound
   const playButtonSound = async () => {
     try {
       if (!buttonPressSound.current) {
@@ -24,6 +26,7 @@ export const SoundProvider = ({children}) => {
     }
   };
 
+  // Reversed click pop button sound to indicate closing sound
   const playCloseButtonSound = async () => {
     try {
       if (!closeButtonSound.current) {
@@ -38,6 +41,7 @@ export const SoundProvider = ({children}) => {
     }
   };
 
+  // Correct answer sound for trivia game
   const playCorrectSound = async () => {
     try {
       if (!correctSound.current) {
@@ -52,6 +56,7 @@ export const SoundProvider = ({children}) => {
     }
   };
 
+  // Incorrect answer sound for trivia game
   const playIncorrectSound = async () => {
     try {
       if (!incorrectSound.current) {
@@ -65,6 +70,7 @@ export const SoundProvider = ({children}) => {
       console.error('Error playing incorrect sound:', error);
     }
   };
+  // Sound for users levelup
   const playLevelUpSound = async () => {
     try {
       if (!levelUpSound.current) {

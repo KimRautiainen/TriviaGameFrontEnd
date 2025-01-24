@@ -14,6 +14,7 @@ import {MainContext} from '../../contexts/MainContext';
 import {mediaUrl} from '../../utils/app-config';
 import {SoundContext} from '../../contexts/SoundContext';
 
+// -- Component to show users avatar, levels username, experience points and xp to level -- //
 const UserProfile = (navigation, route) => {
   const {user, loading} = useContext(MainContext);
 
@@ -113,17 +114,13 @@ const styles = StyleSheet.create({
 UserProfile.propTypes = {
   userData: PropTypes.shape({
     username: PropTypes.string,
-    userAvatar: PropTypes.oneOfType([
-      PropTypes.string,
-      PropTypes.object,
-    ]),
+    userAvatar: PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
     level: PropTypes.number,
     experiencePoints: PropTypes.number,
     maxXp: PropTypes.number,
     totalCorrectAnswers: PropTypes.number,
   }),
 };
-
 
 UserProfile.defaultProps = {
   userData: {

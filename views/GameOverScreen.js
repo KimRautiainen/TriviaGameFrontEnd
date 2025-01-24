@@ -10,6 +10,8 @@ import {
 
 const {width, height} = Dimensions.get('window');
 
+// -- Game over screen for ranked mode -- //
+// TODO: When game is completed show users rankpoints gain or losses in animation and check if user gets rankup. Show game data(winner,scores,etc)
 const GameOverScreen = ({route, navigation}) => {
   const {winnerUsername, player1Username, player2Username, scores} =
     route.params;

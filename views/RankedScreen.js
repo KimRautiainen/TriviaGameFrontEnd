@@ -38,14 +38,18 @@ const RankedScreen = ({navigation}) => {
       return;
     }
 
+    // Listen for message from server side
+    // TODO: Display both users, ranks and best skills before starting the match after match is found. Maybe countdown timer for when match starts
     const handleWebSocketMessage = (event) => {
       const message = JSON.parse(event.data);
       console.log('Received message:', message);
 
+      // if 2 similiar ranked players are in matchpool, server send match_found message
       if (message.type === 'match_found') {
         clearTimeout(timeoutId); // Clear the matchmaking timeout
         setIsFindingMatch(false); // Stop finding match animation
-        Alert.alert('Match Found!', 'Opponent Found! Starting the game.');
+        Alert.alert('Match Found!', 'Opponent Found! Starting the game.'); // Notify players
+        // Navigate to game screen and send data as payload
         navigation.navigate('RankedGameScreen', {
           gameId: message.payload.gameId,
           opponent: message.payload.opponent,
@@ -54,6 +58,7 @@ const RankedScreen = ({navigation}) => {
       }
     };
 
+    // Listen for websocket messages
     ws.addEventListener('message', handleWebSocketMessage);
 
     return () => {
@@ -61,11 +66,14 @@ const RankedScreen = ({navigation}) => {
     };
   }, [ws, navigation, timeoutId]);
 
+  // Function for adding player to matchmaking pool
   const handleFindMatch = () => {
+    // Check if websocket is connected
     if (ws && ws.readyState === WebSocket.OPEN) {
-      setIsFindingMatch(true);
-      ws.send(JSON.stringify({type: 'join_matchmaking', payload: {}}));
+      setIsFindingMatch(true); // Change state to true
+      ws.send(JSON.stringify({type: 'join_matchmaking', payload: {}})); // Send message to server when joining matchmaking pool
 
+      // Remove player from matchmaking pool within 20 seconds if match is not found
       const id = setTimeout(() => {
         setIsFindingMatch(false);
         Alert.alert('Timeout', 'No match found within 20 seconds.');
@@ -78,6 +86,7 @@ const RankedScreen = ({navigation}) => {
     }
   };
 
+  // Send leave matchmaking to server to remove player from matchmaking pool
   const handleCancelMatchmaking = () => {
     if (ws && ws.readyState === WebSocket.OPEN) {
       ws.send(JSON.stringify({type: 'leave_matchmaking', payload: {}}));
@@ -87,6 +96,7 @@ const RankedScreen = ({navigation}) => {
     Alert.alert('Matchmaking Cancelled', 'You have left the matchmaking pool.');
   };
 
+  // Users rank and progress with circular progress bar and image corresponding to ranklevel
   const renderRankProgress = () => {
     const nextRankLevel = rankLevel + 1;
     const nextRankRequirement = rankRequirements[nextRankLevel] || Infinity;
@@ -115,6 +125,7 @@ const RankedScreen = ({navigation}) => {
     );
   };
 
+  // If player is not finding match show landing screen. Else show searching for players screen with animation
   return (
     <View style={styles.container}>
       {!isFindingMatch ? (

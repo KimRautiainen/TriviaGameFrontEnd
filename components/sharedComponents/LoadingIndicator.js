@@ -4,6 +4,7 @@ import LottieView from 'lottie-react-native';
 
 const {width, height} = Dimensions.get('window');
 
+// -- Animated Loading screen with quizKing text --//
 const LoadingIndicator = () => (
   <View style={styles.container}>
     <Text style={styles.title} bold>

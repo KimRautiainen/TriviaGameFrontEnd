@@ -11,9 +11,10 @@ import {MainContext} from '../contexts/MainContext';
 import {SoundContext} from '../contexts/SoundContext';
 
 const LevelUpScreen = () => {
-  const {user, setShowLevelUp} = useContext(MainContext);
+  const {user, setShowLevelUp} = useContext(MainContext); // Get logged in users data and setter for showlevelup from context
   const {playLevelUpSound} = useContext(SoundContext);
 
+  // Play levelup sound from context
   useEffect(() => {
     playLevelUpSound();
   }, [playLevelUpSound]);
@@ -26,7 +27,7 @@ const LevelUpScreen = () => {
   return (
     <View style={styles.overlay}>
       <ImageBackground
-        source={require('../assets/images/levelUpBackground.jpg')} // Use your background image
+        source={require('../assets/images/levelUpBackground.jpg')}
         style={styles.background}
         resizeMode="cover"
       >

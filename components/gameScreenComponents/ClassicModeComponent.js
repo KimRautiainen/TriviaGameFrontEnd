@@ -28,27 +28,30 @@ import {useInventory} from '../../hooks/InventoryHooks';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {SoundContext} from '../../contexts/SoundContext';
 
+// Get device screen dimensions for styling
 const {width, height} = Dimensions.get('window');
 
 const ClassicModeComponent = () => {
-  const [questions, setQuestions] = useState([]);
-  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-  const {getRandomQuestions} = useTrivia();
-  const [loading, setLoading] = useState(true);
-  const [selectedAnswer, setSelectedAnswer] = useState(null);
-  const [showAnswer, setShowAnswer] = useState(false);
-  const [isCorrectAnswer, setIsCorrectAnswer] = useState(false);
-  const [correctAnswersCount, setCorrectAnswersCount] = useState(0);
-  const [incorrectAnswersCount, setIncorrectAnswersCount] = useState(0);
-  const [gameCompleted, setGameCompleted] = useState(false);
-  const navigation = useNavigation();
+  // -- State to manage the game and its progress -- //
+  const [questions, setQuestions] = useState([]); // Stores trivia questions
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0); // Tracks the current question index
+  const {getRandomQuestions} = useTrivia(); // Hook for fetching trivia questions
+  const [loading, setLoading] = useState(true); // Loading state for questions
+  const [selectedAnswer, setSelectedAnswer] = useState(null); // Tracks the user's selected answer
+  const [showAnswer, setShowAnswer] = useState(false); // Controls the display of answer feedback
+  const [isCorrectAnswer, setIsCorrectAnswer] = useState(false); // Tracks whether the last answer was correct
+  const [correctAnswersCount, setCorrectAnswersCount] = useState(0); // Count of correct answers
+  const [incorrectAnswersCount, setIncorrectAnswersCount] = useState(0); // Count of incorrect answers
+  const [gameCompleted, setGameCompleted] = useState(false); // Tracks if the game is finished
+  const navigation = useNavigation(); // Navigation hook for navigating between screens
 
-  // Context and hooks
-  const {user} = useContext(MainContext);
-  const {playCorrectSound, playIncorrectSound} = useContext(SoundContext);
-  const {awardXp} = useUser();
-  const {addItemsToInventory} = useInventory();
+  // -- Context and hooks -- //
+  const {user} = useContext(MainContext); // Access user context
+  const {playCorrectSound, playIncorrectSound} = useContext(SoundContext); // Access sound context for effects
+  const {awardXp} = useUser(); // Hook to award XP
+  const {addItemsToInventory} = useInventory(); // Hook to manage user inventory
 
+  // Reset game state to allow replaying
   const hadlePlayAgain = async () => {
     setQuestions([]);
     setCurrentQuestionIndex(0);
@@ -59,9 +62,13 @@ const ClassicModeComponent = () => {
     setCorrectAnswersCount(0);
     setIncorrectAnswersCount(0);
     setGameCompleted(false);
-    await fetchQuestions();
+    await fetchQuestions(); // Re-fetch questions for a new game
   };
 
+  /**
+   * Updates the navigation bar depending on the game state.
+   * Hides the header when the game is completed.
+   */
   useLayoutEffect(() => {
     if (gameCompleted) {
       navigation.setOptions({
@@ -88,10 +95,15 @@ const ClassicModeComponent = () => {
     }
   }, [questions, currentQuestionIndex, gameCompleted, navigation]);
 
+  // Navigate back to home screen
   const handleReturnHome = () => {
     navigation.navigate('Home');
   };
 
+  /**
+   * Fetch trivia questions and decode them.
+   * Adds a loading delay for better UX.
+   */
   const fetchQuestions = async () => {
     setLoading(true);
     await new Promise((resolve) => setTimeout(resolve, 2000));
@@ -101,16 +113,20 @@ const ClassicModeComponent = () => {
       setLoading(false);
     }
   };
-
+  // Initial effect to fetch questions when the component mounts.
   useEffect(() => {
     fetchQuestions();
   }, []);
 
-  const answerProcessingRef = useRef(false);
+  const answerProcessingRef = useRef(false); // Ref to prevent multiple answer submissions
 
+  /**
+   * Handles user answer selection, updates scores, and transitions to the next question.
+   * @param {string} answer - The user's selected answer.
+   */
   const handleAnswerSelection = async (answer) => {
     // Prevent multiple triggers
-    if (answerProcessingRef.current) return;
+    if (answerProcessingRef.current) return; // Prevent re-triggering
     answerProcessingRef.current = true;
 
     const isCorrect = answer === questions[currentQuestionIndex].correct_answer;
@@ -135,19 +151,20 @@ const ClassicModeComponent = () => {
       if (currentQuestionIndex < questions.length - 1) {
         setCurrentQuestionIndex((prevIndex) => prevIndex + 1);
       } else {
-        setGameCompleted(true);
-        awardXpAfterGameCompletion();
-        addItemsToInventoryAfterGameCompletion();
+        setGameCompleted(true); // Mark game as completed
+        awardXpAfterGameCompletion(); // Award XP
+        addItemsToInventoryAfterGameCompletion(); // Update inventory
       }
       answerProcessingRef.current = false; // Allow further processing
     }, 2000);
   };
 
+  // -- Awards XP to the user after game completion. -- //
   const awardXpAfterGameCompletion = async () => {
     try {
       const token = await AsyncStorage.getItem('userToken');
       if (token) {
-        const xp = correctAnswersCount * 111; // Calculate XP
+        const xp = correctAnswersCount * 11; // Calculate XP
         const userId = user.userId;
 
         // Award XP
@@ -163,6 +180,7 @@ const ClassicModeComponent = () => {
     }
   };
 
+  // -- Adds items to the user's inventory after game completion. --//
   const addItemsToInventoryAfterGameCompletion = async () => {
     try {
       const token = await AsyncStorage.getItem('userToken');
@@ -174,11 +192,12 @@ const ClassicModeComponent = () => {
       console.log('Error adding items to inventory');
     }
   };
-
+  // Display a loading indicator while fetching questions
   if (loading) {
     return <LoadingIndicator />;
   }
 
+  // Display the game completion component when the game is finished
   if (gameCompleted) {
     return (
       <GameCompletedComponent

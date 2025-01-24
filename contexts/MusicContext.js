@@ -3,9 +3,11 @@ import {Audio} from 'expo-av';
 
 export const MusicContext = createContext();
 
+// -- Context to handle background music in application -- //
 export const MusicProvider = ({children}) => {
   const backgroundMusic = useRef(null);
 
+  // Function that can be called from components to play musci
   const playMusic = async () => {
     try {
       if (!backgroundMusic.current) {
@@ -21,6 +23,7 @@ export const MusicProvider = ({children}) => {
     }
   };
 
+  // Function that can be called from components to stop music
   const stopMusic = async () => {
     try {
       if (backgroundMusic.current) {

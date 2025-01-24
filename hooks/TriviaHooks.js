@@ -1,6 +1,7 @@
 import {doFetch} from '../utils/functions';
 import {triviaUrl, categoryUrl} from '../utils/app-config';
 
+// Trivia hooks for open trivia database api
 const useTrivia = () => {
   const getQuestionsWithParams = async (amount, category, difficulty, type) => {
     const url = `${triviaUrl}amount=${amount}&category=${category}&difficulty=${difficulty}&type=${type}`;

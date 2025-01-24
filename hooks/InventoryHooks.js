@@ -19,6 +19,7 @@ const useInventory = () => {
     }
   };
 
+  // add items to users inventort, for example award rewards after game or provide items bought from shop
   const addItemsToInventory = async (items, token) => {
     const body = {
       goldCoins: items.goldCoins || 0, // Default to 0 if not provided

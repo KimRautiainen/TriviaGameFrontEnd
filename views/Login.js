@@ -26,6 +26,7 @@ const Login = ({navigation}) => {
   const deviceWidth = Dimensions.get('window').width;
   const deviceHeight = Dimensions.get('window').height;
 
+  // Check if Async storage has token
   const checkToken = async () => {
     try {
       setLoading(true); // Start loading
@@ -38,9 +39,11 @@ const Login = ({navigation}) => {
         return;
       }
 
+      // Get user data with loken
       const userData = await getUserByToken(token);
       console.log('Fetched user data:', userData);
 
+      // If userdata is found set logged in true from context and set fetched data to user
       if (userData && userData.user && userData.user.length > 0) {
         setIsLoggedIn(true);
         setUser(userData.user[0]);
