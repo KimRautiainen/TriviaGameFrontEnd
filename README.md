@@ -40,4 +40,8 @@ The idea for **Quiz King** originated from a desire to create a fun, interactive
 ## Demo Video
 Click the image below to watch a demo of the app:
 
-[![Demo Video](./assets/images/Quizking.png)](https://youtu.be/54R-umUepdc)
+<p align="center">
+  <a href="https://youtu.be/54R-umUepdc">
+    <img src="./assets/images/Quizking.png" alt="Demo Video" width="300">
+  </a>
+</p>
