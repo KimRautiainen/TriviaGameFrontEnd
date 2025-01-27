@@ -2,7 +2,7 @@
 
 ## Introduction
 
-**Quiz King** is a competitive and engaging trivia game designed to challenge players' knowledge while fostering a fun and social gaming experience. The game combines the thrill of trivia with strategic and social elements, making it appealing to players of all skill levels. 
+**Quiz King** is a competitive and engaging trivia game designed to challenge players' knowledge while fostering a fun and social gaming experience. The game combines the thrill of trivia with strategic and social elements, making it appealing to players of all skill levels.
 
 ---
 
@@ -35,4 +35,9 @@ The idea for **Quiz King** originated from a desire to create a fun, interactive
 3. **Portfolio Building**: Creating *Quiz King* offers a tangible example of my skills and dedication, serving as a valuable asset for showcasing my technical and problem-solving abilities in the job market.
 
 
-## 
+## Current Progress
+
+## Demo Video
+Click the image below to watch a demo of the app:
+
+[![Demo Video](./assets/images/Quizking.png)](https://youtu.be/54R-umUepdc)
