@@ -1,7 +1,7 @@
 // Custom Backend API URLs
-const apiUrl = 'http://192.168.101.205:3000/'; // Base api url
+//const apiUrl = 'http://192.168.101.205:3000/'; // Base api url
 // Lapotop IP:
-//const apiUrl = 'http://192.168.0.101:3000/';
+const apiUrl = 'http://192.168.0.106:3000/';
 
 const authUrl = apiUrl + 'auth/';
 const mediaUrl = apiUrl + 'uploads/';
@@ -11,6 +11,9 @@ const categoryUrl = 'https://opentdb.com/api_category.php'; // Open trivia datab
 const triviaUrl = 'https://opentdb.com/api.php?'; // Open trivia database API URL
 
 // Websocket server url
-const serverUrl = 'ws://192.168.101.205:3000';
+//const serverUrl = 'ws://192.168.101.205:3000';
+
+// Websocker server url laptop
+const serverUrl = 'ws://192.168.0.106:3000';
 
 export {triviaUrl, apiUrl, authUrl, mediaUrl, categoryUrl, serverUrl};
