@@ -16,4 +16,8 @@ const triviaUrl = 'https://opentdb.com/api.php?'; // Open trivia database API UR
 // Websocker server url laptop
 const serverUrl = 'ws://192.168.0.106:3000';
 
+
+
+// 11010101
+
 export {triviaUrl, apiUrl, authUrl, mediaUrl, categoryUrl, serverUrl};
