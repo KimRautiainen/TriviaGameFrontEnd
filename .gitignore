@@ -35,4 +35,4 @@ yarn-error.*
 *.tsbuildinfo
 
 #appconfig
-.utils/appconfig
+utils/app-config.js
