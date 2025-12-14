@@ -17,6 +17,7 @@ import TabMenu from './TabMenu';
 import {StyleSheet} from 'react-native';
 import RankedGameScreen from '../views/RankedGameScreen';
 import GameOverScreen from '../views/GameOverScreen';
+import QuestScreen from '../views/QuestScreen';
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -193,6 +194,22 @@ const Stackscreen = () => {
                 fontWeight: 'bold',
               },
               headerBackTitleVisible: false,
+            }}
+          />
+          <Stack.Screen
+            name="QuestScreen"
+            component={QuestScreen}
+            options={{
+              headerShown: false,
+              title: 'Quests',
+              headerStyle: {
+                backgroundColor: '#000000',
+              },
+              headerTintColor: '#fff',
+              headerTitleStyle: {
+                fontWeight: 'bold',
+              },
+              headerBackTitleVisible: true,
             }}
           />
         </>

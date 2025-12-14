@@ -8,9 +8,10 @@ import {
   ImageBackground,
   StatusBar,
   Platform,
+  Icon,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {Icon} from '@rneui/themed';
+
 import {MainContext} from '../contexts/MainContext';
 import {useInventory} from '../hooks/InventoryHooks';
 import Toast from 'react-native-toast-message';

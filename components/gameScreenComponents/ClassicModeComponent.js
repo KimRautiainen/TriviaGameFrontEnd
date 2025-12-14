@@ -21,7 +21,7 @@ import CorrectAnswer from '../sharedComponents/CorrectAnswer';
 import InCorrectAnswer from '../sharedComponents/IncorrectAnswer';
 import GameCompletedComponent from '../sharedComponents/GameCompletedComponent';
 import {useNavigation} from '@react-navigation/native';
-import {Divider} from '@rneui/base';
+import {Divider} from 'react-native';
 import {MainContext} from '../../contexts/MainContext';
 import {useUser} from '../../hooks/ApiHooks';
 import {useInventory} from '../../hooks/InventoryHooks';

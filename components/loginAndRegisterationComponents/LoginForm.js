@@ -5,7 +5,7 @@ import {useAuthentication} from '../../hooks/ApiHooks';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useContext} from 'react';
 import {MainContext} from '../../contexts/MainContext';
-import {Input, Button, Icon} from '@rneui/themed';
+import {Input, Button, Icon} from 'react-native';
 
 // LoginForm Component for User Authentication
 const LoginForm = () => {
@@ -162,7 +162,7 @@ const styles = StyleSheet.create({
     color: 'white',
   },
   forgotPasswordText: {
-    alignSelf: 'flex-end', 
+    alignSelf: 'flex-end',
     color: 'blue',
     fontWeight: 'bold',
     fontSize: 13,

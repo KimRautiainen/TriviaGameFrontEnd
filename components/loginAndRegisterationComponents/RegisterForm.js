@@ -11,7 +11,7 @@ import {
 import {useForm, Controller} from 'react-hook-form';
 import {useUser} from '../../hooks/ApiHooks';
 import {MainContext} from '../../contexts/MainContext';
-import {Card, Input, Button} from '@rneui/themed';
+import {Card, Input, Button} from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import {PropTypes} from 'prop-types';
 

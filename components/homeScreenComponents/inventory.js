@@ -1,6 +1,6 @@
 import React, {useContext} from 'react';
 import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
-import {Icon} from '@rneui/themed';
+import {Icon} from 'react-native';
 import {MainContext} from '../../contexts/MainContext'; // Import MainContext
 import LottieView from 'lottie-react-native';
 

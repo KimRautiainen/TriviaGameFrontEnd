@@ -6,11 +6,11 @@ import {
   ImageBackground,
   Image,
   Text,
+  Button
 } from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import UserProfile from '../components/homeScreenComponents/UserProfile';
 import Inventory from '../components/homeScreenComponents/inventory';
-import {Button} from '@rneui/themed';
 import PropTypes from 'prop-types';
 import {Icon} from 'react-native-elements';
 import {useFocusEffect} from '@react-navigation/native'; // Import useFocusEffect
@@ -134,7 +134,7 @@ const HomePage = ({navigation, route}) => {
 
               <TouchableOpacity
                 style={styles.iconContainer}
-                onPress={() => handleNavigate('QuestsScreen')}
+                onPress={() => handleNavigate('QuestScreen')}
               >
                 <LottieView
                   ref={questsAnimationRef}
