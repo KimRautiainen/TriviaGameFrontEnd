@@ -10,17 +10,16 @@ import {
   Platform,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {Icon} from '@rneui/themed';
+import {FontAwesome, FontAwesome5} from '@expo/vector-icons';
 import {MainContext} from '../contexts/MainContext';
 import {useInventory} from '../hooks/InventoryHooks';
 import Toast from 'react-native-toast-message';
 
 // -- Shop screen where players can exchange their goldcoins -- //
 const ShopComponent = () => {
-  const {inventoryData, setInventoryData} = useContext(MainContext); // get inventory from maincontext
-  const {deductItemsFromInventory, addItemsToInventory} = useInventory(); // Hooks from inventoryhooks
+  const {inventoryData, setInventoryData} = useContext(MainContext);
+  const {deductItemsFromInventory, addItemsToInventory} = useInventory();
 
-  // Shop items arrays
   const shopItems = [
     {
       id: 1,
@@ -40,15 +39,12 @@ const ShopComponent = () => {
     },
   ];
 
-  // Function to handle purchase in shop
   const handlePurchase = async (item) => {
-    const token = await AsyncStorage.getItem('userToken'); // get token
+    const token = await AsyncStorage.getItem('userToken');
 
-    // Check if user has enough goldcoins before proceeding
     if (inventoryData.goldCoins >= item.price) {
       const itemsToDeduct = {goldCoins: item.price};
 
-      // Deduct the cost of the item from user
       try {
         await deductItemsFromInventory(itemsToDeduct, token);
 
@@ -61,7 +57,7 @@ const ShopComponent = () => {
           tournamentTickets: item.name === 'Tournament Ticket' ? 1 : 0,
           otherItems: item.name === 'Life' ? {lives: 1} : {},
         };
-        // add purchased item to inventory
+
         await addItemsToInventory(itemsToAdd, token);
 
         if (item.name === 'Tournament Ticket') {
@@ -71,47 +67,27 @@ const ShopComponent = () => {
           }));
         }
 
-        // Show toast to user when purchase is succesfull
         Toast.show({
           type: 'success',
           text1: 'Purchase Successful',
           text2: `You have successfully purchased ${item.name}!`,
           visibilityTime: 4000,
-          text1Style: {
-            fontSize: 18, // Increase font size for the title
-            fontWeight: 'bold',
-          },
-          text2Style: {
-            fontSize: 16, // Increase font size for the message
-          },
-          style: {
-            padding: 15, // Increase padding for a larger toast
-            borderRadius: 10, // Customize border radius
-            minHeight: 80, // Increase height of the toast box
-          },
+          text1Style: {fontSize: 18, fontWeight: 'bold'},
+          text2Style: {fontSize: 16},
+          style: {padding: 15, borderRadius: 10, minHeight: 80},
         });
       } catch (error) {
         console.error('Error during purchase transaction:', error.message);
       }
     } else {
-      // Show toast if the purchase is not succesfull
       Toast.show({
         type: 'error',
         text1: 'Not Enough Coins',
         text2: 'You do not have enough gold coins to make this purchase.',
         visibilityTime: 4000,
-        text1Style: {
-          fontSize: 18, // Increase font size for the title
-          fontWeight: 'bold',
-        },
-        text2Style: {
-          fontSize: 16, // Increase font size for the message
-        },
-        style: {
-          padding: 15, // Increase padding for a larger toast
-          borderRadius: 10, // Customize border radius
-          minHeight: 80, // Increase height of the toast box
-        },
+        text1Style: {fontSize: 18, fontWeight: 'bold'},
+        text2Style: {fontSize: 16},
+        style: {padding: 15, borderRadius: 10, minHeight: 80},
       });
     }
   };
@@ -128,34 +104,33 @@ const ShopComponent = () => {
           barStyle="light-content"
         />
 
-        {/* Header Section */}
         <View style={styles.titleContainer}>
           <Text style={styles.title}>Welcome to the Shop</Text>
         </View>
+
         <View style={styles.goldContainer}>
-          <Icon name="coins" size={24} color="#FFD700" type="font-awesome-5" />
+          <FontAwesome5 name="coins" size={24} color="#FFD700" />
           <Text style={styles.goldText}>
             {inventoryData.goldCoins} Gold Coins
           </Text>
         </View>
 
-        {/* Shop Items Section */}
         <ScrollView contentContainerStyle={styles.container}>
           {shopItems.map((item) => (
             <View key={item.id} style={styles.shopItem}>
               <View style={styles.itemIconContainer}>
-                <Icon
+                <FontAwesome
                   name={item.icon}
-                  type="font-awesome"
                   size={50}
                   color={item.iconColor}
-                  style={styles.itemIcon}
                 />
               </View>
+
               <View style={styles.itemDetails}>
                 <Text style={styles.itemName}>{item.name}</Text>
                 <Text style={styles.itemDescription}>{item.description}</Text>
                 <Text style={styles.itemPrice}>{item.price} Gold Coins</Text>
+
                 <TouchableOpacity
                   style={styles.purchaseButton}
                   onPress={() => handlePurchase(item)}
@@ -172,15 +147,13 @@ const ShopComponent = () => {
 };
 
 const styles = StyleSheet.create({
-  safeArea: {
-    flex: 1,
-  },
+  safeArea: {flex: 1},
   headerBackground: {
     width: '100%',
     height: '100%',
     justifyContent: 'center',
     alignItems: 'center',
-    paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 25, // Padding for Android status bar
+    paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 25,
   },
   titleContainer: {
     marginTop: 50,
@@ -193,9 +166,9 @@ const styles = StyleSheet.create({
     fontWeight: '900',
     color: '#fff',
     textAlign: 'center',
-    textShadowColor: 'rgba(0, 0, 0, 1)', // Darker shadow for more contrast
-    textShadowOffset: {width: 4, height: 4}, // Larger offset for more prominent shadow
-    textShadowRadius: 10, // Keep the shadow soft and spread out
+    textShadowColor: 'rgba(0, 0, 0, 1)',
+    textShadowOffset: {width: 4, height: 4},
+    textShadowRadius: 10,
   },
   goldContainer: {
     flexDirection: 'row',
@@ -203,11 +176,11 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     marginTop: 10,
     padding: 10,
-    backgroundColor: 'rgba(0, 0, 0, 0.6)', // Semi-transparent background for the gold container
+    backgroundColor: 'rgba(0, 0, 0, 0.6)',
     borderRadius: 20,
   },
   goldText: {
-    fontSize: 22, // Slightly larger font size for visibility
+    fontSize: 22,
     marginLeft: 8,
     color: '#FFD700',
     fontWeight: 'bold',
@@ -231,28 +204,18 @@ const styles = StyleSheet.create({
   },
   itemIconContainer: {
     marginRight: 16,
-    backgroundColor: '#fff', // Use pure white for background
+    backgroundColor: '#fff',
     padding: 10,
     borderRadius: 10,
-    elevation: 3, // Adds elevation to give a subtle 3D effect on Android
-    shadowColor: '#000', // Adds shadow for iOS
-    shadowOffset: {width: 0, height: 2}, // Adds shadow offset for iOS
-    shadowOpacity: 0.2, // Adjusts shadow opacity for iOS
-    shadowRadius: 3, // Controls the blur of the shadow on iOS
+    elevation: 3,
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 2},
+    shadowOpacity: 0.2,
+    shadowRadius: 3,
   },
-  itemDetails: {
-    flex: 1,
-  },
-  itemName: {
-    fontSize: 22,
-    fontWeight: 'bold',
-    color: '#333',
-  },
-  itemDescription: {
-    fontSize: 16,
-    color: '#666',
-    marginVertical: 5,
-  },
+  itemDetails: {flex: 1},
+  itemName: {fontSize: 22, fontWeight: 'bold', color: '#333'},
+  itemDescription: {fontSize: 16, color: '#666', marginVertical: 5},
   itemPrice: {
     fontSize: 18,
     color: '#4CAF50',
@@ -266,11 +229,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     alignItems: 'center',
   },
-  purchaseButtonText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
+  purchaseButtonText: {color: '#fff', fontSize: 16, fontWeight: 'bold'},
 });
 
 export default ShopComponent;

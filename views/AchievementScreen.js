@@ -1,4 +1,3 @@
-import {Text} from '@rneui/themed';
 import React, {useState} from 'react';
 import {View} from 'react-native';
 import PropTypes from 'prop-types';

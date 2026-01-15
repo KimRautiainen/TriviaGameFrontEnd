@@ -10,74 +10,73 @@ import {
 import {SafeAreaView} from 'react-native-safe-area-context';
 import UserProfile from '../components/homeScreenComponents/UserProfile';
 import Inventory from '../components/homeScreenComponents/inventory';
-import {Button} from '@rneui/themed';
 import PropTypes from 'prop-types';
-import {Icon} from 'react-native-elements';
-import {useFocusEffect} from '@react-navigation/native'; // Import useFocusEffect
+import {useFocusEffect} from '@react-navigation/native';
 import {MainContext} from '../contexts/MainContext';
-import {useUser} from '../hooks/ApiHooks'; // Hook for user API
-import {useInventory} from '../hooks/InventoryHooks'; // Hook for inventory API
+import {useUser} from '../hooks/ApiHooks';
+import {useInventory} from '../hooks/InventoryHooks';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import LevelUpScreen from './LevelUpScreen';
 import {SoundContext} from '../contexts/SoundContext';
 import LottieView from 'lottie-react-native';
+import {FontAwesome} from '@expo/vector-icons';
 
-// -- Landing page after logging in -- //
-// Fetches fresh user data when ever component is focused to ensure all data is the lates from backend
-const HomePage = ({navigation, route}) => {
-  const {setUser, user, setInventoryData, showLevelUp, setShowLevelUp} =
+const HomePage = ({navigation}) => {
+  const {setUser, setInventoryData, showLevelUp, setShowLevelUp} =
     useContext(MainContext);
-  const {getUserByToken} = useUser(); // Hook to get user data
-  const {getUserInventory} = useInventory(); // Hook to get inventory data
-  const {playButtonSound, playLevelUpSound} = useContext(SoundContext);
 
-  // Animation refs for control
+  const {getUserByToken} = useUser();
+  const {getUserInventory} = useInventory();
+  const {playButtonSound} = useContext(SoundContext);
+
   const eventsAnimationRef = useRef(null);
   const questsAnimationRef = useRef(null);
   const leaderboardsAnimationRef = useRef(null);
   const achievementsAnimationRef = useRef(null);
 
-  // Navigate function that plays button sound and taken screen name as param for where to navigate
   const handleNavigate = async (screen) => {
-    await playButtonSound(); // play sound before navigating
+    try {
+      await playButtonSound?.();
+    } catch (e) {
+      // don't block navigation if sound fails
+    }
     navigation.navigate(screen);
   };
 
-  // Fetch user data and check if user has gained new level and trigger levelup state if true
   const fetchUpdatedData = async () => {
     try {
       const token = await AsyncStorage.getItem('userToken');
-      if (token) {
-        // Fetch user data
-        const updatedUser = await getUserByToken(token);
-        const newUserLevel = updatedUser.user[0].level;
+      if (!token) return;
 
-        // Use a functional update to ensure you work with the latest state
+      const updatedUser = await getUserByToken(token);
+      const nextUser = updatedUser?.user?.[0];
+
+      if (nextUser) {
         setUser((prevUser) => {
-          if (newUserLevel > prevUser.level) {
-            setShowLevelUp(true); // Trigger Level Up Screen
-          }
-          return updatedUser.user[0]; // Update the user in context
-        });
+          const prevLevel = prevUser?.level ?? 0;
+          const newLevel = nextUser.level ?? 0;
 
-        // Fetch inventory data
-        const updatedInventory = await getUserInventory(token);
-        setInventoryData({
-          goldCoins: updatedInventory.goldCoins || 0,
-          tournamentTickets: updatedInventory.tournamentTickets || 0,
+          if (newLevel > prevLevel) {
+            setShowLevelUp(true);
+          }
+          return nextUser;
         });
       }
+
+      const updatedInventory = await getUserInventory(token);
+      setInventoryData({
+        goldCoins: updatedInventory?.goldCoins ?? 0,
+        tournamentTickets: updatedInventory?.tournamentTickets ?? 0,
+      });
     } catch (error) {
       console.error('Error fetching updated data:', error);
     }
   };
 
-  // When screen is focused for first time FetchUpdatedData() and play animations once
   useFocusEffect(
     useCallback(() => {
       fetchUpdatedData();
 
-      // Play animations when the screen is focused
       if (eventsAnimationRef.current) eventsAnimationRef.current.play();
       if (questsAnimationRef.current) questsAnimationRef.current.play();
       if (leaderboardsAnimationRef.current)
@@ -93,30 +92,24 @@ const HomePage = ({navigation, route}) => {
       style={styles.background}
     >
       <SafeAreaView style={styles.container}>
-        {/* Top-right corner icons */}
         <View style={styles.topRightIcons}>
           <TouchableOpacity onPress={() => handleNavigate('SettingsScreen')}>
-            <Icon name="cog" type="font-awesome" color="white" size={22} />
+            <FontAwesome name="cog" color="white" size={22} />
           </TouchableOpacity>
+
           <TouchableOpacity
             onPress={() => handleNavigate('NotificationsScreen')}
           >
-            <Icon name="bell" type="font-awesome" color="white" size={22} />
+            <FontAwesome name="bell" color="white" size={22} />
           </TouchableOpacity>
         </View>
 
         <View style={styles.contentContainer}>
-          {/* Render userprofile component for displaying Avatar, level, xp etc */}
           <UserProfile />
-          {/* Render inventory for displaying users gold coins, tournament tickets and lifes */}
           <Inventory />
-          {/* If showLevelUp state is true render Levelup screen */}
           {showLevelUp && <LevelUpScreen />}
 
-          {/* Icons Section */}
           <View style={styles.iconRow}>
-            {/* Left Column */}
-            {/* Animated Icons and navigators for Events, Quests and Placeholder */}
             <View style={styles.iconColumn}>
               <TouchableOpacity
                 style={styles.iconContainer}
@@ -146,20 +139,12 @@ const HomePage = ({navigation, route}) => {
                 <Text style={styles.iconText}>Quests</Text>
               </TouchableOpacity>
 
-              {/* Placeholder Icon */}
-              <TouchableOpacity style={styles.iconContainer}>
-                <Icon
-                  name="star"
-                  type="font-awesome"
-                  color="#FFD43B"
-                  size={35}
-                />
+              <TouchableOpacity style={styles.iconContainer} onPress={() => {}}>
+                <FontAwesome name="star" color="#FFD43B" size={35} />
                 <Text style={styles.iconText}>Placeholder</Text>
               </TouchableOpacity>
             </View>
 
-            {/* Right Column */}
-            {/* Animated Icons for RankedScreen, Leaderboards screen and Achievements screen */}
             <View style={styles.iconColumn}>
               <TouchableOpacity
                 style={styles.iconContainer}
@@ -188,7 +173,7 @@ const HomePage = ({navigation, route}) => {
 
               <TouchableOpacity
                 style={styles.iconContainer}
-                onPress={() => handleNavigate('AchievementsScreen')}
+                onPress={() => handleNavigate('AchievementScreen')}
               >
                 <LottieView
                   ref={achievementsAnimationRef}
@@ -202,15 +187,13 @@ const HomePage = ({navigation, route}) => {
             </View>
           </View>
 
-          {/* Play Button */}
-          <Button
+          <TouchableOpacity
             onPress={() => handleNavigate('GameModeScreen')}
-            large
-            color={'green'}
+            activeOpacity={0.85}
             style={styles.playButton}
           >
-            Play
-          </Button>
+            <Text style={styles.playButtonText}>Play</Text>
+          </TouchableOpacity>
         </View>
       </SafeAreaView>
     </ImageBackground>
@@ -218,19 +201,13 @@ const HomePage = ({navigation, route}) => {
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  background: {
-    flex: 1,
-    height: '100%',
-  },
+  container: {flex: 1},
+  background: {flex: 1, height: '100%'},
   topRightIcons: {
     flexDirection: 'row',
     justifyContent: 'flex-end',
     width: '90%',
     marginTop: 60,
-    marginRight: 0,
     position: 'absolute',
     zIndex: 1,
     gap: 10,
@@ -256,15 +233,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 50,
   },
-  customAnimation: {
-    width: 55,
-    height: 55,
-  },
-  customIcon: {
-    width: 55,
-    height: 55,
-    borderRadius: 30,
-  },
+  customAnimation: {width: 55, height: 55},
+  customIcon: {width: 55, height: 55, borderRadius: 30},
   iconText: {
     marginTop: 8,
     fontSize: 10,
@@ -280,6 +250,11 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     backgroundColor: 'green',
     marginBottom: 40,
+  },
+  playButtonText: {
+    color: 'white',
+    fontSize: 20,
+    fontWeight: '800',
   },
 });
 

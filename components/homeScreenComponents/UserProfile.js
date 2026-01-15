@@ -4,45 +4,44 @@ import {
   Text,
   StyleSheet,
   ActivityIndicator,
-  ImageBackground,
   TouchableOpacity,
+  Image,
 } from 'react-native';
-import {Avatar, Icon} from 'react-native-elements';
 import {Bar} from 'react-native-progress';
 import PropTypes from 'prop-types';
 import {MainContext} from '../../contexts/MainContext';
 import {mediaUrl} from '../../utils/app-config';
 import {SoundContext} from '../../contexts/SoundContext';
+import {useNavigation} from '@react-navigation/native';
 
-// -- Component to show users avatar, levels username, experience points and xp to level -- //
-const UserProfile = (navigation, route) => {
+const UserProfile = () => {
+  const navigation = useNavigation();
   const {user, loading} = useContext(MainContext);
+  const {playButtonSound} = useContext(SoundContext);
 
   if (loading) {
     return <ActivityIndicator size="large" color="#0000ff" />;
   }
+
   const userAvatarUri = `${mediaUrl}${user.userAvatar}`;
-  const {playButtonSound} = useContext(SoundContext);
 
   const handleNavigate = async (screen) => {
-    await playButtonSound(); // play sound before navigating
+    await playButtonSound();
     navigation.navigate(screen);
   };
 
   return (
     <View style={styles.container}>
       <TouchableOpacity onPress={() => handleNavigate('ProfileScreen')}>
-        <Avatar
-          size={100}
-          rounded
-          source={{uri: userAvatarUri}}
-          containerStyle={styles.avatar}
-        />
+        <Image source={{uri: userAvatarUri}} style={styles.avatar} />
       </TouchableOpacity>
+
       <View style={styles.userInfo}>
         <Text style={styles.userText}>{user.username}</Text>
+
         <View style={styles.xpBarContainer}>
           <Text style={styles.levelText}>Lvl {user.level}</Text>
+
           <Bar
             progress={
               isNaN(user.experiencePoints / user.maxXp)
@@ -56,6 +55,7 @@ const UserProfile = (navigation, route) => {
             borderWidth={0}
             borderRadius={360}
           />
+
           <Text style={styles.xpText}>
             {`${
               Number.isFinite(user.experiencePoints) ? user.experiencePoints : 0
@@ -74,9 +74,13 @@ const styles = StyleSheet.create({
     marginBottom: 0,
   },
   avatar: {
+    width: 100,
+    height: 100,
+    borderRadius: 50,
     marginRight: 10,
     borderColor: 'black',
     borderWidth: 1,
+    backgroundColor: '#eee',
   },
   userInfo: {
     justifyContent: 'center',
@@ -88,9 +92,6 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: 'white',
     justifyContent: 'center',
-  },
-  achievementsIcon: {
-    position: 'absolute',
   },
   xpBarContainer: {
     position: 'relative',

@@ -1,6 +1,6 @@
 import React, {useContext} from 'react';
 import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
-import {Icon} from '@rneui/themed';
+import { MaterialIcons } from '@expo/vector-icons';
 import {MainContext} from '../../contexts/MainContext'; // Import MainContext
 import LottieView from 'lottie-react-native';
 
@@ -17,7 +17,7 @@ const Inventory = () => {
         {/* Lives (Hardcoded for now) */}
         <View style={styles.item}>
           <TouchableOpacity onPress={() => iconPressed('favorite')}>
-            <Icon name="favorite" type="material" size={34} color="#FF0000" />
+            <MaterialIcons name="favorite" size={34} color="#FF0000" />
           </TouchableOpacity>
           <Text style={styles.itemText}>{`10 Lives`}</Text>
         </View>

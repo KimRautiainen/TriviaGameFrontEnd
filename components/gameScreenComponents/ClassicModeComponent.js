@@ -21,7 +21,6 @@ import CorrectAnswer from '../sharedComponents/CorrectAnswer';
 import InCorrectAnswer from '../sharedComponents/IncorrectAnswer';
 import GameCompletedComponent from '../sharedComponents/GameCompletedComponent';
 import {useNavigation} from '@react-navigation/native';
-import {Divider} from '@rneui/base';
 import {MainContext} from '../../contexts/MainContext';
 import {useUser} from '../../hooks/ApiHooks';
 import {useInventory} from '../../hooks/InventoryHooks';
@@ -230,7 +229,7 @@ const ClassicModeComponent = () => {
               <Text style={styles.questionCount}>
                 Question {currentQuestionIndex + 1} of {questions.length}
               </Text>
-              <Divider />
+              <View style={styles.divider} />
               <Text style={styles.questionText}>
                 {questions[currentQuestionIndex].question}
               </Text>
@@ -333,6 +332,12 @@ const styles = StyleSheet.create({
     fontSize: 16,
     textAlign: 'center',
     color: '#333',
+  },
+  divider: {
+    width: '100%',
+    height: 1,
+    backgroundColor: 'rgba(0,0,0,0.15)',
+    marginVertical: 12,
   },
 });
 

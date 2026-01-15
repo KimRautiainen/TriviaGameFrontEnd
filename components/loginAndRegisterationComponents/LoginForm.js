@@ -1,25 +1,24 @@
-import React, {useState} from 'react';
-import {Alert, StyleSheet, View, Text, TouchableOpacity} from 'react-native';
+import React, {useState, useContext} from 'react';
+import {
+  Alert,
+  StyleSheet,
+  View,
+  Text,
+  TouchableOpacity,
+  TextInput,
+} from 'react-native';
 import {useForm, Controller} from 'react-hook-form';
 import {useAuthentication} from '../../hooks/ApiHooks';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {useContext} from 'react';
 import {MainContext} from '../../contexts/MainContext';
-import {Input, Button, Icon} from '@rneui/themed';
+import {FontAwesome} from '@expo/vector-icons';
 
-// LoginForm Component for User Authentication
 const LoginForm = () => {
-  // Fetching login function from ApiHooks
   const {postLogin} = useAuthentication();
-
-  // Accessing the application's global state through MainContext
   const {setIsLoggedIn, setUser} = useContext(MainContext);
+
   const [passwordVisible, setPasswordVisible] = useState(false);
 
-  const togglePasswordVisibility = () => {
-    setPasswordVisible(!passwordVisible);
-  };
-  // Setting up form controls and validation using react-hook-form
   const {
     control,
     handleSubmit,
@@ -31,97 +30,112 @@ const LoginForm = () => {
     },
   });
 
-  // Function to handle user login
   const logIn = async (loginData) => {
     try {
-      console.log('Login data:', loginData);  // Check form data being sent
-
-      // Make the API call to login
       const loginResponse = await postLogin(loginData);
-      console.log('Login response:', loginResponse);  // Check API response
 
-      // Store the token in AsyncStorage
       await AsyncStorage.setItem('userToken', loginResponse.token);
 
-      // Update the app state
       setIsLoggedIn(true);
       setUser(loginResponse.user);
     } catch (error) {
-      console.log('Login Error:', error);  // Log the error message
-      Alert.alert('Error', error.message);
+      console.log('Login Error:', error);
+      Alert.alert('Error', error?.message ?? 'Login failed');
     }
   };
 
   const onForgotPasswordPress = () => {
-    // Placeholder for now, you can replace this with navigation or other logic
-    Alert.alert(
-      'Reset Password',
-      'Password reset functionality not implemented yet.',
-    );
+    Alert.alert('Reset Password', 'Password reset functionality not implemented yet.');
   };
 
   return (
     <View style={styles.container}>
+      {/* Email */}
       <View style={styles.inputContainer}>
         <Controller
           control={control}
+          name="email"
           rules={{
             required: {value: true, message: 'Email is required'},
           }}
           render={({field: {onChange, onBlur, value}}) => (
-            <Input
-              placeholder="Email"
-              onBlur={onBlur}
-              onChangeText={onChange}
-              value={value}
-              autoCapitalize="none"
-              errorMessage={errors.username?.message}
-              inputStyle={styles.input}
-            />
+            <>
+              <TextInput
+                placeholder="Email"
+                onBlur={onBlur}
+                onChangeText={onChange}
+                value={value}
+                autoCapitalize="none"
+                keyboardType="email-address"
+                style={[
+                  styles.input,
+                  errors.email ? styles.inputError : null,
+                ]}
+              />
+              {errors.email?.message ? (
+                <Text style={styles.errorText}>{errors.email.message}</Text>
+              ) : null}
+            </>
           )}
-          name="email"
         />
       </View>
 
+      {/* Password */}
       <View style={styles.inputContainer}>
         <Controller
           control={control}
+          name="password"
           rules={{
-            maxLength: 100,
+            maxLength: {value: 100, message: 'Password is too long'},
             required: {value: true, message: 'Password is required'},
           }}
           render={({field: {onChange, onBlur, value}}) => (
-            <Input
-              placeholder="password"
-              secureTextEntry={!passwordVisible}
-              onBlur={onBlur}
-              onChangeText={onChange}
-              value={value}
-              errorMessage={errors.password?.message}
-              inputStyle={styles.input}
-              rightIcon={
-                <TouchableOpacity onPress={togglePasswordVisibility}>
-                  <Icon
+            <>
+              <View style={styles.passwordRow}>
+                <TextInput
+                  placeholder="Password"
+                  secureTextEntry={!passwordVisible}
+                  onBlur={onBlur}
+                  onChangeText={onChange}
+                  value={value}
+                  autoCapitalize="none"
+                  style={[
+                    styles.input,
+                    styles.passwordInput,
+                    errors.password ? styles.inputError : null,
+                  ]}
+                />
+
+                <TouchableOpacity
+                  onPress={() => setPasswordVisible((v) => !v)}
+                  style={styles.eyeButton}
+                  accessibilityRole="button"
+                  accessibilityLabel={passwordVisible ? 'Hide password' : 'Show password'}
+                >
+                  <FontAwesome
                     name={passwordVisible ? 'eye' : 'eye-slash'}
-                    type="font-awesome"
+                    size={18}
+                    color="#333"
                   />
                 </TouchableOpacity>
-              }
-            />
+              </View>
+
+              {errors.password?.message ? (
+                <Text style={styles.errorText}>{errors.password.message}</Text>
+              ) : null}
+            </>
           )}
-          name="password"
         />
+
         <Text style={styles.forgotPasswordText} onPress={onForgotPasswordPress}>
           Forgot your password?
         </Text>
       </View>
 
-      <Button
-        title="Log In"
-        onPress={handleSubmit(logIn)}
-        buttonStyle={styles.button}
-        titleStyle={styles.buttonText}
-      />
+      {/* Button */}
+      <TouchableOpacity style={styles.button} onPress={handleSubmit(logIn)}>
+        <Text style={styles.buttonText}>Log In</Text>
+      </TouchableOpacity>
     </View>
   );
 };
@@ -132,21 +146,45 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     padding: 20,
-    backgroundColor: '"FEFBF6',
+    backgroundColor: '#FEFBF6',
   },
   inputContainer: {
     width: '100%',
-    marginBottom: 5,
+    marginBottom: 12,
   },
   input: {
     backgroundColor: 'white',
     paddingHorizontal: 15,
-    paddingVertical: 10,
+    paddingVertical: 12,
     borderRadius: 10,
     borderWidth: 1,
     borderColor: '#DDDDDD',
     fontSize: 16,
     height: 50,
+  },
+  inputError: {
+    borderColor: '#d00',
+  },
+  errorText: {
+    marginTop: 6,
+    color: '#d00',
+    fontSize: 12,
+  },
+  passwordRow: {
+    position: 'relative',
+    width: '100%',
+    justifyContent: 'center',
+  },
+  passwordInput: {
+    paddingRight: 44, // space for eye icon
+  },
+  eyeButton: {
+    position: 'absolute',
+    right: 12,
+    height: 50,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: 8,
   },
   button: {
     height: 50,
@@ -154,20 +192,21 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: 20,
+    marginTop: 10,
     width: '100%',
   },
   buttonText: {
     fontSize: 18,
     color: 'white',
+    fontWeight: '600',
   },
   forgotPasswordText: {
-    alignSelf: 'flex-end', 
+    alignSelf: 'flex-end',
     color: 'blue',
     fontWeight: 'bold',
     fontSize: 13,
+    marginTop: 8,
     marginRight: 5,
-    marginBottom: 5,
   },
 });
 

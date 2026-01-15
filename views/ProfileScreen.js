@@ -10,21 +10,23 @@ import {
   TouchableOpacity,
   Modal,
   TextInput,
+  Pressable,
 } from 'react-native';
-import {Avatar, Button, Icon} from 'react-native-elements';
 import {MainContext} from '../contexts/MainContext';
 import {Bar} from 'react-native-progress';
 import {mediaUrl} from '../utils/app-config';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
+import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
+import {faPenToSquare} from '@fortawesome/free-solid-svg-icons';
+
 const rankImages = {
-  1: require('../assets/icons/Novice.webp'), // Novice icon
-  2: require('../assets/icons/Master.webp'), // Master icon
-  3: require('../assets/icons/Expert.webp'), // Expert icon
+  1: require('../assets/icons/Novice.webp'),
+  2: require('../assets/icons/Master.webp'),
+  3: require('../assets/icons/Expert.webp'),
 };
 
 const achievementIcons = [
-  // Temp icons
   require('../assets/icons/tempAch1.png'),
   require('../assets/icons/tempAch2.png'),
   require('../assets/icons/tempAch3.png'),
@@ -32,9 +34,9 @@ const achievementIcons = [
 ];
 
 const rankRequirements = {
-  1: 1000, // Points required for Novice
-  2: 2000, // Points required for Master
-  3: Infinity, // No further progress for Expert
+  1: 1000,
+  2: 2000,
+  3: Infinity,
 };
 
 const ProfileScreen = () => {
@@ -43,29 +45,25 @@ const ProfileScreen = () => {
   const [isModalVisible, setModalVisible] = useState(false);
   const [username, setUsername] = useState(user.username);
 
-  // Logout function
   const handleLogout = async () => {
     try {
-      await AsyncStorage.removeItem('userToken'); // Remove token from storage
-      setUser(null); // Clear user context
-      setIsLoggedIn(false); // Update login state
+      await AsyncStorage.removeItem('userToken');
+      setUser(null);
+      setIsLoggedIn(false);
     } catch (error) {
       console.error('Logout error:', error.message);
     }
   };
 
-  // Save user modifications to profile
   const handleSaveProfile = () => {
-    // TODO
+    // TODO: save username etc
     setModalVisible(false);
   };
 
-  // Show spinner if loading state is true
   if (loading) {
     return <ActivityIndicator size="large" color="#0000ff" />;
   }
 
-  // Render achievemnts
   const renderAchievements = () => {
     return (
       <View style={styles.achievementsSection}>
@@ -82,7 +80,6 @@ const ProfileScreen = () => {
     );
   };
 
-  // Rennder rank and indicate users current rank
   const renderRankTimeline = () => {
     return (
       <View style={styles.timelineContainer}>
@@ -122,13 +119,11 @@ const ProfileScreen = () => {
     );
   };
 
-  // Shor users progress of rank and needed rankpoints for next level
   const renderRankProgress = () => {
     const currentPoints = user.rankPoints || 0;
     const nextRankLevel = user.rankLevel + 1;
     const nextRankRequirement = rankRequirements[nextRankLevel] || Infinity;
 
-    // Hide progress section if user is already Expert
     if (user.rankLevel === 3) return null;
 
     return (
@@ -136,14 +131,13 @@ const ProfileScreen = () => {
         <Text style={styles.rankProgressHeader}>Rank Progress</Text>
         <View style={styles.rankProgressBarContainer}>
           <Bar
-            progress={currentPoints / nextRankRequirement}
+            progress={Math.min(currentPoints / nextRankRequirement, 1)}
             width={300}
             height={20}
             color="#4a90e2"
             unfilledColor="#ccc"
             borderWidth={0}
             borderRadius={10}
-            Text={'heihoi'}
           />
           <Image
             source={rankImages[nextRankLevel]}
@@ -169,23 +163,19 @@ const ProfileScreen = () => {
           style={styles.editProfileContainer}
           onPress={() => setModalVisible(true)}
         >
-          <Icon name="edit" type="font-awesome" color="#000" size={18} />
+          <FontAwesomeIcon icon={faPenToSquare} size={18} color="#000" />
           <Text style={styles.editProfileText}>Edit Profile</Text>
         </TouchableOpacity>
 
         {/* Avatar and User Info */}
         <View style={styles.profileHeader}>
-          <Avatar
-            size={150}
-            rounded
-            source={{uri: userAvatarUri}}
-            containerStyle={styles.avatar}
-          />
+          <Image source={{uri: userAvatarUri}} style={styles.avatar} />
           <Text style={styles.userText}>{user.username}</Text>
           <View style={styles.xpBarContainer}>
             <Text style={styles.levelText}>Lvl {user.level}</Text>
           </View>
         </View>
+
         {/* Edit Profile Modal */}
         <Modal
           visible={isModalVisible}
@@ -196,23 +186,28 @@ const ProfileScreen = () => {
           <View style={styles.modalContainer}>
             <View style={styles.modalContent}>
               <Text style={styles.modalHeader}>Edit Profile</Text>
+
               <TextInput
                 style={styles.input}
                 placeholder="Username"
                 value={username}
                 onChangeText={setUsername}
               />
+
               <View style={styles.modalButtons}>
-                <Button
-                  title="Save"
+                <Pressable
                   onPress={handleSaveProfile}
-                  buttonStyle={styles.saveButton}
-                />
-                <Button
-                  title="Logout"
+                  style={[styles.actionButton, styles.saveButton]}
+                >
+                  <Text style={styles.actionButtonText}>Save</Text>
+                </Pressable>
+
+                <Pressable
                   onPress={handleLogout}
-                  buttonStyle={styles.logoutButton}
-                />
+                  style={[styles.actionButton, styles.logoutButton]}
+                >
+                  <Text style={styles.actionButtonText}>Logout</Text>
+                </Pressable>
               </View>
             </View>
           </View>
@@ -227,32 +222,38 @@ const ProfileScreen = () => {
         {/* Rank Progress */}
         {renderRankProgress()}
 
-        {/* Achievements Section */}
+        {/* Achievements */}
         {renderAchievements()}
 
-        {/* Stats Section */}
+        {/* Stats */}
         <View style={styles.statsSection}>
           <Text style={styles.statsHeader}>User Stats</Text>
+
           <View style={styles.statItem}>
             <Text style={styles.statLabel}>Correct Answers</Text>
             <Text style={styles.statValue}>{user.totalCorrectAnswers}</Text>
           </View>
+
           <View style={styles.statItem}>
             <Text style={styles.statLabel}>Incorrect Answers</Text>
             <Text style={styles.statValue}>{user.totalFalseAnswers}</Text>
           </View>
+
           <View style={styles.statItem}>
             <Text style={styles.statLabel}>Games Played</Text>
             <Text style={styles.statValue}>{123}</Text>
           </View>
+
           <View style={styles.statItem}>
             <Text style={styles.statLabel}>Achievements Earned</Text>
             <Text style={styles.statValue}>{45}</Text>
           </View>
+
           <View style={styles.statItem}>
             <Text style={styles.statLabel}>Ranking Points</Text>
             <Text style={styles.statValue}>{user.rankPoints || 0}</Text>
           </View>
+
           <View style={styles.statItem}>
             <Text style={styles.statLabel}>Total Wins</Text>
             <Text style={styles.statValue}>{25}</Text>
@@ -279,9 +280,13 @@ const styles = StyleSheet.create({
     marginBottom: 30,
   },
   avatar: {
+    width: 150,
+    height: 150,
+    borderRadius: 75,
     marginBottom: 10,
     borderColor: '#1E222B',
     borderWidth: 2,
+    backgroundColor: '#eee',
   },
   userText: {
     fontSize: 28,
@@ -298,14 +303,7 @@ const styles = StyleSheet.create({
     color: 'black',
     marginBottom: 5,
   },
-  xpText: {
-    flex: 1,
-    position: 'absolute',
-    top: 5,
-    zIndex: 5,
-    fontSize: 12,
-    color: '#000',
-  },
+
   timelineSection: {
     width: '100%',
     marginBottom: 30,
@@ -330,15 +328,13 @@ const styles = StyleSheet.create({
   rankIcon: {
     width: 60,
     height: 60,
-    resizeMode: 'cover',
     borderRadius: 30,
     overflow: 'hidden',
   },
   currentRankIcon: {
-    width: 85, // Larger size for current rank
+    width: 85,
     height: 85,
     borderRadius: 60,
-    resizeMode: 'cover',
   },
   roundedImage: {
     borderRadius: 30,
@@ -361,6 +357,7 @@ const styles = StyleSheet.create({
   inactiveRankLabel: {
     color: 'gray',
   },
+
   rankProgressContainer: {
     alignItems: 'center',
     marginBottom: 50,
@@ -368,14 +365,13 @@ const styles = StyleSheet.create({
   rankProgressBarContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginTop: 0,
     position: 'relative',
   },
   nextRankIcon: {
     width: 40,
     height: 40,
     borderRadius: 20,
-    marginLeft: -20, // Slight overlap with progress bar
+    marginLeft: -20,
   },
   rankProgressHeader: {
     fontSize: 20,
@@ -387,6 +383,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#333',
   },
+
   achievementsSection: {
     width: '100%',
     marginTop: 20,
@@ -402,28 +399,29 @@ const styles = StyleSheet.create({
   achievementGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    justifyContent: 'space-between', // Spacing between items
-    paddingHorizontal: 10, // Match the spacing from rank icons
+    justifyContent: 'space-between',
+    paddingHorizontal: 10,
   },
   achievementItem: {
-    width: '30%', // Makes 3 items fit per row with spacing
-    aspectRatio: 1, // Keeps items square
-    marginBottom: 10, // Spacing between rows
-    alignItems: 'center', // Center items horizontally
-    justifyContent: 'center', // Center items vertically
+    width: '30%',
+    aspectRatio: 1,
+    marginBottom: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   achievementIcon: {
     width: '70%',
     height: '70%',
-    borderRadius: 50, // Makes images rounded
+    borderRadius: 50,
     resizeMode: 'cover',
   },
   achievementLabel: {
-    marginTop: 5, // Space between the icon and text
-    fontSize: 12, // Small text for the label
-    color: '#555', // Subtle color for the label
+    marginTop: 5,
+    fontSize: 12,
+    color: '#555',
     textAlign: 'center',
   },
+
   statsSection: {
     width: '100%',
     backgroundColor: '#fff',
@@ -452,6 +450,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#333',
   },
+
   editProfileContainer: {
     position: 'absolute',
     top: 30,
@@ -464,6 +463,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#000',
   },
+
   modalContainer: {
     flex: 1,
     justifyContent: 'center',
@@ -488,11 +488,23 @@ const styles = StyleSheet.create({
     borderBottomColor: '#ccc',
     marginBottom: 20,
     fontSize: 16,
+    paddingVertical: 6,
   },
   modalButtons: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     width: '100%',
+  },
+  actionButton: {
+    flex: 1,
+    paddingVertical: 12,
+    borderRadius: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  actionButtonText: {
+    color: '#fff',
+    fontWeight: 'bold',
   },
   saveButton: {
     backgroundColor: '#4CAF50',
@@ -500,6 +512,7 @@ const styles = StyleSheet.create({
   },
   logoutButton: {
     backgroundColor: '#f44336',
+    marginLeft: 10,
   },
 });
 
